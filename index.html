@@ -84,51 +84,51 @@
         button.addEventListener('dragover', function (event) { event.preventDefault(); if (button.dataset.tool !== draggedId) button.classList.add('drag-over'); });
         button.addEventListener('dragleave', function () { button.classList.remove('drag-over'); });
         button.addEventListener('drop', function (event) { event.preventDefault(); button.classList.remove('drag-over'); moveTool(draggedId, button.dataset.tool); });
-        button   按钮.addEventListener('dragend', function   函数 () { button   按钮.classList   班级名册.remove('dragging'); nav.querySelectorAll('.drag-over').forEach(function   函数 (item   项) { item   项.classList   班级名册.remove('drag-over'); }); draggedId = null   零; });
+        button.addEventListener('dragend', function () { button.classList.remove('dragging'); nav.querySelectorAll('.drag-over').forEach(function (item) { item.classList.remove('drag-over'); }); draggedId = null; });
       });
     }
 
-    function   函数 renderSelect() {
-      quickSelect.innerHTML = tools   工具.map(function   函数 (tool   工具) { return   返回 '<option value="' + esc(tool   工具.id) + '">' + esc(tool   工具.title   标题) + '</option>'; }).join('');
-      if (activeId) quickSelect.value   价值 = activeId;
+    function renderSelect() {
+      quickSelect.innerHTML = tools.map(function (tool) { return '<option value="' + esc(tool.id) + '">' + esc(tool.title) + '</option>'; }).join('');
+      if (activeId) quickSelect.value = activeId;
     }
 
-    function   函数 moveTool(fromId, toId) {
-      if (!fromId || !toId || fromId === toId) return   返回;
-      const   常量 fromIndex = tools   工具.findIndex(function   函数 (tool   工具) { return   返回 tool      工具工具.id === fromId; });
-      const   常量 toIndex = tools   工具.findIndex(function   函数 (tool   工具) { return   返回 tool      工具工具.id === toId; });
-      if (fromIndex < 0 || toIndex < 0) return   返回;
-      const   常量 moved = tools   工具.splice(fromIndex, 1)[0];
-      tools   工具.splice(toIndex, 0, moved);
+    function moveTool(fromId, toId) {
+      if (!fromId || !toId || fromId === toId) return;
+      const fromIndex = tools.findIndex(function (tool) { return tool.id === fromId; });
+      const toIndex = tools.findIndex(function (tool) { return tool.id === toId; });
+      if (fromIndex < 0 || toIndex < 0) return;
+      const moved = tools.splice(fromIndex, 1)[0];
+      tools.splice(toIndex, 0, moved);
       saveOrder();
       renderNav();
       renderSelect();
     }
 
-       函数buildFrames() {function   函数 buildFrames() {
-      frameSources。forEach(function   函数 (source   源) {const   常量 iframe = document.createElement('iframe'   iframe的)；const tool   工具 = baseTools.find   找到(function   函数 (item   项)){返回item。Id === source   源.id；});iframe。Id = 'frame-' source   源.id；iframe。Title = tool   工具.title；iframe。srcdoc = decodeBase64Utf8(source   源.htmlBase64)；frameWrap.appendChild (iframe);});frameSources.forEach(function   函数 (source   源) { const   常量 iframe = document   文档.createElement('iframe'   iframe的); const   常量   工具 tool      工具工具 = baseTools.find   找到(function   函数 (item   项) { return   返回 item      项项.id === source   源.id; }); iframe.id = 'frame-' + source   源.id; iframe.title   标题 = tool   工具.title   标题; iframe.srcdoc = decodeBase64Utf8(source   源.htmlBase64); frameWrap.appendChild(iframe); });
+    function buildFrames() {
+      frameSources.forEach(function (source) { const iframe = document.createElement('iframe'); const tool = baseTools.find(function (item) { return item.id === source.id; }); iframe.id = 'frame-' + source.id; iframe.title = tool.title; iframe.srcdoc = decodeBase64Utf8(source.htmlBase64); frameWrap.appendChild(iframe); });
     }
 
-       函数build() {function   函数   构建 build   构建() {
+    function build() {
       buildFrames();
       renderNav();
       renderSelect();
-      quickSelect。addEventListener('change'   “改变”, function   函数 () {activate   激活(quickSelect.value   价值)；});quickSelect.addEventListener('change'   “改变”, function   函数 () { activate   激活(quickSelect.value   价值); });
-      const   常量   最初的 initial      最初的最初的 = new   新 URLSearchParams（window   URLSearchParams(參.location   位置.search）。Get ('tool'   “工具”) || tools   工具[0].id；const initial      最初的最初的 = new   新 URLSearchParams(window   窗口.location   位置.search   搜索).get   得到('tool'   “工具”) || tools   工具[0].id;
-      激活   激活(baseTools。一些函数（工具）{返回工具。Id === initial；}) ?初始值：tools[0].id)；activate(baseTools.some   一些(function   函数 (tool   工具) { return   返回 tool      工具工具.id === initial   最初的; }) ? initial   最初的 : tools   工具[0].id);
+      quickSelect.addEventListener('change', function () { activate(quickSelect.value); });
+      const initial = new URLSearchParams(window.location.search).get('tool') || tools[0].id;
+      activate(baseTools.some(function (tool) { return tool.id === initial; }) ? initial : tools[0].id);
     }
 
-       激活（id） {function   函数   激活 activate   激活(id) {
-      const      工具常量 tool   工具 = baseTools.find   找到(function   函数 (item   项)){返回item。Id === Id；}) ||工具[0]；const tool   工具 = baseTools.find   找到(function   函数 (item   项) { return   返回 item      项项.id === id; }) || tools   工具[0];
-         activeId = tool   工具.id；activeId = tool   工具.id;
-      document   文档.querySelectorAll(“.tool   工具-button”)。forEach(function   函数 (button   按钮) {button   按钮. classlist。Toggle ('active'   “活跃”, button   按钮.dataset.tool   工具 === tool   工具.id)；});document   文档.querySelectorAll('.tool-button'   “.tool   工具-button”).forEach(function   函数 (button   按钮) { button   按钮.classList   班级名册.toggle   切换('active'   “活跃”, button   按钮.dataset.tool   工具 === tool   工具.id); });
-      document   文档.querySelectorAll (iframe的)。forEach(function   函数 (frame   框架) {frame   框架. classlist。(“活跃”,帧切换。Id === 'frame-' tool.id)；});document   文档.querySelectorAll('iframe'   iframe的).forEach(function   函数 (frame   框架) { frame   框架.classList   班级名册.toggle   切换('active'   “活跃”, frame   框架.id === 'frame-' + tool   工具.id); });
-      quickSelect.value   价值 = tool   工具.id; currentName.textContent = tool   工具.title   标题; currentDesc.textContent = tool   工具.desc;
-      历史。replaceState（null,    零", location "   历史）。路径名”?工具= ' encodeURIComponent (tool.id));history.replaceState(null, '', location.pathname + '?   '？工具= 'tool=   路径名' + encodeURIComponent(tool.id));   位置
-      window   窗口.窗口。scrollTo({top   前: 0, behavior   行为: 'instant'   “即时”})；scrollTo({ top   前: 0, behavior   行为: 'instant'   “即时” });
+    function activate(id) {
+      const tool = baseTools.find(function (item) { return item.id === id; }) || tools[0];
+      activeId = tool.id;
+      document.querySelectorAll('.tool-button').forEach(function (button) { button.classList.toggle('active', button.dataset.tool === tool.id); });
+      document.querySelectorAll('iframe').forEach(function (frame) { frame.classList.toggle('active', frame.id === 'frame-' + tool.id); });
+      quickSelect.value = tool.id; currentName.textContent = tool.title; currentDesc.textContent = tool.desc;
+      history.replaceState(null, '', location.pathname + '?tool=' + encodeURIComponent(tool.id));
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
-    build   构建();
-  </script>   < / script>
-</body>   < / body>
-</html>   < / html>
+    build();
+  </script>
+</body>
+</html>
