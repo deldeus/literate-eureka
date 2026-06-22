@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>鎏金板快速运费提交模版</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f2ea;
+      --panel: #fffdf8;
+      --text: #1d1a16;
+      --muted: #756c60;
+      --line: #d8cdbd;
+      --gold: #b88a2a;
+      --gold-dark: #7a5516;
+      --green: #26634a;
+      --red: #a83a2f;
+      --shadow: 0 18px 46px rgba(53, 42, 24, 0.13);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(135deg, rgba(184, 138, 42, 0.13), transparent 38%),
+        radial-gradient(circle at 85% 8%, rgba(38, 99, 74, 0.12), transparent 28%),
+        var(--bg);
+    }
+
+    main {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0 36px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-end;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .status-pill {
+      flex: 0 0 auto;
+      border: 1px solid rgba(184, 138, 42, 0.42);
+      background: rgba(255, 253, 248, 0.74);
+      color: var(--gold-dark);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 0.92fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255, 253, 248, 0.91);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel-inner {
+      padding: 20px;
+    }
+
+    .section-title {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 8px;
+      color: #3a3229;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    textarea,
+    input[type="number"] {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      padding: 12px 13px;
+      outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    textarea:focus,
+    input[type="number"]:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(184, 138, 42, 0.16);
+    }
+
+    .segmented,
+    .spec-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .segmented {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .spec-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .option {
+      position: relative;
+    }
+
+    .option input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .option span {
+      display: block;
+      min-height: 58px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      padding: 11px 12px;
+      font-weight: 800;
+      line-height: 1.25;
+      transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+    }
+
+    .option small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .option input:checked + span {
+      border-color: var(--gold);
+      background: #fff4cf;
+      color: #4b330e;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .quantity-product-row {
+      align-items: end;
+      grid-template-columns: repeat(2, minmax(240px, 1fr));
+    }
+
+    .quantity-product-row .metric {
+      min-height: 74px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 7px;
+      background: var(--text);
+      color: #fff;
+      font: inherit;
+      font-weight: 800;
+      min-height: 42px;
+      padding: 0 14px;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #efe5d5;
+      color: #34291b;
+      border: 1px solid var(--line);
+    }
+
+    button.success {
+      background: var(--green);
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 13px;
+      min-height: 88px;
+    }
+
+    .metric b {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .result-box {
+      border: 1px solid #cab892;
+      border-radius: 8px;
+      background: #16130f;
+      color: #fffaf0;
+      padding: 18px;
+      min-height: 224px;
+      white-space: pre-wrap;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .notice {
+      margin-top: 14px;
+      border-left: 4px solid var(--gold);
+      background: #fff7df;
+      padding: 11px 12px;
+      color: #4b3a17;
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .notice.error {
+      border-left-color: var(--red);
+      background: #fff0ed;
+      color: #6f2019;
+    }
+
+    .rules {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .rules code {
+      color: var(--gold-dark);
+      background: #fff1c7;
+      border-radius: 5px;
+      padding: 2px 5px;
+      font-family: inherit;
+      font-weight: 700;
+    }
+
+    @media (max-width: 860px) {
+      .topbar {
+        display: block;
+      }
+
+      .status-pill {
+        display: inline-block;
+        margin-top: 14px;
+      }
+
+      .grid,
+      .summary {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      main {
+        width: min(100% - 18px, 1120px);
+        padding-top: 18px;
+      }
+
+      .panel-inner {
+        padding: 15px;
+      }
+
+      .segmented,
+      .spec-grid,
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="topbar">
+      <div>
+        <h1>鎏金板快速运费提交模版</h1>
+        <p class="subtitle">复制地址，选择材质、规格和数量，自动生成板材重量、托盘/木箱重量、DB 打包费和可复制咨询文本。</p>
+      </div>
+      <div class="status-pill">产品默认：鎏金板</div>
+    </div>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="panel-inner">
+          <h2 class="section-title">填写信息</h2>
+
+          <label for="address">1. 地址</label>
+          <textarea id="address" placeholder="例如：辽宁省大连市甘井子区和硕园25-7"></textarea>
+
+          <label>2. 材质</label>
+          <div class="segmented" id="materialGroup">
+            <label class="option">
+              <input type="radio" name="material" value="hard" checked>
+              <span>硬质<small>6mm 厚</small></span>
+            </label>
+            <label class="option">
+              <input type="radio" name="material" value="soft">
+              <span>软质<small>2mm 厚</small></span>
+            </label>
+          </div>
+
+          <label>3. 规格</label>
+          <div class="spec-grid" id="specGroup"></div>
+
+          <div class="row quantity-product-row">
+            <div>
+              <label for="quantity">4. 数量</label>
+              <input id="quantity" type="number" min="1" step="1" placeholder="请输入张数" inputmode="numeric">
+            </div>
+            <div>
+              <label>产品</label>
+              <div class="metric">
+                <b>当前产品</b>
+                <strong>鎏金板</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="rules">
+            托盘规则：<code>6mm 10张以内</code> 或 <code>2mm 20张以内</code> 优先托盘；2440 长度用 2 米托盘，3000/3050 长度用 3 米托盘。超过托盘数量后，按可容纳片数选择最小木箱。
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-inner">
+          <h2 class="section-title">自动核算</h2>
+          <div class="summary">
+            <div class="metric">
+              <b>重量公式</b>
+              <strong id="weightLine">-</strong>
+            </div>
+            <div class="metric">
+              <b>包装</b>
+              <strong id="packageLine">-</strong>
+            </div>
+            <div class="metric">
+              <b>打包费</b>
+              <strong id="dbLine">-</strong>
+            </div>
+          </div>
+
+          <div id="result" class="result-box"></div>
+          <div class="actions">
+            <button type="button" class="success" id="copyBtn">复制运费咨询模板</button>
+            <button type="button" class="secondary" id="clearBtn">清空地址</button>
+          </div>
+          <div id="notice" class="notice"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const specs = {
+      hard: [
+        { label: "1220*2440mm", key: "hard-2440", unitWeight: 30, lengthType: "short" },
+        { label: "1220*3050mm", key: "hard-3050", unitWeight: 38, lengthType: "long" },
+        { label: "1200*600mm", key: "hard-600", unitWeight: 7.5, lengthType: "small" }
+      ],
+      soft: [
+        { label: "1200*2440mm", key: "soft-2440", unitWeight: 15, lengthType: "short" },
+        { label: "1200*3000mm", key: "soft-3000", unitWeight: 20, lengthType: "long" }
+      ]
+    };
+
+    const crates = {
+      short: [
+        { name: "木箱7", outer: "2.53*1.31*0.25", weight: 65, hardCap: 15, softCap: 30 },
+        { name: "木箱7", outer: "2.53*1.31*0.35", weight: 70, hardCap: 30, softCap: 60 },
+        { name: "木箱7", outer: "2.53*1.31*0.45", weight: 75, hardCap: 45, softCap: 90 },
+        { name: "木箱7", outer: "2.53*1.31*0.7", weight: 90, hardCap: 88, softCap: 176 }
+      ],
+      long: [
+        { name: "木箱9", outer: "3.09*1.31*0.3", weight: 92, hardCap: 15, softCap: 30 },
+        { name: "木箱9", outer: "3.09*1.31*0.35", weight: 100, hardCap: 30, softCap: 60 },
+        { name: "木箱9", outer: "3.09*1.31*0.45", weight: 108, hardCap: 45, softCap: 90 },
+        { name: "木箱9", outer: "3.09*1.28*0.55", weight: 116, hardCap: 60, softCap: 120 }
+      ]
+    };
+
+    const pallets = {
+      short: { label: "2米拖盘", weight: 46 },
+      long: { label: "3米拖盘", weight: 65 },
+      small: { label: "小托盘", weight: 16 }
+    };
+
+    const state = {
+      material: "hard",
+      specKey: "hard-2440"
+    };
+
+    const els = {
+      address: document.querySelector("#address"),
+      specGroup: document.querySelector("#specGroup"),
+      quantity: document.querySelector("#quantity"),
+      result: document.querySelector("#result"),
+      notice: document.querySelector("#notice"),
+      weightLine: document.querySelector("#weightLine"),
+      packageLine: document.querySelector("#packageLine"),
+      dbLine: document.querySelector("#dbLine"),
+      copyBtn: document.querySelector("#copyBtn"),
+      clearBtn: document.querySelector("#clearBtn")
+    };
+
+    function renderSpecs() {
+      const currentSpecs = specs[state.material];
+      if (!currentSpecs.some((item) => item.key === state.specKey)) {
+        state.specKey = currentSpecs[0].key;
+      }
+
+      els.specGroup.innerHTML = currentSpecs.map((item) => `
+        <label class="option">
+          <input type="radio" name="spec" value="${item.key}" ${item.key === state.specKey ? "checked" : ""}>
+          <span>${item.label}<small>单张 ${item.unitWeight}KG</small></span>
+        </label>
+      `).join("");
+
+      document.querySelectorAll("input[name='spec']").forEach((input) => {
+        input.addEventListener("change", () => {
+          state.specKey = input.value;
+          calculate();
+        });
+      });
+    }
+
+    function currentSpec() {
+      return specs[state.material].find((item) => item.key === state.specKey);
+    }
+
+    function choosePackage(quantity, material, spec) {
+      if (spec.lengthType === "small") {
+        const palletCount = quantity > 100 ? 2 : 1;
+        const weight = pallets.small.weight * palletCount;
+        return {
+          ...pallets.small,
+          weight,
+          type: "pallet",
+          output: palletCount > 1 ? `${pallets.small.label} x ${palletCount}` : pallets.small.label
+        };
+      }
+
+      const palletLimit = material === "hard" ? 10 : 20;
+      if (quantity <= palletLimit) {
+        return { ...pallets[spec.lengthType], type: "pallet", output: pallets[spec.lengthType].label };
+      }
+
+      const capKey = material === "hard" ? "hardCap" : "softCap";
+      const crate = crates[spec.lengthType].find((item) => quantity <= item[capKey]);
+      if (crate) {
+        return { ...crate, type: "crate", output: crate.outer };
+      }
+
+      return null;
+    }
+
+    function calculate() {
+      const spec = currentSpec();
+      const qtyText = els.quantity.value.trim();
+      if (!qtyText) {
+        els.weightLine.textContent = "-";
+        els.packageLine.textContent = "-";
+        els.dbLine.textContent = "-";
+        els.result.textContent = `${els.address.value.trim() || "请粘贴地址"}\n\n请填写数量`;
+        els.notice.textContent = "数量为空时不会自动核算，输入张数后会立即生成模板。";
+        els.notice.className = "notice";
+        return;
+      }
+
+      const rawQty = Number.parseInt(qtyText, 10);
+      if (!Number.isFinite(rawQty) || rawQty <= 0) {
+        els.weightLine.textContent = "-";
+        els.packageLine.textContent = "-";
+        els.dbLine.textContent = "-";
+        els.result.textContent = `${els.address.value.trim() || "请粘贴地址"}\n\n请输入大于 0 的数量`;
+        els.notice.textContent = "数量需要填写大于 0 的整数。";
+        els.notice.className = "notice error";
+        return;
+      }
+
+      const quantity = rawQty;
+      const pkg = choosePackage(quantity, state.material, spec);
+      const boardTotal = quantity * spec.unitWeight;
+      const db = Math.ceil(quantity * 1.5);
+
+      if (!pkg) {
+        const max = state.material === "hard" ? (spec.lengthType === "short" ? 88 : 60) : (spec.lengthType === "short" ? 176 : 120);
+        const message = `当前数量 ${quantity} 张超过表格最大可装数量（${max}张），请拆分多箱后再提交。`;
+        els.result.textContent = message;
+        els.notice.textContent = message;
+        els.notice.className = "notice error";
+        els.weightLine.textContent = "-";
+        els.packageLine.textContent = "需拆分";
+        els.dbLine.textContent = `DB${db}元`;
+        return;
+      }
+
+      const total = boardTotal + pkg.weight;
+      const address = els.address.value.trim() || "请粘贴地址";
+      const weightLine = `${quantity}*${spec.unitWeight}+${pkg.weight}=${Number.isInteger(total) ? total : total.toFixed(1).replace(/\.0$/, "")}公斤`;
+      const dbLine = `DB${db}`;
+      const template = `${address}\n\n${weightLine}\n${pkg.output}\n${dbLine}`;
+
+      els.weightLine.textContent = weightLine;
+      els.packageLine.textContent = pkg.output;
+      els.dbLine.textContent = dbLine;
+      els.result.textContent = template;
+
+      const packDescription = pkg.type === "pallet"
+        ? `${quantity}张在优先托盘范围内，使用${pkg.output}，包装重量 ${pkg.weight}KG。`
+        : `${quantity}张超过托盘范围，匹配${pkg.name}，外径 ${pkg.outer}，木箱重量 ${pkg.weight}KG。`;
+      els.notice.textContent = packDescription;
+      els.notice.className = "notice";
+    }
+
+    document.querySelectorAll("input[name='material']").forEach((input) => {
+      input.addEventListener("change", () => {
+        state.material = input.value;
+        state.specKey = specs[state.material][0].key;
+        renderSpecs();
+        calculate();
+      });
+    });
+
+    els.address.addEventListener("input", calculate);
+    els.quantity.addEventListener("input", calculate);
+
+    els.clearBtn.addEventListener("click", () => {
+      els.address.value = "";
+      els.address.focus();
+      calculate();
+    });
+
+    els.copyBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(els.result.textContent);
+        els.copyBtn.textContent = "已复制";
+        window.setTimeout(() => {
+          els.copyBtn.textContent = "复制运费咨询模板";
+        }, 1200);
+      } catch (error) {
+        const range = document.createRange();
+        range.selectNodeContents(els.result);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        els.copyBtn.textContent = "已选中，可手动复制";
+      }
+    });
+
+    renderSpecs();
+    calculate();
+  </script>
+</body>
+</html>

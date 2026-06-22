@@ -1,0 +1,1487 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>宁波重量快速计算</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d9dee7;
+      --accent: #0f766e;
+      --accent-soft: #e2f3f0;
+      --warn: #c2410c;
+      --shadow: 0 18px 44px rgba(20, 30, 45, .09);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    main {
+      width: min(1180px, calc(100vw - 28px));
+      margin: 20px auto 36px;
+      display: grid;
+      grid-template-columns: minmax(320px, 420px) 1fr;
+      gap: 16px;
+    }
+
+    header {
+      width: min(1180px, calc(100vw - 28px));
+      margin: 24px auto 0;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .source {
+      color: var(--muted);
+      font-size: 14px;
+      text-align: right;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .left {
+      padding: 16px;
+      min-height: 720px;
+    }
+
+    .right {
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0 0 7px;
+    }
+
+    input, select, button {
+      font: inherit;
+    }
+
+    input, select {
+      width: 100%;
+      height: 44px;
+      border: 1px solid #cbd3df;
+      border-radius: 7px;
+      background: #fff;
+      color: var(--ink);
+      padding: 0 12px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, .16);
+    }
+
+    .search-row {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: var(--panel);
+      padding-bottom: 12px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    .list {
+      display: grid;
+      gap: 8px;
+      max-height: 610px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .product {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 11px 12px;
+      text-align: left;
+      cursor: pointer;
+      display: grid;
+      gap: 4px;
+    }
+
+    .product:hover, .product.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .product-name {
+      font-weight: 700;
+      font-size: 17px;
+    }
+
+    .product-meta {
+      color: var(--muted);
+      font-size: 13px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      border: 1px solid #b9c3d2;
+      background: #fff;
+      border-radius: 999px;
+      min-height: 38px;
+      padding: 0 15px;
+      cursor: pointer;
+      font-weight: 650;
+    }
+
+    .chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px;
+      background: #fbfcfe;
+      min-height: 92px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 25px;
+      line-height: 1.08;
+    }
+
+    .metric small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .result-row {
+      display: grid;
+      grid-template-columns: minmax(250px, .68fr) minmax(360px, 1.32fr);
+      gap: 12px;
+    }
+
+    .result-card,
+    .crate {
+      background: #111827;
+      color: #fff;
+      border-radius: 8px;
+      padding: 18px 20px;
+      display: grid;
+      gap: 12px;
+      min-height: 142px;
+      border: 2px solid #22c55e;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, .18);
+    }
+
+    .result-card {
+      background: #0f766e;
+      border-color: #fbbf24;
+    }
+
+    .result-card .label,
+    .crate .label {
+      color: rgba(255, 255, 255, .82);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .result-value,
+    .crate-size {
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .result-value {
+      font-size: clamp(30px, 4vw, 46px);
+      white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .result-value.small {
+      font-size: clamp(26px, 3.3vw, 38px);
+    }
+
+    .result-value.compact {
+      font-size: clamp(22px, 2.8vw, 32px);
+    }
+
+    .crate-size {
+      font-size: clamp(30px, 4.1vw, 44px);
+      word-break: break-all;
+    }
+
+    .result-note {
+      color: rgba(255, 255, 255, .82);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .formula {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      line-height: 1.7;
+      background: #fff;
+      color: #334155;
+    }
+
+    .formula code {
+      background: #eef2f7;
+      border-radius: 5px;
+      padding: 2px 6px;
+      color: #0f172a;
+    }
+
+    .warn {
+      color: var(--warn);
+      font-weight: 650;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .copy {
+      border: 1px solid var(--accent);
+      color: #fff;
+      background: var(--accent);
+      border-radius: 7px;
+      min-height: 42px;
+      padding: 0 14px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .copy.secondary {
+      color: var(--accent);
+      background: #fff;
+    }
+
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 24px 10px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+    }
+
+    @media (max-width: 860px) {
+      header {
+        align-items: start;
+        flex-direction: column;
+      }
+      .source { text-align: left; }
+      main {
+        grid-template-columns: 1fr;
+      }
+      .left {
+        min-height: auto;
+      }
+      .list {
+        max-height: 320px;
+      }
+      .grid, .grid.two, .metric-row, .result-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>宁波重量快速计算</h1>
+      <div class="hint">输入产品关键字，选择规格和数量后自动计算板重、总重和木箱尺寸。</div>
+    </div>
+    <div class="source">数据来自：平方重量厚度(1).docx</div>
+  </header>
+
+  <main>
+    <section class="panel left">
+      <div class="search-row">
+        <label for="search">产品搜索</label>
+        <input id="search" autocomplete="off" placeholder="例如：脉、脉络石、圆线石">
+        <div class="hint">支持连续关键字和单字匹配。输入“脉”会匹配“圆线石脉络石”。</div>
+      </div>
+      <div id="productList" class="list"></div>
+    </section>
+
+    <section class="panel right">
+      <div>
+        <label>当前产品</label>
+        <div id="currentName" style="font-size:26px;font-weight:800;">请选择产品</div>
+        <div id="currentMeta" class="hint"></div>
+      </div>
+
+      <div>
+        <label>规格</label>
+        <div id="sizeChips" class="chips"></div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="qty">数量（张）</label>
+          <input id="qty" type="number" min="1" step="1" placeholder="请输入张数" inputmode="numeric">
+        </div>
+        <div>
+          <label for="crateThickness">木箱按厚度（mm）</label>
+          <input id="crateThickness" type="number" min="0" step="0.1">
+        </div>
+        <div>
+          <label for="kgPerSqm">平方重量（kg/㎡）</label>
+          <input id="kgPerSqm" type="number" min="0" step="0.1">
+        </div>
+      </div>
+
+      <div class="metric-row">
+        <div class="metric">
+          <span>单张理论重量</span>
+          <strong id="rawWeight">-</strong>
+          <small id="rawFormula">长 * 宽 * 平方重量</small>
+        </div>
+        <div class="metric">
+          <span>单张取整重量</span>
+          <strong id="sheetWeight">-</strong>
+          <small>向上取整</small>
+        </div>
+        <div class="metric">
+          <span>产品尺寸</span>
+          <strong id="sizeMetric">-</strong>
+          <small>单位：mm</small>
+        </div>
+      </div>
+
+      <div class="result-row">
+        <div class="result-card">
+          <div class="label">总重量</div>
+          <div id="totalWeight" class="result-value">-</div>
+          <div class="result-note">单张取整重量 * 数量</div>
+        </div>
+        <div class="crate">
+          <div class="label">木箱尺寸（长 * 宽 * 高，单位 mm）</div>
+          <div id="crateSize" class="crate-size">-</div>
+          <div id="crateFormula" class="label"></div>
+        </div>
+      </div>
+
+      <div class="formula" id="detailFormula">
+        选择产品后显示计算过程。
+      </div>
+
+      <div class="actions">
+        <button class="copy" id="copySummary">复制计算结果</button>
+        <button class="copy secondary" id="resetBtn">重置数量</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const products = [
+      {
+            "no": 1,
+            "name": "夯土A(细夯土）",
+            "thickness": "4",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2360*1160",
+                  "2360*580"
+            ]
+      },
+      {
+            "no": 2,
+            "name": "夯土B（粗夯土）",
+            "thickness": "4",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "3000*1200",
+                  "2900*1160",
+                  "2800*1030",
+                  "2680*930"
+            ]
+      },
+      {
+            "no": 3,
+            "name": "夯土C（大夯土）",
+            "thickness": "5",
+            "kgPerSqm": 7.5,
+            "sizes": [
+                  "2800*1060"
+            ]
+      },
+      {
+            "no": 4,
+            "name": "夯土D（新夯土）",
+            "thickness": "4",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2800*560"
+            ]
+      },
+      {
+            "no": 5,
+            "name": "夯土砖",
+            "thickness": "7",
+            "kgPerSqm": 8.5,
+            "sizes": [
+                  "2800*1000"
+            ]
+      },
+      {
+            "no": 6,
+            "name": "A7夯土",
+            "thickness": "4",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2800*1050"
+            ]
+      },
+      {
+            "no": 7,
+            "name": "水泥板",
+            "thickness": "3-5",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "3100*1180"
+            ]
+      },
+      {
+            "no": 8,
+            "name": "木纹板",
+            "thickness": "3-5",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2830*1140",
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 9,
+            "name": "大波纹",
+            "thickness": "3-9",
+            "kgPerSqm": 8.5,
+            "sizes": [
+                  "3000*1150",
+                  "2750*1060"
+            ]
+      },
+      {
+            "no": 10,
+            "name": "小波纹",
+            "thickness": "3-7",
+            "kgPerSqm": 7.5,
+            "sizes": [
+                  "3000*1200",
+                  "2850*990"
+            ]
+      },
+      {
+            "no": 11,
+            "name": "波浪石",
+            "thickness": "3-6",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "2750*980",
+                  "2750*1200"
+            ]
+      },
+      {
+            "no": 12,
+            "name": "麻编",
+            "thickness": "5",
+            "kgPerSqm": 8,
+            "sizes": [
+                  "1420*560",
+                  "2650*1160"
+            ]
+      },
+      {
+            "no": 13,
+            "name": "碳化木",
+            "thickness": "4",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2850*930"
+            ]
+      },
+      {
+            "no": 14,
+            "name": "布纹石",
+            "thickness": "3-5",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2500*1160"
+            ]
+      },
+      {
+            "no": 15,
+            "name": "粗线石",
+            "thickness": "3-7",
+            "kgPerSqm": 7.5,
+            "sizes": [
+                  "2380*1180",
+                  "2360*580"
+            ]
+      },
+      {
+            "no": 16,
+            "name": "B款粗线石",
+            "thickness": "3-7",
+            "kgPerSqm": 7.5,
+            "sizes": [
+                  "2800*1200"
+            ]
+      },
+      {
+            "no": 17,
+            "name": "凸竹纹",
+            "thickness": "3-8",
+            "kgPerSqm": 9,
+            "sizes": [
+                  "2950*1000",
+                  "2880*580"
+            ]
+      },
+      {
+            "no": 18,
+            "name": "凹竹纹",
+            "thickness": "3-10",
+            "kgPerSqm": 11,
+            "sizes": [
+                  "2800*980"
+            ]
+      },
+      {
+            "no": 19,
+            "name": "方线石 阡陌石",
+            "thickness": "3-8",
+            "kgPerSqm": 10,
+            "sizes": [
+                  "2800*1000",
+                  "2800*580"
+            ]
+      },
+      {
+            "no": 20,
+            "name": "圆线石 脉络石",
+            "thickness": "3-9",
+            "kgPerSqm": 10,
+            "sizes": [
+                  "2800*1200",
+                  "2800*995",
+                  "2800*600"
+            ],
+            "crateThickness": 8
+      },
+      {
+            "no": 21,
+            "name": "双线石",
+            "thickness": "3*8",
+            "kgPerSqm": 10,
+            "sizes": [
+                  "2650*1180"
+            ]
+      },
+      {
+            "no": 22,
+            "name": "锈石",
+            "thickness": "4",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2850*950"
+            ]
+      },
+      {
+            "no": 23,
+            "name": "泡沫铝",
+            "thickness": "5",
+            "kgPerSqm": 8,
+            "sizes": [
+                  "2800*1130"
+            ]
+      },
+      {
+            "no": 24,
+            "name": "圆铝",
+            "thickness": "4",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2360*1160"
+            ]
+      },
+      {
+            "no": 25,
+            "name": "新洞石",
+            "thickness": "4",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2380*1160"
+            ]
+      },
+      {
+            "no": 26,
+            "name": "新线石",
+            "thickness": "4",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2950*1200",
+                  "2700*1200"
+            ]
+      },
+      {
+            "no": 27,
+            "name": "洞石",
+            "thickness": "4",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2800*1200",
+                  "2400*1200"
+            ]
+      },
+      {
+            "no": 28,
+            "name": "小洞石",
+            "thickness": "3",
+            "kgPerSqm": 5,
+            "sizes": [
+                  "1200*600"
+            ]
+      },
+      {
+            "no": 29,
+            "name": "新款洞石",
+            "thickness": "4.5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "3000*1200",
+                  "2400*1200"
+            ]
+      },
+      {
+            "no": 30,
+            "name": "海洞石",
+            "thickness": "4.5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "2400*1200"
+            ]
+      },
+      {
+            "no": 31,
+            "name": "花岗岩",
+            "thickness": "3-5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "3000*1150"
+            ]
+      },
+      {
+            "no": 32,
+            "name": "玄武岩",
+            "thickness": "3-5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "3000*600"
+            ]
+      },
+      {
+            "no": 33,
+            "name": "方形马赛克",
+            "thickness": "4",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2950*1180"
+            ]
+      },
+      {
+            "no": 34,
+            "name": "星月石",
+            "thickness": "3-8",
+            "kgPerSqm": 10,
+            "sizes": [
+                  "3100*1160",
+                  "2830*1150"
+            ]
+      },
+      {
+            "no": 35,
+            "name": "洞石马赛克",
+            "thickness": "3-7",
+            "kgPerSqm": 9,
+            "sizes": [
+                  "2990*1190"
+            ]
+      },
+      {
+            "no": 36,
+            "name": "锯木纹",
+            "thickness": "3-7",
+            "kgPerSqm": 8.5,
+            "sizes": [
+                  "3100*1160"
+            ]
+      },
+      {
+            "no": 37,
+            "name": "大斧开石",
+            "thickness": "3-13",
+            "kgPerSqm": 11,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 38,
+            "name": "黑山岩",
+            "thickness": "3-12",
+            "kgPerSqm": 10,
+            "sizes": [
+                  "3100*1160"
+            ]
+      },
+      {
+            "no": 39,
+            "name": "叠纹",
+            "thickness": "3-12",
+            "kgPerSqm": 11,
+            "sizes": [
+                  "3100*1160"
+            ]
+      },
+      {
+            "no": 40,
+            "name": "莱姆石",
+            "thickness": "4",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2800*1200"
+            ]
+      },
+      {
+            "no": 41,
+            "name": "沉积岩",
+            "thickness": "3-13",
+            "kgPerSqm": 11,
+            "sizes": [
+                  "2850*1100"
+            ]
+      },
+      {
+            "no": 42,
+            "name": "页岩",
+            "thickness": "3-15",
+            "kgPerSqm": 13,
+            "sizes": [
+                  "3100*1160"
+            ]
+      },
+      {
+            "no": 43,
+            "name": "溶积岩",
+            "thickness": "3-15",
+            "kgPerSqm": 11,
+            "sizes": [
+                  "2950*1160"
+            ]
+      },
+      {
+            "no": 44,
+            "name": "山岩石",
+            "thickness": "3-10",
+            "kgPerSqm": 10,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 45,
+            "name": "古木细纹",
+            "thickness": "3-5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "2950*1200"
+            ]
+      },
+      {
+            "no": 46,
+            "name": "古木粗纹",
+            "thickness": "3-5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 47,
+            "name": "条石纹",
+            "thickness": "3-5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "2850*990"
+            ]
+      },
+      {
+            "no": 48,
+            "name": "芭蕉叶",
+            "thickness": "3-6",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "2900*1150"
+            ]
+      },
+      {
+            "no": 49,
+            "name": "齿木纹",
+            "thickness": "3-6",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "2950*1180"
+            ]
+      },
+      {
+            "no": 50,
+            "name": "大齿木",
+            "thickness": "3-7",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "2360*1160"
+            ]
+      },
+      {
+            "no": 51,
+            "name": "积木",
+            "thickness": "3-5",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2950*1180"
+            ]
+      },
+      {
+            "no": 52,
+            "name": "苹果叶",
+            "thickness": "3-6",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "2950*1160"
+            ]
+      },
+      {
+            "no": 53,
+            "name": "山竹",
+            "thickness": "3-5",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2950*1160"
+            ]
+      },
+      {
+            "no": 54,
+            "name": "水立方",
+            "thickness": "3-5",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "3000*1140"
+            ]
+      },
+      {
+            "no": 55,
+            "name": "71线石",
+            "thickness": "3-7",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "2950*1160"
+            ]
+      },
+      {
+            "no": 56,
+            "name": "15线石",
+            "thickness": "3-7",
+            "kgPerSqm": 7.5,
+            "sizes": [
+                  "2950*1180"
+            ]
+      },
+      {
+            "no": 57,
+            "name": "23线石",
+            "thickness": "3-7",
+            "kgPerSqm": 7.5,
+            "sizes": [
+                  "2950*1160"
+            ]
+      },
+      {
+            "no": 58,
+            "name": "35线石",
+            "thickness": "3-7",
+            "kgPerSqm": 7.5,
+            "sizes": [
+                  "2950*1160"
+            ]
+      },
+      {
+            "no": 59,
+            "name": "摩洛石",
+            "thickness": "3-6",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "2950*1160"
+            ]
+      },
+      {
+            "no": 60,
+            "name": "云丘",
+            "thickness": "3-5",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2950*1160"
+            ]
+      },
+      {
+            "no": 61,
+            "name": "山丘",
+            "thickness": "3-5",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2680*1180"
+            ]
+      },
+      {
+            "no": 62,
+            "name": "环形石",
+            "thickness": "3-7",
+            "kgPerSqm": 8,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 63,
+            "name": "粗布纹",
+            "thickness": "3-5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "2800*1200"
+            ]
+      },
+      {
+            "no": 64,
+            "name": "中线石",
+            "thickness": "3-8",
+            "kgPerSqm": 9,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 65,
+            "name": "5号波浪石",
+            "thickness": "3-7",
+            "kgPerSqm": 7.5,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 66,
+            "name": "脊线石",
+            "thickness": "3-5",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 67,
+            "name": "人字编",
+            "thickness": "3-5",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "2360*1160"
+            ]
+      },
+      {
+            "no": 68,
+            "name": "20圆柱",
+            "thickness": "3-7",
+            "kgPerSqm": 8,
+            "sizes": [
+                  "3000*1190"
+            ]
+      },
+      {
+            "no": 69,
+            "name": "30内圆",
+            "thickness": "3-7",
+            "kgPerSqm": 8,
+            "sizes": [
+                  "3000*1190"
+            ]
+      },
+      {
+            "no": 70,
+            "name": "22马赛克",
+            "thickness": "3-6",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "1190*590"
+            ]
+      },
+      {
+            "no": 71,
+            "name": "50马赛克",
+            "thickness": "3-6",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "1190*590"
+            ]
+      },
+      {
+            "no": 72,
+            "name": "流水石",
+            "thickness": "3-10",
+            "kgPerSqm": 9,
+            "sizes": [
+                  "1180*580"
+            ]
+      },
+      {
+            "no": 73,
+            "name": "花岗岩",
+            "thickness": "3-5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "1200*600"
+            ]
+      },
+      {
+            "no": 74,
+            "name": "星月石",
+            "thickness": "3-8",
+            "kgPerSqm": 8,
+            "sizes": [
+                  "1200*600"
+            ]
+      },
+      {
+            "no": 75,
+            "name": "黑山岩",
+            "thickness": "3-8",
+            "kgPerSqm": 8,
+            "sizes": [
+                  "1200*600"
+            ]
+      },
+      {
+            "no": 76,
+            "name": "板岩",
+            "thickness": "3-5",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "1190*590"
+            ]
+      },
+      {
+            "no": 77,
+            "name": "斧开石",
+            "thickness": "3-12",
+            "kgPerSqm": 12,
+            "sizes": [
+                  "2300*560"
+            ]
+      },
+      {
+            "no": 78,
+            "name": "峭壁岩",
+            "thickness": "3-10",
+            "kgPerSqm": 9,
+            "sizes": [
+                  "1050*590"
+            ]
+      },
+      {
+            "no": 79,
+            "name": "洞石拼接",
+            "thickness": "3-6",
+            "kgPerSqm": 7.5,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 80,
+            "name": "岁月痕",
+            "thickness": "3-6",
+            "kgPerSqm": 7.5,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 81,
+            "name": "斧凿石",
+            "thickness": "3-6",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 82,
+            "name": "缩编",
+            "thickness": "3-5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 83,
+            "name": "大峭壁岩",
+            "thickness": "3-6",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 84,
+            "name": "大板岩",
+            "thickness": "3-5",
+            "kgPerSqm": 6.5,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 85,
+            "name": "100圆柱",
+            "thickness": "3-10",
+            "kgPerSqm": 9,
+            "sizes": [
+                  "3000*590"
+            ]
+      },
+      {
+            "no": 86,
+            "name": "荔枝面",
+            "thickness": "3-5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 87,
+            "name": "火烧面",
+            "thickness": "3-5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "3000*1200"
+            ]
+      },
+      {
+            "no": 88,
+            "name": "方布纹",
+            "thickness": "3-5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "2950*1200"
+            ]
+      },
+      {
+            "no": 89,
+            "name": "圆布纹",
+            "thickness": "3-5",
+            "kgPerSqm": 7,
+            "sizes": [
+                  "2950*1200"
+            ]
+      },
+      {
+            "no": 90,
+            "name": "文化石拼接",
+            "thickness": "3*8",
+            "kgPerSqm": 8,
+            "sizes": [
+                  "2800*1200"
+            ]
+      },
+      {
+            "no": 91,
+            "name": "条石拼接",
+            "thickness": "3-8",
+            "kgPerSqm": 8,
+            "sizes": [
+                  "2800*1200"
+            ]
+      }
+];
+
+    const els = {
+      search: document.querySelector("#search"),
+      productList: document.querySelector("#productList"),
+      currentName: document.querySelector("#currentName"),
+      currentMeta: document.querySelector("#currentMeta"),
+      sizeChips: document.querySelector("#sizeChips"),
+      qty: document.querySelector("#qty"),
+      crateThickness: document.querySelector("#crateThickness"),
+      kgPerSqm: document.querySelector("#kgPerSqm"),
+      rawWeight: document.querySelector("#rawWeight"),
+      rawFormula: document.querySelector("#rawFormula"),
+      sheetWeight: document.querySelector("#sheetWeight"),
+      totalWeight: document.querySelector("#totalWeight"),
+      sizeMetric: document.querySelector("#sizeMetric"),
+      crateSize: document.querySelector("#crateSize"),
+      crateFormula: document.querySelector("#crateFormula"),
+      detailFormula: document.querySelector("#detailFormula"),
+      copySummary: document.querySelector("#copySummary"),
+      resetBtn: document.querySelector("#resetBtn")
+    };
+
+    let selectedProduct = products.find(item => item.name.includes("脉络石")) || products[0];
+    let selectedSize = selectedProduct.sizes[0];
+
+    function normalize(text) {
+      return String(text || "").toLowerCase().replace(/\s+/g, "").replace(/[()（）]/g, "");
+    }
+
+    function fuzzyMatch(text, query) {
+      const cleanText = normalize(text);
+      const cleanQuery = normalize(query);
+      if (!cleanQuery) return true;
+      if (cleanText.includes(cleanQuery)) return true;
+      let index = 0;
+      for (const char of cleanText) {
+        if (char === cleanQuery[index]) index += 1;
+        if (index === cleanQuery.length) return true;
+      }
+      return false;
+    }
+
+    function maxThickness(thickness) {
+      const nums = String(thickness || "").match(/\d+(?:\.\d+)?/g);
+      if (!nums) return 0;
+      return Math.max(...nums.map(Number));
+    }
+
+    function defaultCrateThickness(product) {
+      return product.crateThickness ?? maxThickness(product.thickness);
+    }
+
+    function parseSize(size) {
+      const parts = String(size).replace("×", "*").split("*").map(part => Number(part.trim()));
+      return { length: parts[0] || 0, width: parts[1] || 0 };
+    }
+
+    function formatNumber(num, digits = 2) {
+      if (!Number.isFinite(num)) return "-";
+      return Number(num.toFixed(digits)).toLocaleString("zh-CN");
+    }
+
+    function renderProducts() {
+      const query = els.search.value;
+      const matches = products.filter(product => fuzzyMatch(product.name, query));
+      els.productList.innerHTML = "";
+      if (!matches.length) {
+        els.productList.innerHTML = '<div class="empty">没有找到匹配产品</div>';
+        return;
+      }
+      matches.forEach(product => {
+        const button = document.createElement("button");
+        button.className = `product${product === selectedProduct ? " active" : ""}`;
+        button.innerHTML = `
+          <div class="product-name">${product.name}</div>
+          <div class="product-meta">
+            <span>厚度 ${product.thickness}mm</span>
+            <span>${product.kgPerSqm}kg/㎡</span>
+            <span>${product.sizes.join("、")}</span>
+          </div>
+        `;
+        button.addEventListener("click", () => selectProduct(product));
+        els.productList.appendChild(button);
+      });
+    }
+
+    function renderSizes() {
+      els.sizeChips.innerHTML = "";
+      selectedProduct.sizes.forEach(size => {
+        const button = document.createElement("button");
+        button.className = `chip${size === selectedSize ? " active" : ""}`;
+        button.textContent = size;
+        button.addEventListener("click", () => {
+          selectedSize = size;
+          renderSizes();
+          calculate();
+        });
+        els.sizeChips.appendChild(button);
+      });
+    }
+
+    function selectProduct(product) {
+      selectedProduct = product;
+      selectedSize = product.sizes[0];
+      els.crateThickness.value = defaultCrateThickness(product);
+      els.kgPerSqm.value = product.kgPerSqm;
+      renderProducts();
+      renderSizes();
+      calculate();
+    }
+
+    function calculate() {
+      const qty = Math.max(0, Math.floor(Number(els.qty.value) || 0));
+      const kgPerSqm = Number(els.kgPerSqm.value) || 0;
+      const crateThickness = Number(els.crateThickness.value) || 0;
+      const { length, width } = parseSize(selectedSize);
+      const area = length / 1000 * width / 1000;
+      const rawWeight = area * kgPerSqm;
+      const sheetWeight = Math.ceil(rawWeight);
+      const totalWeight = sheetWeight * qty;
+      const crateLength = length + 100;
+      const crateWidth = width + 100;
+      const crateHeight = Math.ceil(crateThickness * qty + 200);
+
+      els.currentName.textContent = selectedProduct.name;
+      els.currentMeta.innerHTML = `编号 ${selectedProduct.no} · 表格厚度 ${selectedProduct.thickness}mm · 规格 ${selectedProduct.sizes.join("、")}`;
+      els.rawWeight.textContent = `${formatNumber(rawWeight)} KG`;
+      els.rawFormula.textContent = `${formatNumber(length / 1000, 3)} * ${formatNumber(width / 1000, 3)} * ${kgPerSqm}`;
+      els.sheetWeight.textContent = `${sheetWeight.toLocaleString("zh-CN")} KG`;
+      els.totalWeight.textContent = `${totalWeight.toLocaleString("zh-CN")} KG`;
+      els.totalWeight.classList.toggle("small", totalWeight >= 1000 && totalWeight < 10000);
+      els.totalWeight.classList.toggle("compact", totalWeight >= 10000);
+      els.sizeMetric.textContent = selectedSize;
+      els.crateSize.textContent = `${crateLength}*${crateWidth}*${crateHeight}`;
+      els.crateFormula.textContent = `${crateLength} = ${length}+100，${crateWidth} = ${width}+100，高 ${crateHeight} = ${qty}*${crateThickness}+100+100`;
+      els.detailFormula.innerHTML = `
+        <div><strong>${selectedProduct.name}</strong> / ${selectedSize} / ${qty}张</div>
+        <div>单张重量：<code>${length / 1000} * ${width / 1000} * ${kgPerSqm} = ${formatNumber(rawWeight)}KG</code>，向上取整为 <code>${sheetWeight}KG</code></div>
+        <div>总重量：<code>${sheetWeight} * ${qty} = ${totalWeight}KG</code></div>
+        <div>木箱：长宽各加 100mm，高度 = <code>${qty} * ${crateThickness} + 100 + 100 = ${crateHeight}mm</code></div>
+        ${selectedProduct.name.includes("脉络石") && selectedProduct.thickness !== "3-8" ? '<div class="warn">提示：Excel 中圆线石脉络石厚度为 3-9mm；当前木箱厚度按你的示例默认 8mm，可手动改为 9。</div>' : ""}
+      `;
+    }
+
+    async function copySummary() {
+      const text = [
+        `${selectedProduct.name} ${selectedSize}`,
+        `数量：${els.qty.value}张`,
+        `单张取整重量：${els.sheetWeight.textContent}`,
+        `总重量：${els.totalWeight.textContent}`,
+        `木箱尺寸：${els.crateSize.textContent}mm`
+      ].join("\n");
+      try {
+        await navigator.clipboard.writeText(text);
+        els.copySummary.textContent = "已复制";
+        setTimeout(() => { els.copySummary.textContent = "复制计算结果"; }, 1200);
+      } catch {
+        window.prompt("复制下面内容", text);
+      }
+    }
+
+    els.search.addEventListener("input", renderProducts);
+    els.qty.addEventListener("input", calculate);
+    els.crateThickness.addEventListener("input", calculate);
+    els.kgPerSqm.addEventListener("input", calculate);
+    els.copySummary.addEventListener("click", copySummary);
+    els.resetBtn.addEventListener("click", () => {
+      els.qty.value = "";
+      calculate();
+    });
+
+    function applyUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      const query = params.get("q") || "脉";
+      const productQuery = params.get("product");
+      const sizeQuery = params.get("size");
+      const qty = params.get("qty");
+      const crateThickness = params.get("crateThickness");
+      const kgPerSqm = params.get("kgPerSqm");
+
+      if (productQuery) {
+        const found = products.find(product => fuzzyMatch(product.name, productQuery));
+        if (found) selectedProduct = found;
+      }
+      els.search.value = query;
+      selectProduct(selectedProduct);
+      if (selectedProduct.sizes.includes(sizeQuery)) selectedSize = sizeQuery;
+      if (qty) els.qty.value = qty;
+      if (crateThickness) els.crateThickness.value = crateThickness;
+      if (kgPerSqm) els.kgPerSqm.value = kgPerSqm;
+      renderProducts();
+      renderSizes();
+      calculate();
+    }
+
+    applyUrlParams();
+  </script>
+</body>
+</html>

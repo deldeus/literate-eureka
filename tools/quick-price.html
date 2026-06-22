@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>快速查价</title>
+  <style>
+    :root { color-scheme: light; --bg:#f5f7f4; --panel:#fff; --ink:#17201b; --muted:#65716a; --line:#d8e0da; --accent:#1f7a52; --soft:#e7f4ed; --gold:#b78324; --shadow:0 16px 42px rgba(22,40,30,.11); }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; color:var(--ink); background:linear-gradient(135deg,rgba(31,122,82,.12),transparent 34%),linear-gradient(225deg,rgba(183,131,36,.11),transparent 36%),var(--bg); }
+    main { width:min(1180px,calc(100% - 28px)); margin:0 auto; padding:24px 0 36px; }
+    .topbar { display:flex; justify-content:space-between; gap:18px; align-items:end; margin-bottom:16px; }
+    h1 { margin:0; font-size:clamp(28px,4vw,44px); line-height:1.12; letter-spacing:0; }
+    .subtitle { margin:8px 0 0; color:var(--muted); font-size:14px; line-height:1.6; }
+    .pill { flex:0 0 auto; border:1px solid rgba(31,122,82,.26); border-radius:999px; background:rgba(255,255,255,.78); color:var(--accent); padding:8px 13px; font-size:13px; font-weight:850; }
+    .panel { background:rgba(255,255,255,.94); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); }
+    .search-panel { padding:18px; position:sticky; top:0; z-index:10; }
+    label { display:block; margin:0 0 8px; font-size:13px; color:#2f3a34; font-weight:850; }
+    .search-wrap { position:relative; }
+    input { width:100%; min-height:58px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); font:inherit; font-size:24px; font-weight:800; padding:12px 16px; outline:none; }
+    input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(31,122,82,.13); }
+    .suggestions { position:absolute; left:0; right:0; top:calc(100% + 8px); z-index:20; display:none; max-height:340px; overflow:auto; border:1px solid rgba(15,23,42,.14); border-radius:10px; background:#fff; box-shadow:0 18px 38px rgba(15,23,42,.18); padding:6px; }
+    .suggestions.show { display:block; }
+    .suggestion { width:100%; border:0; border-radius:8px; background:transparent; color:var(--ink); cursor:pointer; font:inherit; text-align:left; padding:11px 12px; display:grid; gap:4px; }
+    .suggestion:hover, .suggestion:focus { background:rgba(31,122,82,.1); outline:none; }
+    .suggestion strong { font-size:16px; line-height:1.25; }
+    .suggestion span { color:var(--muted); font-size:12px; line-height:1.35; }
+    .quick-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .tag-btn { border:1px solid rgba(31,122,82,.22); border-radius:999px; background:#fff; color:#145b3d; padding:7px 11px; font:inherit; font-weight:800; cursor:pointer; }
+    .tag-btn:hover { background:var(--soft); }
+    .tag-btn.dragging { opacity:.45; }
+    .results { display:grid; gap:14px; margin-top:16px; }
+    .empty { padding:28px; color:var(--muted); font-size:15px; line-height:1.7; }
+    .card { border:1px solid var(--line); border-radius:8px; background:#fff; overflow:hidden; }
+    .card-head { display:flex; justify-content:space-between; gap:14px; align-items:start; padding:14px 16px; background:#f8fbf8; border-bottom:1px solid var(--line); }
+    .card-title { display:grid; gap:4px; }
+    .card-title strong { font-size:20px; line-height:1.25; }
+    .meta { color:var(--muted); font-size:13px; line-height:1.45; }
+    .badge { flex:0 0 auto; border-radius:999px; background:var(--soft); color:#0c5436; padding:6px 10px; font-size:12px; font-weight:900; }
+    .price-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; padding:14px; }
+    .price-grid.single { grid-template-columns:1fr; }
+    .price-row { border:1px solid rgba(31,122,82,.16); border-radius:8px; background:#fbfdfb; padding:12px; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:center; }
+    .price-row span { color:#2f3a34; font-weight:750; line-height:1.35; }
+    .row-main { display:block; color:#22302a; font-weight:900; line-height:1.3; }
+    .row-sub { display:block; margin-top:4px; color:var(--muted); font-size:12px; font-weight:650; line-height:1.35; }
+    .row-tag { display:inline-flex; align-items:center; border-radius:999px; padding:2px 8px; margin-right:7px; font-size:12px; font-weight:950; line-height:1.25; vertical-align:1px; }
+    .row-tag.hard { background:#dff1e8; color:#075536; }
+    .row-tag.soft { background:#fff1cc; color:#7a4c00; }
+    .sub-price-list { display:flex; flex-wrap:wrap; gap:6px; margin-top:7px; }
+    .sub-price { display:inline-flex; align-items:center; gap:5px; border:1px solid rgba(31,122,82,.18); border-radius:999px; background:#fff; padding:4px 8px; color:#5d6962; font-size:12px; font-weight:800; }
+    .sub-price strong { color:#7a4c00; font-size:11px; font-weight:950; }
+    .sub-price b { color:#0c5436; font-size:18px; line-height:1; }
+    .price-row b { color:#0c5436; font-size:22px; white-space:nowrap; text-align:right; }
+    .price-row b small { display:block; margin-bottom:2px; color:#7a4c00; font-size:11px; font-weight:950; line-height:1; }
+    .note { margin:0; padding:0 14px 14px; color:#6a470f; font-size:13px; line-height:1.6; }
+    @media (max-width:760px) { main{width:min(100% - 18px,1180px); padding-top:16px;} .topbar{display:block;} .pill{display:inline-block; margin-top:10px;} .search-panel{padding:14px;} input{font-size:20px; min-height:54px;} .price-grid{grid-template-columns:1fr;} .card-head{display:grid;} .badge{justify-self:start;} }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="topbar"><div><h1>快速查价</h1><p class="subtitle">输入产品关键词，快速查看鎏金板、宁波柔岩板、水泥板、松诺仓和 168 仓各规格底价。</p></div><div class="pill">按关键词查底价</div></div>
+    <section class="panel search-panel"><label for="query">产品关键词</label><div class="search-wrap"><input id="query" autocomplete="off" placeholder="例如 雪岩 / 拉丝 / 仿金属 / 星月石"><div id="suggestions" class="suggestions"></div></div><div class="quick-tags" id="quickTags"></div></section>
+    <section id="results" class="results"><div class="panel empty">输入关键词后显示底价。比如输入“仿”会出现“仿金属”，点击后显示硬质、软质各规格价格。</div></section>
+  </main>
+  <script>
+    const specs = [
+      { value: "hard-2440", label: "硬质-1220*2440*6mm", width: 1.22, length: 2.44, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 75 },
+      { value: "hard-3050", label: "硬质-1220*3050*6mm", width: 1.22, length: 3.05, unitWeight: 38, lengthType: "long", material: "hard", defaultSqmPrice: 75 },
+      { value: "hard-600", label: "硬质-1200*600*6mm", width: 1.2, length: 0.6, unitWeight: 7.5, lengthType: "small", material: "hard", defaultSqmPrice: 75 },
+      { value: "soft-2440", label: "软质-1200*2440*2~3mm", width: 1.2, length: 2.44, unitWeight: 15, lengthType: "short", material: "soft", defaultSqmPrice: 85 },
+      { value: "soft-3000", label: "软质-1200*3000*2~3mm", width: 1.2, length: 3, unitWeight: 20, lengthType: "long", material: "soft", defaultSqmPrice: 85 }
+    ];
+    const liujinSeriesPriceGroups = [
+      {
+        names: ["珠光釉", "珍珠绒", "鎏金", "大漠", "仿锈", "金丝纹", "琼花", "云绸"],
+        prices: { "hard-2440": 75, "hard-3050": 75, "soft-2440": 85, "soft-3000": 85 }
+      },
+      {
+        names: ["铜铁锈", "古铜", "绫罗", "凤尾", "绢丝", "熔岩"],
+        prices: { "hard-2440": 85, "hard-3050": 85, "soft-2440": 95, "soft-3000": 95 }
+      },
+      {
+        names: ["德克德勒", "烟花", "幻影"],
+        prices: { "hard-2440": 90, "hard-3050": 90, "soft-2440": 100, "soft-3000": 100 }
+      },
+      {
+        names: ["仿金属"],
+        prices: { "hard-2440": 105, "hard-3050": 105, "soft-2440": 115, "soft-3000": 115 }
+      },
+      {
+        names: ["珠光"],
+        prices: { "hard-2440": 170, "hard-3050": 170, "soft-2440": 180, "soft-3000": 180 }
+      }
+    ];
+    const sandstoneSpecs = [
+      { value: "sand-2440", label: "1220*2440*6mm", width: 1.22, length: 2.44, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 150 },
+      { value: "sand-2400", label: "1200*2400*6mm", width: 1.2, length: 2.4, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 150 },
+      { value: "sand-600", label: "1200*600*6mm", width: 1.2, length: 0.6, unitWeight: 7.5, lengthType: "small", material: "hard", defaultSqmPrice: 135 }
+    ];
+    const ningboProductCatalog = [
+      { name: "水泥浇筑板", price: 70, specs: ["3100*1180"] },
+      { name: "水波纹板", price: 90, specs: ["3000*1150", "2750*1060", "2800*540"] },
+      { name: "木浇筑板", price: 70, specs: ["2830*1140"] },
+      { name: "洞石", price: 70, specs: ["2800*1200", "2400*1200"] },
+      { name: "洞石", price: 50, specs: ["1200*600"] },
+      { name: "新洞石（密孔）", price: 70, specs: ["2380*1160"] },
+      { name: "海洞石", price: 75, specs: ["2400*1200"] },
+      { name: "新版洞石", price: 70, specs: ["3000*1200", "2400*1200"] },
+      { name: "粗纹线石", price: 80, specs: ["2800*1200", "2380*1180", "2360*580"] },
+      { name: "新线石", price: 75, specs: ["2950*1200", "2700*1200"] },
+      { name: "炭烧木", price: 75, specs: ["2850*930"] },
+      { name: "大竹纹（凸模）", price: 85, specs: ["2950*1000", "2880*580"] },
+      { name: "大竹纹（凹模）", price: 95, specs: ["2800*980"] },
+      { name: "波浪石", price: 80, specs: ["2750*980"] },
+      { name: "波浪", price: 90, specs: ["2800*1200"] },
+      { name: "中线石", price: 90, specs: ["2800*1200"] },
+      { name: "脊线石", price: 80, specs: ["2800*1200"] },
+      { name: "环型石", price: 90, specs: ["2800*1200"] },
+      { name: "粗布纹", price: 80, specs: ["2800*1200"] },
+      { name: "星云石", price: 85, specs: ["2830*1150"] },
+      { name: "星云石B款", price: 85, specs: ["3000*1200"] },
+      { name: "星月石", price: 85, specs: ["3100*1160", "2830*1150"] },
+      { name: "星月石", price: 70, specs: ["1200*600"] },
+      { name: "花岗岩", price: 78, specs: ["3000*1150"] },
+      { name: "花岗岩", price: 48, specs: ["1200*600"] },
+      { name: "花岗岩拼接", price: 80, specs: ["2700*1200"] },
+      { name: "阡陌石（方线石）", price: 85, specs: ["2800*1000", "2800*580"] },
+      { name: "脉络石", price: 85, specs: ["2800*990", "2800*1200", "2800*600"] },
+      { name: "双线石", price: 90, specs: ["2650*1180"] },
+      { name: "三角板（山纹）", price: 85, specs: ["2850*990"] },
+      { name: "泡沫铝", price: 100, specs: ["2800*1130"] },
+      { name: "圆铝", price: 90, specs: ["2360*1180"] },
+      { name: "锯木板", price: 85, specs: ["3100*1160"] },
+      { name: "马赛克", price: 90, specs: ["2850*1080"] },
+      { name: "方形马赛克", price: 80, specs: ["2900*1180"] },
+      { name: "50马赛克小板1", price: 75, specs: ["1200*600"] },
+      { name: "22马赛克小板2", price: 75, specs: ["1200*600"] },
+      { name: "条石拼接", price: 75, specs: ["600*150"] },
+      { name: "斧开石", price: 95, specs: ["3000*1200"] },
+      { name: "黑山岩、劈开岩", price: 95, specs: ["3100*1160"] },
+      { name: "黑山岩小板", price: 70, specs: ["1200*600"] },
+      { name: "溶积岩", price: 100, specs: ["3000*1160"] },
+      { name: "叠纹石（山岳石）", price: 100, specs: ["3100*1160"] },
+      { name: "沉积岩", price: 125, specs: ["2850*1100"] },
+      { name: "页岩", price: 125, specs: ["3100*1160"] },
+      { name: "古木纹细", price: 80, specs: ["2950*1200"] },
+      { name: "古木纹粗", price: 80, specs: ["3000*1200"] },
+      { name: "大布纹石", price: 70, specs: ["2500*1160"] },
+      { name: "玄武岩", price: 80, specs: ["3000*600"] },
+      { name: "水泥板（打印）", price: 90, specs: ["2850*1150"] },
+      { name: "平板", price: 80, specs: ["2850*1150"] },
+      { name: "锈石", price: 100, specs: ["2850*950"] },
+      { name: "平面锈石", price: 100, specs: ["2950*1160"] },
+      { name: "鎏金板软质", price: 95, specs: ["2950*1160"] },
+      { name: "鎏金板硬质", price: 85, specs: ["3000*1220", "2440*1220"] },
+      { name: "麻编（小）", price: 70, specs: ["1420*560"] },
+      { name: "麻编（大）", price: 77, specs: ["2650*1160"] },
+      { name: "竹编/人字编", price: 75, specs: ["2360*1160"] },
+      { name: "积木纹", price: 80, specs: ["2950*1180"] },
+      { name: "条石纹", price: 80, specs: ["2850*990"] },
+      { name: "苹果叶", price: 90, specs: ["2900*1160"] },
+      { name: "芭蕉叶", price: 90, specs: ["3000*1150"] },
+      { name: "齿木纹", price: 90, specs: ["2360*1160"] },
+      { name: "大齿木", price: 90, specs: ["2360*1160"] },
+      { name: "水立方", price: 90, specs: ["3000*1140"] },
+      { name: "木立方（山竹板）", price: 90, specs: ["2950*1160"] },
+      { name: "夯土砖", price: 95, specs: ["2850*1000"] },
+      { name: "15线石（金属色）", price: 95, specs: ["2950*1180"] },
+      { name: "35线石（金属色）", price: 95, specs: ["2950*1180"] },
+      { name: "23线石（金属色）", price: 95, specs: ["2950*1180"] },
+      { name: "71线石（金属色）", price: 95, specs: ["2950*1180"] },
+      { name: "摩洛石（金属色）", price: 95, specs: ["2950*1180"] },
+      { name: "峭壁岩", price: 75, specs: ["1060*590"] },
+      { name: "岩板", price: 80, specs: ["2900*1160"] },
+      { name: "岩板3D", price: 90, specs: ["2900*1160"] },
+      { name: "大理石3D", price: 90, specs: ["2950*1160"] },
+      { name: "莱姆石3D", price: 90, specs: ["2800*1200"] },
+      { name: "粗夯土3D", price: 85, specs: ["2800*1200"] },
+      { name: "云丘", price: 90, specs: ["2950*1160"] },
+      { name: "山丘", price: 90, specs: ["2700*1200"] },
+      { name: "20内圆", price: 95, specs: ["3000*1200"] },
+      { name: "30内圆", price: 95, specs: ["3000*1200"] },
+      { name: "100内圆", price: 105, specs: ["3000*590"] },
+      { name: "大峭壁岩", price: 95, specs: ["3000*1200"] },
+      { name: "腾编", price: 95, specs: ["3000*1200"] },
+      { name: "麻编", price: 95, specs: ["3000*1200"] },
+      { name: "洞石拼接", price: 100, specs: ["3000*1200"] },
+      { name: "岁月痕", price: 95, specs: ["3000*1200"] },
+      { name: "斧凿石", price: 95, specs: ["3000*1200"] },
+      { name: "山峰石", price: 115, specs: ["3000*1200"] },
+      { name: "拼接文化石", price: 95, specs: ["2800*1200"] },
+      { name: "条形文化石", price: 95, specs: ["2800*1200"] },
+      { name: "大板岩", price: 90, specs: ["3000*1200"] },
+      { name: "3D洞石", price: 75, specs: ["2800*1200", "2400*1200"] },
+      { name: "3D洞石", price: 55, specs: ["1200*600"] }
+    ];
+    const concretePriceTable = {
+      "松诺": {
+        flat: {
+          small: { thin: 170, medium: 180, thick: 200 },
+          large: { thin: 205, medium: 215, thick: 235 }
+        },
+        cave: {
+          small: { thin: 170, medium: 180, thick: 200 },
+          large: { thin: 205, medium: 215, thick: 235 }
+        },
+        texture: {
+          short: { thin: 230, medium: 260 },
+          long: { thin: 260, medium: 290 }
+        }
+      },
+      "168": {
+        flat: {
+          small: { combo: 160, thick: 190 },
+          large: { combo: 190, thick: 220 }
+        },
+        cave: {
+          small: { combo: 160, thick: 190 },
+          large: { combo: 190, thick: 220 }
+        },
+        texture: {
+          short: { combo: 220, thick: 250 },
+          long: { combo: 250, thick: 280 }
+        }
+      }
+    };
+    const cementBoardTables = [
+      {
+        title: '雪岩（浅灰/深灰）',
+        aliases: ['雪岩', '雪岩浅灰', '雪岩深灰', '浅灰', '深灰', '福建雪岩'],
+        brand: '福建',
+        warehouses: ['上海仓', '武汉仓', '淮海仓', '昌盛'],
+        rows: [
+          { spec: '1220*2440*5mm', prices: { '上海仓': 70, '武汉仓': 70, '淮海仓': 70 } },
+          { spec: '1220*2440*6mm', prices: { '上海仓': 75, '武汉仓': 75, '淮海仓': 75, '昌盛': 80 } },
+          { spec: '1220*2440*8mm', prices: { '上海仓': 95, '武汉仓': 95, '淮海仓': 95, '昌盛': 100 } },
+          { spec: '1220*2440*9mm', prices: { '上海仓': 120, '武汉仓': 120, '淮海仓': 120 } },
+          { spec: '1220*2440*10mm', prices: { '上海仓': 140, '武汉仓': 140, '淮海仓': 140, '昌盛': 145 } },
+          { spec: '1220*2440*12mm', prices: { '上海仓': 170, '武汉仓': 170, '淮海仓': 170 } },
+          { spec: '1220*2440*15mm', prices: { '上海仓': 245, '武汉仓': 245, '淮海仓': 245, '昌盛': 250 } },
+          { spec: '1220*2440*20mm', prices: { '上海仓': 345, '武汉仓': 345, '淮海仓': 345 } }
+        ]
+      },
+      {
+        title: '拉丝',
+        aliases: ['拉丝', '福建拉丝'],
+        brand: '福建',
+        warehouses: ['上海仓', '武汉仓', '淮海仓', '昌盛'],
+        rows: [
+          { spec: '1220*2440*6mm', prices: { '上海仓': 75, '武汉仓': 75, '淮海仓': 75 } },
+          { spec: '1220*2440*8mm', prices: { '上海仓': 95, '武汉仓': 95, '淮海仓': 95 } },
+          { spec: '1220*2440*10mm', prices: { '上海仓': 140, '武汉仓': 140, '淮海仓': 140 } }
+        ]
+      },
+      {
+        title: '雪岩（浅/中/深）',
+        aliases: ['雪岩', '雪岩浅', '雪岩中', '雪岩深', '贝厂雪岩'],
+        brand: '贝厂',
+        warehouses: ['上海仓', '武汉仓', '淮海仓'],
+        rows: [
+          { spec: '1220*2440*6mm', prices: { '上海仓': 70, '武汉仓': 70, '淮海仓': 70 }, extra: '实际厚度 5-5.4；拉丝足厚 65' },
+          { spec: '1220*2440*8mm', prices: { '上海仓': 90, '武汉仓': 90, '淮海仓': 90 }, extra: '实际厚度 7-7.4；拉丝足厚 85' },
+          { spec: '1220*2440*9mm', prices: { '上海仓': 105, '武汉仓': 105, '淮海仓': 105 }, extra: '实际厚度 8-8.4；拉丝足厚 100' },
+          { spec: '1220*2440*10mm', prices: { '上海仓': 125, '武汉仓': 125, '淮海仓': 125 }, extra: '实际厚度 9-9.4；拉丝足厚 120' },
+          { spec: '1220*2440*12mm', prices: { '上海仓': 160, '武汉仓': 160, '淮海仓': 160 }, extra: '实际厚度 11-11.4；拉丝足厚 150' },
+          { spec: '1220*2440*15mm', prices: { '上海仓': 245, '武汉仓': 245, '淮海仓': 245 }, extra: '实际厚度 14-14.4；拉丝足厚 230' },
+          { spec: '1220*2440*18mm', prices: { '上海仓': 290, '武汉仓': 290, '淮海仓': 290 }, extra: '实际厚度 18-18.4；拉丝足厚 275' },
+          { spec: '1220*2440*20mm', prices: { '上海仓': 345, '武汉仓': 345, '淮海仓': 345 }, extra: '实际厚度 19-19.4；拉丝足厚 330' }
+        ]
+      },
+      {
+        title: '拉丝',
+        aliases: ['拉丝', '贝厂拉丝'],
+        brand: '贝厂',
+        warehouses: ['上海仓', '武汉仓', '淮海仓'],
+        rows: [
+          { spec: '1220*2440*6mm', prices: { '上海仓': 53, '武汉仓': 53, '淮海仓': 53 }, extra: '实际厚度 5-5.4；拉丝足厚 65' },
+          { spec: '1220*2440*8mm', prices: { '上海仓': 70, '武汉仓': 70, '淮海仓': 70 }, extra: '实际厚度 7-7.4；拉丝足厚 85' },
+          { spec: '1220*2440*9mm', prices: { '上海仓': 90, '武汉仓': 90, '淮海仓': 90 }, extra: '实际厚度 8-8.4；拉丝足厚 100' },
+          { spec: '1220*2440*10mm', prices: { '上海仓': 105, '武汉仓': 105, '淮海仓': 105 }, extra: '实际厚度 9-9.4；拉丝足厚 120' },
+          { spec: '1220*2440*12mm', prices: { '上海仓': 135, '武汉仓': 135, '淮海仓': 135 }, extra: '实际厚度 11-11.4；拉丝足厚 150' },
+          { spec: '1220*2440*15mm', prices: { '上海仓': 200, '武汉仓': 200, '淮海仓': 200 }, extra: '实际厚度 14-14.4；拉丝足厚 230' },
+          { spec: '1220*2440*18mm', prices: { '上海仓': 245, '武汉仓': 245, '淮海仓': 245 }, extra: '实际厚度 18-18.4；拉丝足厚 275' },
+          { spec: '1220*2440*20mm', prices: { '上海仓': 300, '武汉仓': 300, '淮海仓': 300 }, extra: '实际厚度 19-19.4；拉丝足厚 330' }
+        ]
+      }
+    ];
+    const meiyanPriceTables = [
+      {
+        title: '美岩 秀士板',
+        aliases: ['美岩', '秀士板', '美岩秀士板', '美岩芬士板'],
+        category: '美岩',
+        sortOrder: 10,
+        note: '单位：元/片；备注为图片表格中的返点比例。',
+        rows: [
+          { spec: '1200*2400*8mm', min: 235, remark: '3%' },
+          { spec: '1200*2400*11mm', min: 280, remark: '3%' },
+          { spec: '1200*2400*16mm', min: 420, remark: '5%' },
+          { spec: '1200*2400*20mm', min: 480, remark: '5%' }
+        ]
+      },
+      {
+        title: '美岩 水泥板',
+        aliases: ['美岩', '美岩水泥板', '水泥板'],
+        category: '美岩',
+        sortOrder: 20,
+        note: '单位：元/片；以最新图片为准，无零售价。',
+        rows: [
+          { spec: '1220*2440*4mm', min: 95, remark: '3%' },
+          { spec: '1220*2440*6mm', min: 130, remark: '3%' },
+          { spec: '1220*2440*8mm', min: 155, remark: '3%' },
+          { spec: '1220*2440*10mm', min: 250, remark: '5%' },
+          { spec: '1220*2440*12mm', min: 340, remark: '5%' },
+          { spec: '1220*2440*16mm', min: 580, remark: '5%' }
+        ]
+      },
+      {
+        title: '新美岩 水泥板',
+        aliases: ['新美岩', '新美岩水泥板', '水泥板'],
+        category: '美岩',
+        sortOrder: 30,
+        note: '单位：元/片；备注为图片表格中的返点比例。',
+        rows: [
+          { spec: '1200*2400*4mm', min: 95, remark: '3%' },
+          { spec: '1200*2400*6mm', min: 130, remark: '3%' },
+          { spec: '1200*2400*8mm', min: 155, remark: '3%' },
+          { spec: '1220*2440*4mm', min: 95, remark: '3%' },
+          { spec: '1220*2440*6mm', min: 130, remark: '3%' },
+          { spec: '1220*2440*8mm', min: 155, remark: '3%' }
+        ]
+      },
+      {
+        title: '美岩 辅料',
+        aliases: ['美岩', '辅料', '保护剂', '胶水', '密封胶', 'SEL', '渗透性', '结膜型'],
+        category: '辅料',
+        sortOrder: 90,
+        note: '图片备注：只提取差价。',
+        rows: [
+          { spec: '保护剂(结膜型) · 1kg', min: 40 },
+          { spec: '保护剂二合一(通用) · 5kg', min: 145 },
+          { spec: 'SEL 专用胶水 · 360g', min: 17 },
+          { spec: '防火密封胶 · 900g', min: 25 },
+          { spec: '保护剂（渗透性） · 1kg', min: 45 },
+          { spec: '保护剂（渗透性） · 5kg', min: 185 }
+        ]
+      }
+    ];
+    const translucentBoardRows = [
+      { thickness: '10mm', style: '满天星', sales: 250, min: 280, note: '包邮+40元/㎡，量大运费直接问工厂' },
+      { thickness: '20mm', style: '满天星', sales: 320, min: 350, note: '包邮+50元/㎡，量大运费直接问工厂' },
+      { thickness: '30mm', style: '满天星', sales: 500, min: 550, note: '包邮+50元/㎡，量大运费直接问工厂' },
+      { thickness: '50mm', style: '满天星', sales: 800, min: 900, note: '包邮+50元/㎡，量大运费直接问工厂' },
+      { thickness: '20mm', style: '水波纹', sales: 350, min: 380, note: '包邮+50元/㎡，量大运费直接问工厂' },
+      { thickness: '坐凳50mm', style: '常规', sales: 1100, min: '正常提点', note: '异形定制+100元/㎡' }
+    ];
+    const translucentBoardNote = '偏远地区除外（新疆、西藏、内蒙古、甘肃、青海、宁夏、海南、黑龙江、辽宁及香港、澳门、台湾等），偏远地区运费咨询厂家，3平方以内运费统一按100元/平方收费。提点：高于最低售价3%，低于最低售价提2%。工费：定制图案+150元，弧形曲面+150（超过15平定制图案+75元，弧形曲面+75元），倒角5元/米，拉槽+25/平方，打孔1元/个，干挂件5元/套。';
+    const translucentBenchRows = [
+      { thickness: '40mm', prices: { '矩形透光坐凳': 900, '异形透光坐凳': 1050, '矩形清水坐凳': 650, '异形清水坐凳': 850, '矩形水磨石坐凳': 700, '异形水磨石坐凳': 900 } },
+      { thickness: '50mm', prices: { '矩形透光坐凳': 1000, '异形透光坐凳': 1100, '矩形清水坐凳': 700, '异形清水坐凳': 900, '矩形水磨石坐凳': 750, '异形水磨石坐凳': 950 } },
+      { thickness: '60mm', prices: { '矩形透光坐凳': 1100, '异形透光坐凳': 1150, '矩形清水坐凳': 750, '异形清水坐凳': 950, '矩形水磨石坐凳': 800, '异形水磨石坐凳': 1000 } }
+    ];
+    const translucentBenchNote = '利润：5:5分，不做提成。其它定制另行定价执行。透光坐凳为常规光点，表面没有装饰形状；透光为常规白色与灰色，其他颜色重新报价；以上报价为国内产品，定制产品重新报价。矩形为能共用模具，异形为一件产品一件模具；清水为白色或者灰色，其他颜色重新报价。石子为常规石子，定制石子重新报价。';
+    const rammedEarthRows = [
+      { style: '夯土A（细夯土）', specs: ['2360*580mm', '2360*1160mm'], thickness: '3-5mm', price: 70 },
+      { style: '细夯土Y', specs: ['2360*600mm'], thickness: '3mm', price: 62 },
+      { style: '夯土B（粗夯土）', specs: ['2900*1160mm', '2800*1030mm', '2680*930mm'], thickness: '3-5mm', price: 75 },
+      { style: '夯土C（新夯土）', specs: ['2800*530mm', '2800*1060mm'], thickness: '3-5mm', price: 80 },
+      { style: '夯土D（窑变夯土）', specs: ['2800*560mm'], thickness: '3-5mm', price: 75 },
+      { style: '夯土E（A7夯土）', specs: ['2800*1030mm'], thickness: '3-5mm', price: 75 }
+    ];
+    const meteoriteBoardRows = [
+      { series: '砂岩系列', specs: [{ size:'1200*600', sales:135 }, { size:'2400*1200', sales:150 }] },
+      { series: '仿清水混凝土', specs: [{ size:'1200*600', sales:135 }, { size:'2400*1200', sales:150 }] }
+    ];
+    const meililaiRows = [
+      { name:'劈开砖', price:31, specs:[{ size:'60*240', thickness:'2-3mm', weight:'25KG/箱' }] },
+      { name:'连体砖', price:45, specs:[{ size:'400*2300', thickness:'2-3mm', weight:'3.5KG/块' }, { size:'1210*2300', thickness:'2-3mm', weight:'10KG/块' }] },
+      { name:'辰美新线石', price:47, specs:[{ size:'1200*2400', thickness:'2-3mm', weight:'12KG/块' }, { size:'1200*3000', thickness:'2-3mm', weight:'15KG/块' }] },
+      { name:'标准新线石', price:55, aliases:['标准新线石美利来非特价产品'], specs:[{ size:'590*1200', thickness:'2-3mm', weight:'3KG/块' }, { size:'590*2400', thickness:'2-3mm', weight:'6KG/块' }, { size:'1190*2400', thickness:'2-3mm', weight:'12KG/块' }, { size:'600*3240', thickness:'2-3mm', weight:'8KG/块' }, { size:'1200*3230', thickness:'2-3mm', weight:'16KG/块' }] },
+      { name:'阡陌石', price:67, specs:[{ size:'590*1190', thickness:'3-5mm', weight:'4.1KG/块' }, { size:'590*2390', thickness:'3-5mm', weight:'8.3KG/块' }, { size:'1190*2390', thickness:'3-5mm', weight:'16.7KG/块' }, { size:'1200*3000', thickness:'3-5mm', weight:'24KG/块' }] },
+      { name:'大星月（小版）', price:67, aliases:['星月小版'], specs:[{ size:'600*1200', thickness:'3-7mm', weight:'8KG/块' }] },
+      { name:'月球石', price:75, aliases:['大星月石'], specs:[{ size:'1170*3230', thickness:'3-7mm', weight:'30KG/块' }] },
+      { name:'小魔方', price:67, specs:[{ size:'300*600', thickness:'2-3mm', weight:'1.35KG/块' }] },
+      { name:'水泥板', price:67, specs:[{ size:'550*2760', thickness:'3-4mm', weight:'7.5KG/块' }, { size:'1100*2760', thickness:'3-4mm', weight:'15KG/块' }] },
+      { name:'双线脉络石', price:67, specs:[{ size:'580*2650', thickness:'3-5mm', weight:'11KG' }, { size:'1175*2650', thickness:'3-5mm', weight:'22KG/块' }] },
+      { name:'大板脉络石', price:67, specs:[{ size:'1200*3000', thickness:'3-5mm', weight:'25KG/块' }] },
+      { name:'鎏金板（软板）', price:90, aliases:['鎏金软板'], specs:[{ size:'1200*2950', thickness:'2-3mm', weight:'17.5KG/块' }] },
+      { name:'鎏金板（硬板）', price:90, aliases:['鎏金硬板'], specs:[{ size:'1220*2440', thickness:'3mm/5mm/8mm', weight:'18KG/块（5mm）' }, { size:'1220*3000', thickness:'3mm/5mm/8mm', weight:'22KG/块（5mm）' }] },
+      { name:'波浪石', price:80, specs:[{ size:'1190*2395', thickness:'3-6mm', weight:'22KG/块' }] },
+      { name:'洞石波浪板', price:80, specs:[{ size:'600*1200', thickness:'3-6mm', weight:'5KG/块' }] },
+      { name:'小洞石', price:50, aliases:['美利来非特价产品', '洞石'], specs:[{ size:'1190*2390', thickness:'2-3mm', weight:'14KG/块' }, { size:'1200*2880', thickness:'2-3mm', weight:'16KG/块' }] },
+      { name:'虫洞石', price:75, aliases:['洞石'], specs:[{ size:'1175*2340', thickness:'5mm', weight:'20KG/块' }] },
+      { name:'鎏金洞石', price:55, aliases:['洞石'], specs:[{ size:'600*1200', thickness:'2-3mm', weight:'3KG/块' }, { size:'600*2400', thickness:'2-3mm', weight:'6KG/块' }, { size:'1200*2400', thickness:'2-3mm', weight:'12KG/块' }] },
+      { name:'打印款洞石', price:55, aliases:['洞石'], specs:[{ size:'600*1200', thickness:'2-3mm', weight:'3.5KG/块' }, { size:'580*1200（老版）', thickness:'2-3mm', weight:'3KG/块' }] },
+      { name:'打印款洞石', price:60, aliases:['洞石'], specs:[{ size:'600*2400', thickness:'2-3mm', weight:'7KG/块' }, { size:'1200*2400', thickness:'2-3mm', weight:'14KG/块' }] },
+      { name:'打印款洞石', price:70, aliases:['洞石'], specs:[{ size:'600*2880', thickness:'2-3mm', weight:'8KG/块' }, { size:'1200*2880', thickness:'2-3mm', weight:'16KG/块' }, { size:'1200*3000（辰美尺寸）', thickness:'2-3mm', weight:'17.5KG/块' }] },
+      { name:'辰美小星月', price:40, aliases:['辰美英安岩'], specs:[{ size:'600*1200', thickness:'2-3mm', weight:'3KG/块' }, { size:'1200*2400', thickness:'2-3mm', weight:'12KG/块' }, { size:'1200*3000', thickness:'2-3mm', weight:'15KG/块' }] },
+      { name:'小星月', price:47, aliases:['辰美英安岩'], specs:[{ size:'600*1200', thickness:'2-3mm', weight:'3KG/块' }, { size:'1200*2400', thickness:'2-3mm', weight:'12KG/块' }, { size:'1200*3000', thickness:'2-3mm', weight:'15KG/块' }] },
+      { name:'毛面花岗岩', price:45, specs:[{ size:'580*1200', thickness:'2-3mm', weight:'2.8KG/块' }, { size:'1180*2400', thickness:'2-3mm', weight:'11.5KG/块' }] },
+      { name:'毛面花岗岩', price:51, specs:[{ size:'580*1200', thickness:'2-3mm', weight:'2.8KG/块' }, { size:'1180*2400', thickness:'2-3mm', weight:'11.5KG/块' }] },
+      { name:'鲁班木', price:67, specs:[{ size:'600*2780', thickness:'3mm', weight:'9KG/块' }, { size:'1200*2780', thickness:'3mm', weight:'18KG/块' }] },
+      { name:'皮革纹/鎏金软底板', price:67, specs:[{ size:'1200*3000', thickness:'3mm', weight:'17.5KG/块' }] },
+      { name:'皮革纹打印款', price:80, specs:[{ size:'1200*3000', thickness:'3mm', weight:'18KG/块' }] },
+      { name:'碳化木', price:73, specs:[{ size:'1200*2800', thickness:'3mm', weight:'20KG/块' }] },
+      { name:'星云石', price:67, specs:[{ size:'1200*2800', thickness:'3-5mm', weight:'18.6KG/块' }, { size:'1200*3000', thickness:'3-5mm', weight:'20KG/块' }] },
+      { name:'斧开石', price:75, specs:[{ size:'1200*3000', thickness:'3-5mm', weight:'27KG/块' }] },
+      { name:'榉木板', price:67, specs:[{ size:'1200*3000', thickness:'3mm', weight:'22KG/块' }] },
+      { name:'洞石马赛克', price:87, specs:[{ size:'600*3000', thickness:'3-6mm', weight:'14KG/块' }, { size:'1175*2950', thickness:'3-6mm', weight:'28KG/块' }] },
+      { name:'发泡铝', price:80, specs:[{ size:'1100*2750', thickness:'3mm', weight:'24KG/块' }] },
+      { name:'珊瑚石', price:93, specs:[{ size:'1200*2950', thickness:'3-8mm', weight:'38KG/块' }] },
+      { name:'树皮纹', price:73, specs:[{ size:'1200*3000', thickness:'2-3mm', weight:'20KG/块' }] },
+      { name:'木纹浇筑板', price:73, specs:[{ size:'1200*3000', thickness:'2-3mm', weight:'22KG/块' }] },
+      { name:'木纹', price:60, specs:[{ size:'165*1200', thickness:'2-3mm', weight:'1.16KG/块' }] },
+      { name:'大木纹板', price:73, specs:[{ size:'1200*2950', thickness:'2-3mm', weight:'20.5KG/块' }] },
+      { name:'新打印木纹', price:67, specs:[{ size:'600*1200', thickness:'2-3mm', weight:'5KG/块' }] },
+      { name:'新打印木纹', price:80, specs:[{ size:'1200*2950', thickness:'2-3mm', weight:'20.5KG/块' }] },
+      { name:'粗纹星云石', price:67, specs:[{ size:'1150*2850', thickness:'3-5mm', weight:'17.5KG/块' }] },
+      { name:'三棱砖', price:80, specs:[{ size:'1200*3200', thickness:'3-5mm', weight:'27KG/块' }] }
+    ];
+    const els = { query: document.querySelector('#query'), suggestions: document.querySelector('#suggestions'), results: document.querySelector('#results'), quickTags: document.querySelector('#quickTags') };
+    const quickWordsDefault = ['鎏金板', 'NB柔岩板', '混凝土', '陨石板', '雪岩', '美岩', 'MLL柔岩板', '夯土板', '透光板', '坐凳', '拉丝', '洞石'];
+    function esc(value) { return String(value ?? '').replace(/[&<>"']/g, (ch) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+    function normalize(value) { return String(value || '').replace(/[\s（）()、/·-]+/g, '').toLowerCase(); }
+    function money(value) { const num = Number(value); if (value === '' || value === null || value === undefined || Number.isNaN(num)) return String(value ?? ''); return Number.isInteger(num) ? String(num) : String(num).replace(/\.?0+$/, ''); }
+    function specLabel(value) { const text = String(value || ''); return text + (text.toLowerCase().includes('mm') ? '' : 'mm'); }
+    function liujinEntries() {
+      const specNames = { 'hard-2440':'硬质 1220*2440*6mm', 'hard-3050':'硬质 1220*3050*6mm', 'hard-600':'硬质 1200*600*6mm（按硬质短板底价）', 'soft-2440':'软质 1200*2440*2~3mm', 'soft-3000':'软质 1200*3000*2~3mm' };
+      const order = ['hard-2440','hard-3050','soft-2440','soft-3000'];
+      return liujinSeriesPriceGroups.map((group) => ({ type:'liujin', title:group.names[0], aliases:group.names, warehouse:'浙江仓', category:'鎏金板', note:'款式：' + group.names.join('、') + '。销售不得低于规定最低成交价；特殊项目需审批。', rows:order.map((key) => ({ label:'款式 ' + group.names.join(' / ') + ' · 规格 ' + specNames[key], price:group.prices[key] })).filter((row) => row.price) }));
+    }
+    function liujinTableEntries() {
+      const rows = [];
+      liujinSeriesPriceGroups.forEach((group) => {
+        const styles = group.names.join(' / ');
+        const hardPrice = group.prices['hard-2440'] || group.prices['hard-3050'];
+        const softPrice = group.prices['soft-2440'] || group.prices['soft-3000'];
+        if (hardPrice) rows.push({ label:styles, tag:'硬质', tagClass:'hard', subLabel:'1220*2440 / 3050mm', price:hardPrice });
+        if (softPrice) rows.push({ label:styles, tag:'软质', tagClass:'soft', subLabel:'1200*2440 / 3000mm', price:softPrice });
+      });
+      return [{
+        type:'liujin-table',
+        title:'鎏金板价格表',
+        aliases:['鎏金板', '鎏金板价格表', '鎏金价格表', '鎏金完整价格表'],
+        warehouse:'浙江仓',
+        category:'鎏金板',
+        unit:'销售底价 / 元每平',
+        note:'硬质同组 1220*2440mm 和 1220*3050mm 同价；软质同组 1200*2440mm 和 1200*3000mm 同价。',
+        rows
+      }];
+    }
+    function sandstoneEntries() { return [{ type:'sandstone', title:'砂岩板', aliases:['砂岩','砂岩板'], warehouse:'浙江仓', category:'砂岩板', note:'', rows:sandstoneSpecs.map((item) => ({ label:specLabel(item.label), price:item.defaultSqmPrice })) }]; }
+    function ningboEntries() { const map = new Map(); ningboProductCatalog.forEach((item) => { if (!map.has(item.name)) map.set(item.name, { type:'ningbo', title:item.name, aliases:[item.name, '宁波' + item.name, '柔岩板' + item.name], warehouse:'宁波仓', category:'柔岩板', unit:'单价 / 元每平', note:'打印+10元/平。', rows:[] }); const entry = map.get(item.name); item.specs.forEach((spec) => entry.rows.push({ label:'规格 ' + specLabel(spec), price:item.price })); }); return Array.from(map.values()); }
+    function ningboTableEntries() {
+      const rows = [];
+      ningboProductCatalog.forEach((item) => {
+        item.specs.forEach((spec) => {
+          rows.push({ label:item.name + ' · 规格 ' + specLabel(spec), subLabel:'宁波仓 · 柔岩板', price:item.price });
+        });
+      });
+      return [{
+        type:'ningbo-table',
+        title:'NB柔岩板价格表',
+        aliases:['NB柔岩板', 'NB柔岩板价格表', '宁波柔岩板价格表', '宁波价格表', '柔岩板价格表', 'NB价格表'],
+        warehouse:'宁波仓',
+        category:'柔岩板',
+        unit:'单价 / 元每平',
+        layout:'single',
+        note:'价格来自宁波柔岩板表；打印+10元/平。搜索洞石、星月石等仍显示对应单品。',
+        rows
+      }];
+    }
+    function concreteEntries() {
+      const labels = { flat:{ title:'清水平板', aliases:['混凝土','清水','平板','清水平板'], sizes:{ small:'600*1200', large:'1200*2400' } }, cave:{ title:'清水虫洞板', aliases:['混凝土','虫洞','清水虫洞','清水虫洞板'], sizes:{ small:'600*1200', large:'1200*2400' } }, texture:{ title:'木纹板 / 竹纹板', aliases:['混凝土','木纹','木纹板','竹纹','竹纹板','竹模'], sizes:{ short:'1200*600 / 2400*600', long:'3000*600' } } };
+      const bands = { thin:'10-12mm最低售价', medium:'20-25mm最低售价', combo:'10-25mm最低售价', thick:'30mm最低售价' };
+      const notes = {
+        "松诺": {
+          default:'单件面积：1.5㎡以下，20种规格内，执行600*1200mm的价格；装饰孔+7元/㎡，装饰孔费用统一开成加工费用。其它超大规格另行核算。',
+          texture:'硅胶模+20元/㎡。'
+        },
+        "168": {
+          default:'装饰孔：+5元/㎡；预埋(含预埋件)：+7元/㎡；倒边：+5元/米；100㎡以下，30种规格另加10元/㎡。'
+        }
+      };
+      const entries = [];
+      Object.entries(concretePriceTable).forEach(([warehouse, products]) => { Object.entries(products).forEach(([type, sizes]) => { const info = labels[type]; const rows = []; Object.entries(sizes).forEach(([sizeKey, bandPrices]) => { Object.entries(bandPrices).forEach(([band, price]) => rows.push({ label:info.sizes[sizeKey] + ' · ' + bands[band], price })); }); const note = notes[warehouse][type === 'texture' ? 'texture' : 'default'] || notes[warehouse].default; entries.push({ type:'concrete', title:warehouse + info.title, aliases:[warehouse, warehouse + '清水', info.title, ...info.aliases], warehouse, category:'混凝土', note, rows }); }); });
+      return entries;
+    }
+    function concreteTableEntries() {
+      const labels = { flat:'清水平板', cave:'清水虫洞板', texture:'木纹板 / 竹纹板' };
+      const sizes = { small:'600*1200', large:'1200*2400', short:'1200*600 / 2400*600', long:'3000*600' };
+      const bands = { thin:'10-12mm', medium:'20-25mm', combo:'10-25mm', thick:'30mm' };
+      const notes = {
+        '松诺':'单件面积：1.5㎡以下，20种规格内，执行600*1200mm的价格；装饰孔+7元/㎡，装饰孔费用统一开成加工费用。其它超大规格另行核算。木纹板 / 竹纹板：硅胶模+20元/㎡。',
+        '168':'装饰孔：+5元/㎡；预埋(含预埋件)：+7元/㎡；倒边：+5元/米；100㎡以下，30种规格另加10元/㎡。'
+      };
+      return ['松诺', '168'].map((warehouse) => {
+        const rows = [];
+        const products = concretePriceTable[warehouse];
+        Object.entries(products).forEach(([type, sizeGroups]) => {
+          Object.entries(sizeGroups).forEach(([sizeKey, bandPrices]) => {
+            rows.push({
+              label:labels[type] + ' · 尺寸 ' + sizes[sizeKey],
+              priceItems:Object.entries(bandPrices).map(([band, price]) => ({ label:bands[band], price })),
+              price:''
+            });
+          });
+        });
+        return {
+        type:'concrete-table',
+        title:warehouse + '厂 混凝土价格表',
+        aliases:['混凝土', '混凝土价格表', '混凝土完整价格表', '清水价格表', warehouse + '混凝土价格表', warehouse + '厂混凝土价格表'],
+        warehouse:warehouse + '厂',
+        category:'混凝土',
+        unit:'最低售价 / 元每平',
+        layout:'single',
+        note:notes[warehouse],
+        rows
+        };
+      });
+    }
+    function cementBoardEntries() {
+      const brandOrder = { '福建': 10, '贝厂': 20 };
+      return cementBoardTables.map((item) => {
+        const rows = [];
+        item.rows.forEach((row) => {
+          const groupedByPrice = new Map();
+          item.warehouses.forEach((warehouse) => {
+            const price = row.prices[warehouse];
+            if (!price) return;
+            if (!groupedByPrice.has(price)) groupedByPrice.set(price, []);
+            groupedByPrice.get(price).push(warehouse);
+          });
+          groupedByPrice.forEach((warehouses, price) => {
+            rows.push({ label:row.spec + ' · ' + warehouses.join(' / ') + (row.extra ? ' · ' + row.extra : ''), price });
+          });
+        });
+        return {
+          type:'cement',
+          title:item.brand + ' ' + item.title,
+          aliases:[item.brand, item.title, ...item.aliases],
+          warehouse:item.warehouses.join(' / '),
+          category:'水泥板',
+          unit:'底价 / 元每片',
+          note:item.brand + '仓：' + item.warehouses.join('、') + '；空白仓位不显示价格。',
+          sortOrder:brandOrder[item.brand] || 50,
+          rows
+        };
+      });
+    }
+    function meiyanEntries() {
+      return meiyanPriceTables.map((item) => ({
+        type:'meiyan',
+        title:item.title,
+        aliases:item.aliases,
+        warehouse:'美岩',
+        category:item.category,
+        unit:'最低成交价 / 元每片',
+        note:item.note,
+        sortOrder:item.sortOrder,
+        rows:item.rows.map((row) => {
+          const parts = [row.spec, '最低成交价 ' + money(row.min)];
+          if (row.remark) parts.push('备注 ' + row.remark);
+          return { label:parts.join(' · '), price:row.min };
+        })
+      }));
+    }
+    function translucentBoardEntries() {
+      return [{
+        type:'translucent',
+        title:'透光混凝土板 168',
+        aliases:['透光板', '透光混凝土板', '透光混凝土板168', '168透光板', '满天星', '水波纹'],
+        warehouse:'168',
+        category:'透光板',
+        unit:'最低成交价 / 元每平',
+        layout:'single',
+        note:translucentBoardNote,
+        rows:translucentBoardRows.map((row) => {
+          const parts = [row.thickness, row.style, '销售底价 ' + money(row.sales), '最低成交价 ' + money(row.min)];
+          if (row.note) parts.push(row.note);
+          return { label:parts.join(' · '), price:row.min };
+        })
+      }];
+    }
+    function translucentBenchEntries() {
+      const rows = [];
+      translucentBenchRows.forEach((thicknessRow) => {
+        Object.entries(thicknessRow.prices).forEach(([style, price]) => {
+          rows.push({ label:thicknessRow.thickness + ' · ' + style, price });
+        });
+      });
+      return [{
+        type:'translucent-bench',
+        title:'透光坐凳价格表',
+        aliases:['坐凳', '透光坐凳', '矩形透光坐凳', '异形透光坐凳', '清水坐凳', '矩形清水坐凳', '异形清水坐凳', '水磨石坐凳', '矩形水磨石坐凳', '异形水磨石坐凳'],
+        warehouse:'168',
+        category:'透光坐凳',
+        unit:'报价',
+        note:translucentBenchNote,
+        sortOrder:5,
+        rows
+      }];
+    }
+    function rammedEarthEntries() {
+      return [{
+        type:'rammed-earth',
+        title:'夯土板价格表',
+        aliases:['夯土板', '夯土', '夯土A', '夯土B', '夯土C', '夯土D', '夯土E', '细夯土', '细夯土Y', '粗夯土', '新夯土', '窑变夯土', 'A7夯土'],
+        warehouse:'夯土板',
+        category:'夯土板',
+        unit:'平方单价 / 元每平',
+        rows:rammedEarthRows.map((row) => ({ label:row.style + ' · 规格 ' + row.specs.join(' / ') + ' · 厚度 ' + row.thickness, price:row.price }))
+      }];
+    }
+    function meteoriteBoardEntries() {
+      const rows = [];
+      meteoriteBoardRows.forEach((item) => {
+        item.specs.forEach((spec) => {
+          rows.push({
+            label:item.series + ' · 尺寸 ' + spec.size,
+            subLabel:'厚度 6mm',
+            price:spec.sales
+          });
+        });
+      });
+      return [{
+        type:'meteorite',
+        title:'陨石板价格表',
+        aliases:['陨石板', '陨石', '砂岩系列', '仿清水混凝土'],
+        warehouse:'陨石板',
+        category:'陨石板',
+        unit:'销售底价 / 元每平',
+        note:'单位：元/㎡。以最新图片为准，只显示有销售底价的系列。',
+        rows
+      }];
+    }
+    function meililaiEntries() {
+      return meililaiRows.map((item) => ({
+        type:'meililai',
+        title:'MLL' + item.name,
+        aliases:[item.name, 'MLL' + item.name, '美利来' + item.name, '美丽来' + item.name, '美利来' + item.name, 'MLL', '美利来', '美丽来', '美利来', ...(item.aliases || [])],
+        warehouse:'美利来',
+        category:'MLL',
+        unit:'平方单价 / 元每平',
+        note:'美利来产品。标题统一加 MLL；每行显示规格、厚度、重量。',
+        rows:item.specs.map((spec) => ({ label:'规格 ' + spec.size + ' · 厚度 ' + spec.thickness + ' · 重量 ' + spec.weight, price:item.price }))
+      }));
+    }
+    function meililaiTableEntries() {
+      const rows = [];
+      meililaiRows.forEach((item) => {
+        item.specs.forEach((spec) => {
+          rows.push({ label:item.name + ' · 规格 ' + spec.size, subLabel:'厚度 ' + spec.thickness + ' · 重量 ' + spec.weight, price:item.price });
+        });
+      });
+      return [{
+        type:'meililai-table',
+        title:'MLL价格表',
+        aliases:['MLL', 'MLL柔岩板', 'MLL价格表', '美利来', '美丽来', '美利来价格表', '美丽来价格表'],
+        warehouse:'美利来',
+        category:'MLL',
+        unit:'平方单价 / 元每平',
+        note:'点击候选词“MLL”显示完整美利来价格表；搜索具体产品仍显示对应 MLL 产品。',
+        rows
+      }];
+    }
+    const priceEntries = [...liujinTableEntries(), ...liujinEntries(), ...sandstoneEntries(), ...ningboTableEntries(), ...ningboEntries(), ...concreteTableEntries(), ...concreteEntries(), ...cementBoardEntries(), ...meiyanEntries(), ...translucentBoardEntries(), ...translucentBenchEntries(), ...rammedEarthEntries(), ...meteoriteBoardEntries(), ...meililaiTableEntries(), ...meililaiEntries()];
+    function scoreEntry(entry, query) { const q = normalize(query); if (!q) return 0; const hay = [entry.title, entry.warehouse, entry.category, ...entry.aliases].map(normalize); let score = 0; hay.forEach((text) => { if (!text) return; if (text === q) score = Math.max(score,100); else if (text.startsWith(q)) score = Math.max(score,80); else if (text.includes(q)) score = Math.max(score,60 - Math.min(text.indexOf(q),20)); else if (q.includes(text) && text.length >= 2) score = Math.max(score,45 + Math.min(text.length,20)); }); return score; }
+    function matchingEntries(query) {
+      const scored = priceEntries.map((entry) => ({ entry, score:scoreEntry(entry, query) })).filter((item) => item.score > 0);
+      const q = normalize(query);
+      const exactTable = scored.filter((item) => ['meililai-table', 'liujin-table', 'concrete-table', 'ningbo-table'].includes(item.entry.type) && [item.entry.title, ...item.entry.aliases].map(normalize).includes(q));
+      if (exactTable.length && (q.includes('价格表') || ['鎏金板', 'nb柔岩板', '混凝土', 'mll', 'mll柔岩板', '美利来', '美丽来'].includes(q))) return exactTable.map((item) => item.entry);
+      if (q === normalize('洞石')) {
+        const exactNingboDongshi = scored.filter((item) => item.entry.type === 'ningbo' && normalize(item.entry.title) === q);
+        const meililaiDongshi = scored.filter((item) => item.entry.type === 'meililai' && [item.entry.title, ...item.entry.aliases].map(normalize).some((text) => text.includes(q)));
+        const combined = [...exactNingboDongshi, ...meililaiDongshi];
+        if (combined.length) return combined.sort((a,b) => {
+          const typeOrder = { ningbo:10, meililai:20 };
+          return (typeOrder[a.entry.type] || 100) - (typeOrder[b.entry.type] || 100) || b.score - a.score || a.entry.title.localeCompare(b.entry.title, 'zh-Hans-CN');
+        }).map((item) => item.entry);
+      }
+      const exactMeililai = scored.filter((item) => item.entry.type === 'meililai' && [item.entry.title, ...item.entry.aliases].map(normalize).includes(q));
+      if (exactMeililai.length) return exactMeililai.sort((a,b) => a.entry.title.localeCompare(b.entry.title, 'zh-Hans-CN')).map((item) => item.entry);
+      const exactNingbo = scored.filter((item) => item.entry.type === 'ningbo' && [item.entry.title, ...item.entry.aliases].map(normalize).includes(q));
+      if (exactNingbo.length) return exactNingbo.sort((a,b) => a.entry.title.localeCompare(b.entry.title, 'zh-Hans-CN')).map((item) => item.entry);
+      const exactLiujin = scored.filter((item) => item.entry.type === 'liujin' && [item.entry.title, ...item.entry.aliases].map(normalize).includes(q));
+      if (exactLiujin.length) return exactLiujin.sort((a,b) => (a.entry.sortOrder || 100) - (b.entry.sortOrder || 100) || a.entry.title.localeCompare(b.entry.title, 'zh-Hans-CN')).map((item) => item.entry);
+      const maxScore = scored.reduce((max, item) => Math.max(max, item.score), 0);
+      const filtered = maxScore >= 80 ? scored.filter((item) => item.score >= 60) : scored;
+      const focused = q.includes('夯土') && !q.includes('3d') && filtered.some((item) => item.entry.type === 'rammed-earth') ? filtered.filter((item) => item.entry.type === 'rammed-earth') : filtered;
+      return focused.sort((a,b) => b.score - a.score || (a.entry.sortOrder || 100) - (b.entry.sortOrder || 100) || a.entry.title.localeCompare(b.entry.title, 'zh-Hans-CN')).map((item) => item.entry);
+    }
+    function renderSuggestions(query) { const matches = matchingEntries(query).slice(0,12); els.suggestions.classList.toggle('show', Boolean(query.trim()) && matches.length > 0); els.suggestions.innerHTML = matches.map((entry,index) => '<button class="suggestion" type="button" data-index="' + index + '"><strong>' + esc(entry.title) + '</strong><span>' + esc(entry.warehouse) + ' · ' + esc(entry.category) + (entry.aliases.length ? ' · ' + esc(entry.aliases.join(' / ')) : '') + '</span></button>').join(''); els.suggestions.querySelectorAll('.suggestion').forEach((button) => { button.addEventListener('click', () => { const entry = matches[Number(button.dataset.index)]; els.query.value = entry.aliases[0] || entry.title; els.suggestions.classList.remove('show'); renderResults([entry]); }); }); }
+    function renderResults(entries) { if (!entries.length) { els.results.innerHTML = '<div class="panel empty">没有匹配到价格。换一个关键词试试，例如“陨石板”“夯土板”“透光板”“坐凳”。</div>'; return; } els.results.innerHTML = entries.map((entry) => '<article class="card"><div class="card-head"><div class="card-title"><strong>' + esc(entry.title) + '</strong><span class="meta">' + esc(entry.warehouse) + ' · ' + esc(entry.category) + (entry.aliases.length ? ' · 关键词：' + esc(entry.aliases.join('、')) : '') + '</span></div><span class="badge">' + esc(entry.unit || '底价 / 元每平') + '</span></div><div class="price-grid' + (entry.layout === 'single' ? ' single' : '') + '">' + entry.rows.map((row) => '<div class="price-row"><span><strong class="row-main">' + esc(row.label) + '</strong>' + (row.subLabel ? '<small class="row-sub">' + (row.tag ? '<mark class="row-tag ' + esc(row.tagClass || '') + '">' + esc(row.tag) + '</mark>' : '') + esc(row.subLabel) + '</small>' : '') + (row.priceItems ? '<span class="sub-price-list">' + row.priceItems.map((item) => '<span class="sub-price">' + esc(item.label) + '<strong>底价</strong><b>' + esc(money(item.price)) + '</b></span>').join('') + '</span>' : '') + '</span>' + (row.price === '' || row.price === null || row.price === undefined ? '' : '<b><small>底价</small>' + esc(money(row.price)) + '</b>') + '</div>').join('') + '</div>' + (entry.note ? '<p class="note">' + esc(entry.note) + '</p>' : '') + '</article>').join(''); }
+    function searchNow() { const q = els.query.value.trim(); renderSuggestions(q); if (!q) { els.results.innerHTML = '<div class="panel empty">输入关键词后显示底价。比如输入“陨石板”会出现砂岩、洞石、木纹和仿清水混凝土系列价格。</div>'; return; } renderResults(matchingEntries(q).slice(0,20)); }
+    els.query.addEventListener('input', searchNow); els.query.addEventListener('focus', () => renderSuggestions(els.query.value)); document.addEventListener('click', (event) => { if (!event.target.closest('.search-wrap')) els.suggestions.classList.remove('show'); });
+    function loadQuickWords() {
+      try {
+        const saved = JSON.parse(localStorage.getItem('quickPriceTags') || '[]');
+        if (!Array.isArray(saved)) return quickWordsDefault;
+        return [...saved.filter((word) => quickWordsDefault.includes(word)), ...quickWordsDefault.filter((word) => !saved.includes(word))];
+      } catch (error) {
+        return quickWordsDefault;
+      }
+    }
+    let quickWords = loadQuickWords();
+    function saveQuickWords() { localStorage.setItem('quickPriceTags', JSON.stringify(quickWords)); }
+    function renderQuickTags() {
+      els.quickTags.innerHTML = quickWords.map((word, index) => '<button class="tag-btn" type="button" draggable="true" data-index="' + index + '">' + esc(word) + '</button>').join('');
+      els.quickTags.querySelectorAll('.tag-btn').forEach((button) => {
+        let didDrag = false;
+        button.addEventListener('click', () => {
+          if (didDrag) { didDrag = false; return; }
+          els.query.value = button.textContent;
+          els.suggestions.classList.remove('show');
+          searchNow();
+          els.query.focus();
+        });
+        button.addEventListener('dragstart', (event) => {
+          didDrag = true;
+          button.classList.add('dragging');
+          event.dataTransfer.effectAllowed = 'move';
+          event.dataTransfer.setData('text/plain', button.dataset.index);
+        });
+        button.addEventListener('dragend', () => button.classList.remove('dragging'));
+        button.addEventListener('dragover', (event) => {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = 'move';
+        });
+        button.addEventListener('drop', (event) => {
+          event.preventDefault();
+          const from = Number(event.dataTransfer.getData('text/plain'));
+          const to = Number(button.dataset.index);
+          if (!Number.isInteger(from) || !Number.isInteger(to) || from === to) return;
+          const [word] = quickWords.splice(from, 1);
+          quickWords.splice(to, 0, word);
+          saveQuickWords();
+          renderQuickTags();
+        });
+      });
+    }
+    renderQuickTags();
+    els.query.focus();
+  </script>
+</body>
+</html>
