@@ -25,18 +25,20 @@
       background: var(--bg);
       color: var(--ink);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      overflow-x: hidden;
     }
 
     main {
-      width: min(1180px, calc(100vw - 28px));
+      width: min(1180px, calc(100% - 28px));
       margin: 20px auto 36px;
       display: grid;
-      grid-template-columns: minmax(320px, 420px) 1fr;
+      grid-template-columns: 1fr;
       gap: 16px;
+      min-width: 0;
     }
 
     header {
-      width: min(1180px, calc(100vw - 28px));
+      width: min(1180px, calc(100% - 28px));
       margin: 24px auto 0;
       display: flex;
       align-items: end;
@@ -62,11 +64,13 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       box-shadow: var(--shadow);
+      min-width: 0;
     }
 
     .left {
       padding: 16px;
-      min-height: 720px;
+      min-height: auto;
+      min-width: 0;
     }
 
     .right {
@@ -74,7 +78,10 @@
       display: grid;
       gap: 16px;
       align-content: start;
+      min-width: 0;
     }
+
+    .right > * { min-width: 0; }
 
     label {
       display: block;
@@ -83,22 +90,24 @@
       margin: 0 0 7px;
     }
 
-    input, select, button {
+    input, select, button, textarea {
       font: inherit;
     }
 
-    input, select {
+    input, select, textarea {
       width: 100%;
-      height: 44px;
       border: 1px solid #cbd3df;
       border-radius: 7px;
       background: #fff;
       color: var(--ink);
-      padding: 0 12px;
+      padding: 11px 12px;
       outline: none;
     }
 
-    input:focus, select:focus {
+    input, select { height: 44px; padding-top: 0; padding-bottom: 0; }
+    textarea { min-height: 88px; resize: vertical; line-height: 1.55; }
+
+    input:focus, select:focus, textarea:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(15, 118, 110, .16);
     }
@@ -116,12 +125,13 @@
       font-size: 13px;
       line-height: 1.5;
       margin-top: 8px;
+      overflow-wrap: anywhere;
     }
 
     .list {
       display: grid;
       gap: 8px;
-      max-height: 610px;
+      max-height: 360px;
       overflow: auto;
       padding-right: 4px;
     }
@@ -136,6 +146,7 @@
       cursor: pointer;
       display: grid;
       gap: 4px;
+      min-width: 0;
     }
 
     .product:hover, .product.active {
@@ -146,6 +157,7 @@
     .product-name {
       font-weight: 700;
       font-size: 17px;
+      overflow-wrap: anywhere;
     }
 
     .product-meta {
@@ -154,6 +166,14 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px 14px;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .product-meta span {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
     }
 
     .grid {
@@ -170,6 +190,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
+      min-width: 0;
     }
 
     .chip {
@@ -180,6 +201,8 @@
       padding: 0 15px;
       cursor: pointer;
       font-weight: 650;
+      max-width: 100%;
+      overflow-wrap: anywhere;
     }
 
     .chip.active {
@@ -200,6 +223,7 @@
       padding: 13px;
       background: #fbfcfe;
       min-height: 92px;
+      min-width: 0;
     }
 
     .metric span {
@@ -220,12 +244,14 @@
       color: var(--muted);
       font-size: 12px;
       line-height: 1.35;
+      overflow-wrap: anywhere;
     }
 
     .result-row {
       display: grid;
-      grid-template-columns: minmax(250px, .68fr) minmax(360px, 1.32fr);
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 12px;
+      min-width: 0;
     }
 
     .result-card,
@@ -239,6 +265,7 @@
       min-height: 142px;
       border: 2px solid #22c55e;
       box-shadow: 0 10px 28px rgba(15, 23, 42, .18);
+      min-width: 0;
     }
 
     .result-card {
@@ -261,9 +288,9 @@
 
     .result-value {
       font-size: clamp(30px, 4vw, 46px);
-      white-space: nowrap;
+      white-space: normal;
       max-width: 100%;
-      overflow: hidden;
+      overflow-wrap: anywhere;
     }
 
     .result-value.small {
@@ -275,8 +302,9 @@
     }
 
     .crate-size {
-      font-size: clamp(30px, 4.1vw, 44px);
-      word-break: break-all;
+      font-size: clamp(26px, 4vw, 42px);
+      overflow-wrap: anywhere;
+      word-break: normal;
     }
 
     .result-note {
@@ -311,6 +339,66 @@
       gap: 10px;
       flex-wrap: wrap;
     }
+
+    .option-panel {
+      border: 1px solid rgba(15, 118, 110, .2);
+      border-radius: 8px;
+      background: #f4fbf9;
+      padding: 13px;
+    }
+
+    .option-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .option {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .option span {
+      display: grid;
+      place-items: center;
+      min-height: 42px;
+      border: 1px solid #b9c3d2;
+      border-radius: 7px;
+      background: #fff;
+      font-weight: 750;
+    }
+
+    .option input:checked + span {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: #075e57;
+    }
+
+    .freight-panel {
+      display: grid;
+      gap: 12px;
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+    }
+
+    .freight-output {
+      min-height: 170px;
+      border-radius: 8px;
+      background: #111827;
+      color: #fff;
+      padding: 16px;
+      white-space: pre-wrap;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+    }
+
+    .hidden { display: none !important; }
 
     .copy {
       border: 1px solid var(--accent);
@@ -354,6 +442,8 @@
       .grid, .grid.two, .metric-row, .result-row {
         grid-template-columns: 1fr;
       }
+      .right { padding: 14px; }
+      .option-row { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -388,6 +478,14 @@
         <div id="sizeChips" class="chips"></div>
       </div>
 
+      <div id="finishPanel" class="option-panel hidden">
+        <label>加工方式（莱姆石、洞石、平板需要确认）</label>
+        <div class="option-row">
+          <label class="option"><input type="radio" name="finishType" value="color"><span>上色</span></label>
+          <label class="option"><input type="radio" name="finishType" value="print" checked><span>打印</span></label>
+        </div>
+      </div>
+
       <div class="grid">
         <div>
           <label for="qty">数量（张）</label>
@@ -402,6 +500,22 @@
           <input id="kgPerSqm" type="number" min="0" step="0.1">
         </div>
       </div>
+
+      <section class="freight-panel">
+        <div>
+          <label for="address">收货地址</label>
+          <textarea id="address" placeholder="粘贴省市区和详细地址"></textarea>
+        </div>
+        <div>
+          <label>宁波运费询价模板</label>
+          <div id="freightOutput" class="freight-output">请选择产品、规格并填写数量和地址。</div>
+        </div>
+        <div class="actions">
+          <button class="copy" id="copyFreight">复制运费询价模板</button>
+          <button class="copy secondary" id="clearAddress">清空地址</button>
+        </div>
+        <div class="hint">宁波运费模板不生成 DB。木箱重量会自动加入询价总重量。</div>
+      </section>
 
       <div class="metric-row">
         <div class="metric">
@@ -418,6 +532,21 @@
           <span>产品尺寸</span>
           <strong id="sizeMetric">-</strong>
           <small>单位：mm</small>
+        </div>
+        <div class="metric">
+          <span>木箱类型</span>
+          <strong id="crateType">-</strong>
+          <small id="crateRule">按产品、规格和数量判断</small>
+        </div>
+        <div class="metric">
+          <span>木箱重量</span>
+          <strong id="crateWeight">-</strong>
+          <small>大夹板按用量核算 / 夹板 10KG / 小木箱 30KG / 大木箱 65KG</small>
+        </div>
+        <div class="metric">
+          <span>含包装总重量</span>
+          <strong id="shippingWeight">-</strong>
+          <small>产品重量 + 木箱重量</small>
         </div>
       </div>
 
@@ -1301,15 +1430,26 @@
       sheetWeight: document.querySelector("#sheetWeight"),
       totalWeight: document.querySelector("#totalWeight"),
       sizeMetric: document.querySelector("#sizeMetric"),
+      finishPanel: document.querySelector("#finishPanel"),
+      finishTypes: document.querySelectorAll('input[name="finishType"]'),
+      crateType: document.querySelector("#crateType"),
+      crateRule: document.querySelector("#crateRule"),
+      crateWeight: document.querySelector("#crateWeight"),
+      shippingWeight: document.querySelector("#shippingWeight"),
       crateSize: document.querySelector("#crateSize"),
       crateFormula: document.querySelector("#crateFormula"),
       detailFormula: document.querySelector("#detailFormula"),
       copySummary: document.querySelector("#copySummary"),
-      resetBtn: document.querySelector("#resetBtn")
+      resetBtn: document.querySelector("#resetBtn"),
+      address: document.querySelector("#address"),
+      freightOutput: document.querySelector("#freightOutput"),
+      copyFreight: document.querySelector("#copyFreight"),
+      clearAddress: document.querySelector("#clearAddress")
     };
 
     let selectedProduct = products.find(item => item.name.includes("脉络石")) || products[0];
     let selectedSize = selectedProduct.sizes[0];
+    let productListCollapsed = false;
 
     function normalize(text) {
       return String(text || "").toLowerCase().replace(/\s+/g, "").replace(/[()（）]/g, "");
@@ -1348,9 +1488,92 @@
       return Number(num.toFixed(digits)).toLocaleString("zh-CN");
     }
 
+    function formatPlainNumber(num, digits = 0) {
+      if (!Number.isFinite(num)) return "-";
+      return String(Number(num.toFixed(digits)));
+    }
+
+    function productFamily(name) {
+      if (name.includes("花岗岩")) return "花岗岩";
+      if (name.includes("星月石")) return "星月石";
+      if (name.includes("黑山岩")) return "黑山岩";
+      if (name.includes("洞石")) return "洞石";
+      return "";
+    }
+
+    function requiresFinishChoice(product, size) {
+      if (normalize(size) === "1200*600") return false;
+      return ["莱姆石", "洞石", "平板"].some(keyword => product.name.includes(keyword));
+    }
+
+    function selectedFinishType() {
+      return document.querySelector('input[name="finishType"]:checked')?.value || "print";
+    }
+
+    function roundUpHalf(value) {
+      return Math.ceil(value * 2) / 2;
+    }
+
+    function crateInfo(product, size, qty, calculation) {
+      const family = productFamily(product.name);
+      const isSmallSize = normalize(size) === "1200*600";
+      const plywoodLimits = { "洞石": 10, "花岗岩": 10, "星月石": 6, "黑山岩": 6 };
+      const smallCrateLimits = { "洞石": 240, "花岗岩": 160, "星月石": 80, "黑山岩": 80 };
+
+      if (isSmallSize && family) {
+        if (qty > 0 && qty <= plywoodLimits[family]) {
+          return { type: "夹板", weight: 10, rule: `${family} 1200*600，${plywoodLimits[family]}片以内` };
+        }
+        if (qty > 0 && qty <= smallCrateLimits[family]) {
+          return { type: "小木箱", weight: 30, rule: `${family} 1200*600，${smallCrateLimits[family]}片以内` };
+        }
+        return { type: "大木箱", weight: 65, rule: `${family} 1200*600，超过${smallCrateLimits[family]}片` };
+      }
+
+      if (!isSmallSize && family && qty === 1 && calculation.kgPerSqm <= 7.5 && qty <= plywoodLimits[family]) {
+        const standardPlywoodArea = 1.22 * 2.44;
+        const plywoodSheets = roundUpHalf(calculation.area * 2 / standardPlywoodArea);
+        const plywoodWeight = plywoodSheets * 20;
+        const packedWeight = calculation.totalWeight + plywoodWeight;
+        if (packedWeight <= 80) {
+          return {
+            type: "大夹板",
+            weight: plywoodWeight,
+            plywoodSheets,
+            packedWeight,
+            rule: `${family}非1200*600单张，${calculation.kgPerSqm}kg/㎡；夹板${formatNumber(plywoodSheets, 1)}张，共${formatNumber(plywoodWeight)}KG，含产品${formatNumber(packedWeight)}KG≤80KG`
+          };
+        }
+      }
+
+      if (requiresFinishChoice(product, size)) {
+        if (selectedFinishType() === "color") {
+          return { type: "大木箱", weight: 65, rule: "不符合大夹板条件的上色产品使用大木箱" };
+        }
+        if (qty > 0 && qty <= 6) {
+          return { type: "小木箱", weight: 30, rule: "打印产品 6片以内" };
+        }
+        return { type: "大木箱", weight: 65, rule: "打印产品超过6片" };
+      }
+
+      return { type: "大木箱", weight: 65, rule: "其他产品统一使用大木箱" };
+    }
+
+    function freightText(calculation) {
+      const address = els.address.value.trim();
+      if (!calculation.qty) return "请选择产品、规格并填写数量和地址。";
+      const crateLabel = calculation.crate.type.includes("夹板") ? "夹板" : "木箱";
+      return [
+        address || "请填写收货地址",
+        "",
+        `${formatPlainNumber(calculation.totalWeight)}+${formatPlainNumber(calculation.crate.weight)}=${formatPlainNumber(calculation.shippingWeight)}KG`,
+        `${crateLabel}：${calculation.crateLength}*${calculation.crateWidth}*${calculation.crateHeight}mm`
+      ].join("\n");
+    }
+
     function renderProducts() {
       const query = els.search.value;
-      const matches = products.filter(product => fuzzyMatch(product.name, query));
+      const matches = productListCollapsed ? [selectedProduct] : products.filter(product => fuzzyMatch(product.name, query));
       els.productList.innerHTML = "";
       if (!matches.length) {
         els.productList.innerHTML = '<div class="empty">没有找到匹配产品</div>';
@@ -1370,6 +1593,7 @@
         button.addEventListener("click", () => selectProduct(product));
         els.productList.appendChild(button);
       });
+      els.productList.style.maxHeight = productListCollapsed ? "120px" : "";
     }
 
     function renderSizes() {
@@ -1390,6 +1614,7 @@
     function selectProduct(product) {
       selectedProduct = product;
       selectedSize = product.sizes[0];
+      productListCollapsed = true;
       els.crateThickness.value = defaultCrateThickness(product);
       els.kgPerSqm.value = product.kgPerSqm;
       renderProducts();
@@ -1409,6 +1634,16 @@
       const crateLength = length + 100;
       const crateWidth = width + 100;
       const crateHeight = Math.ceil(crateThickness * qty + 200);
+      const showFinish = requiresFinishChoice(selectedProduct, selectedSize);
+      const crate = crateInfo(selectedProduct, selectedSize, qty, {
+        area,
+        kgPerSqm,
+        sheetWeight,
+        totalWeight,
+        length,
+        width
+      });
+      const shippingWeight = totalWeight + (qty > 0 ? crate.weight : 0);
 
       els.currentName.textContent = selectedProduct.name;
       els.currentMeta.innerHTML = `编号 ${selectedProduct.no} · 表格厚度 ${selectedProduct.thickness}mm · 规格 ${selectedProduct.sizes.join("、")}`;
@@ -1419,15 +1654,32 @@
       els.totalWeight.classList.toggle("small", totalWeight >= 1000 && totalWeight < 10000);
       els.totalWeight.classList.toggle("compact", totalWeight >= 10000);
       els.sizeMetric.textContent = selectedSize;
+      els.finishPanel.classList.toggle("hidden", !showFinish);
+      els.crateType.textContent = qty > 0 ? crate.type : "-";
+      els.crateRule.textContent = qty > 0 ? crate.rule : "填写数量后自动判断";
+      els.crateWeight.textContent = qty > 0 ? `${crate.weight} KG` : "-";
+      els.shippingWeight.textContent = qty > 0 ? `${shippingWeight.toLocaleString("zh-CN")} KG` : "-";
       els.crateSize.textContent = `${crateLength}*${crateWidth}*${crateHeight}`;
       els.crateFormula.textContent = `${crateLength} = ${length}+100，${crateWidth} = ${width}+100，高 ${crateHeight} = ${qty}*${crateThickness}+100+100`;
       els.detailFormula.innerHTML = `
         <div><strong>${selectedProduct.name}</strong> / ${selectedSize} / ${qty}张</div>
         <div>单张重量：<code>${length / 1000} * ${width / 1000} * ${kgPerSqm} = ${formatNumber(rawWeight)}KG</code>，向上取整为 <code>${sheetWeight}KG</code></div>
         <div>总重量：<code>${sheetWeight} * ${qty} = ${totalWeight}KG</code></div>
+        <div>木箱类型：<code>${qty > 0 ? crate.type : "-"}</code>${crate.plywoodSheets ? `，夹板用量：<code>${formatNumber(crate.plywoodSheets, 1)}张 * 20KG = ${crate.weight}KG</code>` : `，包装重量：<code>${qty > 0 ? `${crate.weight}KG` : "-"}</code>`}${showFinish ? `，加工：<code>${selectedFinishType() === "color" ? "上色" : "打印"}</code>` : ""}</div>
+        <div>询价总重量：<code>${qty > 0 ? `${totalWeight} + ${crate.weight} = ${shippingWeight}KG` : "-"}</code></div>
         <div>木箱：长宽各加 100mm，高度 = <code>${qty} * ${crateThickness} + 100 + 100 = ${crateHeight}mm</code></div>
         ${selectedProduct.name.includes("脉络石") && selectedProduct.thickness !== "3-8" ? '<div class="warn">提示：Excel 中圆线石脉络石厚度为 3-9mm；当前木箱厚度按你的示例默认 8mm，可手动改为 9。</div>' : ""}
       `;
+      els.freightOutput.textContent = freightText({
+        qty,
+        totalWeight,
+        shippingWeight,
+        crate,
+        crateLength,
+        crateWidth,
+        crateHeight,
+        showFinish
+      });
     }
 
     async function copySummary() {
@@ -1436,22 +1688,60 @@
         `数量：${els.qty.value}张`,
         `单张取整重量：${els.sheetWeight.textContent}`,
         `总重量：${els.totalWeight.textContent}`,
+        `木箱类型：${els.crateType.textContent}`,
+        `木箱重量：${els.crateWeight.textContent}`,
+        `含包装总重量：${els.shippingWeight.textContent}`,
         `木箱尺寸：${els.crateSize.textContent}mm`
       ].join("\n");
-      try {
-        await navigator.clipboard.writeText(text);
-        els.copySummary.textContent = "已复制";
-        setTimeout(() => { els.copySummary.textContent = "复制计算结果"; }, 1200);
-      } catch {
-        window.prompt("复制下面内容", text);
-      }
+      await copyText(text, els.copySummary, "复制计算结果");
     }
 
-    els.search.addEventListener("input", renderProducts);
+    function copyByTextarea(text) {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      textarea.style.top = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      const ok = document.execCommand("copy");
+      textarea.remove();
+      return ok;
+    }
+
+    async function copyText(text, button, originalLabel) {
+      let copied = false;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          copied = true;
+        }
+      } catch {
+        copied = false;
+      }
+      if (!copied) copied = copyByTextarea(text);
+      button.textContent = copied ? "已复制" : "复制失败";
+      setTimeout(() => { button.textContent = originalLabel; }, 1200);
+    }
+
+    els.search.addEventListener("input", () => {
+      productListCollapsed = false;
+      renderProducts();
+    });
     els.qty.addEventListener("input", calculate);
     els.crateThickness.addEventListener("input", calculate);
     els.kgPerSqm.addEventListener("input", calculate);
+    els.finishTypes.forEach(input => input.addEventListener("change", calculate));
+    els.address.addEventListener("input", calculate);
     els.copySummary.addEventListener("click", copySummary);
+    els.copyFreight.addEventListener("click", () => copyText(els.freightOutput.textContent, els.copyFreight, "复制运费询价模板"));
+    els.clearAddress.addEventListener("click", () => {
+      els.address.value = "";
+      calculate();
+      els.address.focus();
+    });
     els.resetBtn.addEventListener("click", () => {
       els.qty.value = "";
       calculate();
@@ -1459,7 +1749,7 @@
 
     function applyUrlParams() {
       const params = new URLSearchParams(window.location.search);
-      const query = params.get("q") || "脉";
+      const query = params.get("q") || "";
       const productQuery = params.get("product");
       const sizeQuery = params.get("size");
       const qty = params.get("qty");
@@ -1467,7 +1757,8 @@
       const kgPerSqm = params.get("kgPerSqm");
 
       if (productQuery) {
-        const found = products.find(product => fuzzyMatch(product.name, productQuery));
+        const found = products.find(product => fuzzyMatch(product.name, productQuery) && (!sizeQuery || product.sizes.includes(sizeQuery)))
+          || products.find(product => fuzzyMatch(product.name, productQuery));
         if (found) selectedProduct = found;
       }
       els.search.value = query;
