@@ -81,7 +81,10 @@
       border-radius: 8px;
       background: var(--panel);
     }
-    iframe { display: block; width: 100%; height: 100%; border: 0; background: #fff; }
+    iframe,
+    .tool-frame { display: block; width: 100%; height: 100%; border: 0; background: #fff; }
+    .tool-frame { position: absolute; inset: 0; }
+    .tool-frame.hidden { display: none; }
     .loading {
       position: absolute;
       inset: 0;
@@ -133,8 +136,7 @@
     </aside>
     <main class="content">
       <section class="frame-shell">
-        <div class="frame-wrap">
-          <iframe id="toolFrame" title="工具内容" allow="clipboard-read; clipboard-write"></iframe>
+        <div class="frame-wrap" id="frameWrap">
           <div class="loading" id="loading">正在加载工具...</div>
         </div>
       </section>
@@ -144,8 +146,9 @@
     const tools = [{"id":"order-template","title":"开单模板","short":"开单模板","tag":"开单","desc":"鎏金板每日文字开单模板，快速生成可复制开单内容。"},{"id":"quote-generator","title":"报价单生成器","short":"报价单","tag":"快速报价","desc":"输入产品、规格、数量和费用，自动生成可复制或打印的报价单。"},{"id":"quick-price","title":"快速查价","short":"快速查价","tag":"查底价","desc":"输入产品关键词，快速查看鎏金板、宁波柔岩和混凝土仓各规格底价。"},{"id":"report-template","title":"报备模板","short":"报备模板","tag":"项目报备","desc":"快速填写项目报备信息，生成可复制的报备模板。"},{"id":"hole-1200","title":"1200×600 孔心排版","short":"孔心排版","tag":"孔位图","desc":"快速设置板宽、板高、孔数、孔径和边距，导出 SVG。"},{"id":"freight-gold","title":"鎏金板快速运费提交","short":"鎏金运费","tag":"运费模板","desc":"填写地址、规格和张数，自动生成重量、包装和 DB 模板。"},{"id":"ningbo-weight","title":"宁波重量木箱快速计算","short":"宁波重量","tag":"重量木箱","desc":"搜索产品，选择规格和数量，计算总重及木箱尺寸。"},{"id":"full-board-cut","title":"整板切割计算","short":"整板切割","tag":"切割排版","desc":"输入小板规格数量，自动估算整板用量并生成排版图。"},{"id":"wall-panel","title":"水泥板/混凝土上墙排版","short":"上墙排版","tag":"墙面排版","desc":"多墙面排版、孔位示意、裁切统计，并支持导出 SVG/PNG。"}];
     const toolPaths = {"order-template":"tools/order-template.html","quote-generator":"tools/quote-generator.html","quick-price":"tools/quick-price.html","report-template":"tools/report-template.html","hole-1200":"tools/hole-1200.html","freight-gold":"tools/freight-gold.html","ningbo-weight":"tools/ningbo-weight.html","full-board-cut":"tools/full-board-cut.html","wall-panel":"tools/wall-panel.html"};
     const nav = document.getElementById('toolNav');
-    const frame = document.getElementById('toolFrame');
+    const frameWrap = document.getElementById('frameWrap');
     const loading = document.getElementById('loading');
+    const frames = {};
     let activeId = '';
 
     function esc(value) {
@@ -163,6 +166,21 @@
       });
     }
 
+    function getFrame(tool) {
+      if (frames[tool.id]) return frames[tool.id];
+      const frame = document.createElement('iframe');
+      frame.className = 'tool-frame hidden';
+      frame.title = tool.title;
+      frame.allow = 'clipboard-read; clipboard-write';
+      frame.src = toolPaths[tool.id];
+      frame.addEventListener('load', function () {
+        if (activeId === tool.id) loading.classList.add('hidden');
+      });
+      frameWrap.insertBefore(frame, loading);
+      frames[tool.id] = frame;
+      return frame;
+    }
+
     function activate(id) {
       const tool = tools.find(function (item) { return item.id === id; }) || tools[0];
       if (!tool || activeId === tool.id) return;
@@ -170,9 +188,16 @@
       nav.querySelectorAll('.tool-button').forEach(function (button) {
         button.classList.toggle('active', button.dataset.tool === tool.id);
       });
-      loading.classList.remove('hidden');
-      frame.title = tool.title;
-      frame.src = toolPaths[tool.id];
+      Object.keys(frames).forEach(function (frameId) {
+        frames[frameId].classList.toggle('hidden', frameId !== tool.id);
+      });
+      const frame = getFrame(tool);
+      frame.classList.remove('hidden');
+      if (!frame.dataset.loaded) {
+        loading.classList.remove('hidden');
+      } else {
+        loading.classList.add('hidden');
+      }
       try {
         history.replaceState(null, '', location.pathname + '?tool=' + encodeURIComponent(tool.id));
       } catch (error) {}
@@ -180,7 +205,11 @@
       if (activeButton) activeButton.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     }
 
-    frame.addEventListener('load', function () { loading.classList.add('hidden'); });
+    frameWrap.addEventListener('load', function (event) {
+      if (event.target && event.target.classList && event.target.classList.contains('tool-frame')) {
+        event.target.dataset.loaded = '1';
+      }
+    }, true);
     renderNav();
     const initial = new URLSearchParams(location.search).get('tool') || tools[0].id;
     activate(tools.some(function (tool) { return tool.id === initial; }) ? initial : tools[0].id);
