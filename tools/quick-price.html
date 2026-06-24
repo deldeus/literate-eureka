@@ -54,6 +54,22 @@
     .price-row b small { display:block; margin-bottom:2px; color:#7a4c00; font-size:11px; font-weight:950; line-height:1; }
     .note { margin:0; padding:0 14px 14px; color:#6a470f; font-size:13px; line-height:1.6; }
     @media (max-width:760px) { main{width:min(100% - 18px,1180px); padding-top:16px;} .topbar{display:block;} .pill{display:inline-block; margin-top:10px;} .search-panel{padding:14px;} input{font-size:20px; min-height:54px;} .price-grid{grid-template-columns:1fr;} .card-head{display:grid;} .badge{justify-self:start;} }
+
+    /* iPhone-style refinement aligned with the quote module. */
+    :root { --bg:#f5f6f8; --panel:#fff; --ink:#1f2937; --muted:#687385; --line:#d9dee7; --accent:#146c94; --soft:#e9f4f8; --gold:#a8842e; --shadow:0 18px 44px rgba(20,36,55,.08); }
+    body { background:var(--bg); }
+    main { width:min(1180px,calc(100% - 40px)); padding:28px 0 40px; }
+    .topbar { align-items:flex-end; margin-bottom:18px; }
+    .panel, .card { border-radius:22px; box-shadow:var(--shadow); }
+    .search-panel { padding:22px; top:12px; }
+    input { min-height:58px; border-radius:18px; border-color:#cfd6e2; font-size:22px; }
+    .suggestions { border-radius:18px; padding:8px; }
+    .suggestion { min-height:58px; border-radius:16px; padding:13px 14px; }
+    .tag-btn { min-height:44px; border-radius:999px; padding:8px 14px; }
+    .card-head { padding:18px; border-radius:22px 22px 0 0; }
+    .price-grid { gap:12px; padding:16px; }
+    .price-row { min-height:72px; border-radius:18px; padding:14px; }
+    @media (max-width:760px) { main{width:min(100% - 18px,1180px);} .search-panel{padding:16px;} input{font-size:19px;} }
   </style>
 </head>
 <body>

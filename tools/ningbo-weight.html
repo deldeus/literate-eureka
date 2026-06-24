@@ -445,6 +445,89 @@
       .right { padding: 14px; }
       .option-row { grid-template-columns: 1fr 1fr; }
     }
+
+    /* iPhone-style refinement aligned with the quote module. */
+    :root {
+      --bg: #f5f6f8;
+      --panel: #ffffff;
+      --ink: #1f2937;
+      --muted: #687385;
+      --line: #d9dee7;
+      --accent: #146c94;
+      --accent-soft: #e9f4f8;
+      --shadow: 0 18px 44px rgba(20, 36, 55, 0.08);
+    }
+
+    header,
+    main {
+      width: min(1180px, calc(100% - 40px));
+    }
+
+    .panel,
+    .metric,
+    .result-card,
+    .product-item,
+    .freight-question {
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .left,
+    .right {
+      padding: 22px;
+    }
+
+    input,
+    textarea,
+    select {
+      min-height: 52px;
+      border-radius: 14px;
+      border-color: #cfd6e2;
+      padding: 12px 14px;
+      font-size: 16px;
+    }
+
+    button,
+    .spec-btn,
+    .option-btn,
+    .product-item {
+      min-height: 52px;
+      border-radius: 16px;
+    }
+
+    .grid,
+    .grid.two,
+    .metric-row,
+    .result-row {
+      gap: 14px;
+    }
+
+    .result-row {
+      grid-template-columns: 1fr;
+    }
+
+    .result-card {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .result-card strong,
+    .result-card .big {
+      overflow-wrap: anywhere;
+      font-size: clamp(34px, 7vw, 58px);
+    }
+
+    @media (max-width: 860px) {
+      header,
+      main {
+        width: min(100% - 18px, 1180px);
+      }
+
+      .left,
+      .right {
+        padding: 16px;
+      }
+    }
   </style>
 </head>
 <body>

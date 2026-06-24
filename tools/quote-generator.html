@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>报价单生成器</title>
+  <title>文字报价</title>
   <style>
     :root {
       color-scheme: light;
@@ -616,13 +616,155 @@
         min-height: auto;
       }
     }
+
+    /* iPhone-style refinement shared by quote-related tools. */
+    :root {
+      --bg: #f5f6f8;
+      --panel: #ffffff;
+      --ink: #1f2937;
+      --muted: #687385;
+      --line: #d9dee7;
+      --brand: #146c94;
+      --brand-dark: #0f506d;
+      --soft: #e9f4f8;
+      --radius: 18px;
+    }
+
+    body {
+      background: var(--bg);
+    }
+
+    main {
+      width: min(1440px, calc(100vw - 40px));
+    }
+
+    .panel {
+      border-radius: 22px;
+      box-shadow: 0 18px 44px rgba(20, 36, 55, 0.08);
+    }
+
+    .form {
+      gap: 18px;
+      padding: 22px;
+    }
+
+    .section {
+      border-radius: 18px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.96);
+    }
+
+    input,
+    select,
+    textarea {
+      min-height: 52px;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 16px;
+    }
+
+    .radio-pill span,
+    button,
+    .toggle-row .inline,
+    .compact-mode-toggle {
+      min-height: 52px;
+      border-radius: 16px;
+    }
+
+    #singleProductFields {
+      gap: 16px;
+      align-items: stretch;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    #singleProductFields > .field:nth-child(1),
+    #singleProductFields > .spec-actions {
+      grid-column: span 6;
+    }
+
+    #singleProductFields > .spec-actions {
+      display: grid;
+      align-content: start;
+      gap: 8px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    #singleProductFields > .field:nth-child(1),
+    #singleProductFields > .spec-actions {
+      grid-template-rows: auto 52px;
+      align-self: start;
+    }
+
+    #singleProductFields > .field:nth-child(1) {
+      display: grid;
+      gap: 8px;
+    }
+
+    #singleProductFields > .field:nth-child(1) label,
+    #singleProductFields > .spec-actions label {
+      margin-bottom: 0;
+      line-height: 1.25;
+    }
+
+    #singleProductFields > .field:nth-child(3) {
+      grid-column: span 4;
+    }
+
+    #singleProductFields > .grid-2 {
+      grid-column: span 8;
+      gap: 16px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    #singleProductFields > .field:nth-child(5) {
+      grid-column: 1 / -1;
+    }
+
+    #singleProductFields .field {
+      margin-bottom: 0;
+    }
+
+    #singleProductFields > .field:nth-child(1) input,
+    #singleProductFields > .spec-actions select {
+      min-height: 52px;
+    }
+
+    .button-row {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        width: min(100% - 18px, 1440px);
+      }
+
+      #singleProductFields > .field:nth-child(1),
+      #singleProductFields > .spec-actions,
+      #singleProductFields > .field:nth-child(3),
+      #singleProductFields > .grid-2,
+      #singleProductFields > .field:nth-child(5) {
+        grid-column: 1 / -1;
+      }
+
+      #singleProductFields > .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .button-row {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
   <main>
     <header>
       <div>
-        <h1>报价单生成器</h1>
+        <h1>文字报价</h1>
         <p class="hint">上方填写报价信息，下方自动生成可复制报价文字。</p>
       </div>
       <div class="hint">材料费取整：小数第一位 0-3 舍，4-9 入。</div>
@@ -803,7 +945,7 @@
       <section class="panel preview-wrap" aria-label="报价预览区">
         <div class="preview-head">
           <div>
-            <div class="preview-title">报价单预览</div>
+            <div class="preview-title">文字报价预览</div>
             <div id="copyState" class="copy-state"></div>
           </div>
           <div class="button-row">
@@ -820,9 +962,9 @@
       <div class="history-head">
         <div>
           <h1>报价历史记录</h1>
-          <p class="hint">自动保留最近 40 条生成记录，点击载入后回到报价单界面。</p>
+          <p class="hint">自动保留最近 40 条生成记录，点击载入后回到文字报价界面。</p>
         </div>
-        <button id="backToQuote" class="secondary" type="button">返回报价单生成界面</button>
+        <button id="backToQuote" class="secondary" type="button">返回文字报价界面</button>
       </div>
       <div id="historyList" class="history-list"></div>
     </section>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="format-detection" content="telephone=no">
-  <title>杰哥工具表合集</title>
+  <title>杰哥工具表</title>
   <style>
     :root {
       color-scheme: light;
@@ -12,7 +12,7 @@
       --ink: #111827;
       --line: #d8dee8;
       --panel: #fff;
-      --sidebar: #0d151c;
+      --sidebar: #111820;
       --accent: #d94722;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -30,7 +30,7 @@
       height: 100vh;
       height: 100dvh;
       display: grid;
-      grid-template-columns: 168px minmax(0, 1fr);
+      grid-template-columns: 112px minmax(0, 1fr);
       overflow: hidden;
     }
     .sidebar {
@@ -41,32 +41,35 @@
       background: var(--sidebar);
       color: #fff;
       border-right: 1px solid rgba(255,255,255,.08);
-      padding: 9px;
+      padding: 7px;
     }
     .brand {
-      padding: 3px 2px 10px;
+      padding: 3px 1px 8px;
       border-bottom: 1px solid rgba(255,255,255,.12);
       margin-bottom: 8px;
     }
-    .brand h1 { margin: 0; font-size: 17px; line-height: 1.25; letter-spacing: 0; }
-    .nav { display: grid; gap: 6px; }
+    .brand h1 { margin: 0; font-size: 14px; line-height: 1.22; letter-spacing: 0; text-align: center; }
+    .nav { display: grid; gap: 5px; }
     .tool-button {
       width: 100%;
       min-width: 0;
       min-height: 40px;
-      border: 1px solid rgba(255,255,255,.11);
-      border-radius: 6px;
-      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 10px;
+      background: rgba(255,255,255,.06);
       color: #fff;
       cursor: pointer;
-      text-align: left;
-      padding: 8px;
+      text-align: center;
+      padding: 6px 5px;
       font-weight: 800;
+      font-size: 14px;
       line-height: 1.2;
+      display: grid;
+      place-items: center;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
     }
-    .tool-button.active { background: #fff; color: #101820; border-color: #fff; }
+    .tool-button.active { background: #fff; color: #101820; border-color: #fff; box-shadow: 0 8px 22px rgba(0,0,0,.18); }
     .button-title { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .content { min-width: 0; min-height: 0; height: 100%; }
     .frame-shell { width: 100%; height: 100%; min-width: 0; min-height: 0; padding: 8px; }
@@ -131,7 +134,7 @@
 <body>
   <div class="app">
     <aside class="sidebar">
-      <div class="brand"><h1>杰哥工具表合集</h1></div>
+      <div class="brand"><h1>杰哥工具表</h1></div>
       <nav class="nav" id="toolNav" aria-label="工具列表"></nav>
     </aside>
     <main class="content">
@@ -143,7 +146,7 @@
     </main>
   </div>
   <script>
-    const tools = [{"id":"order-template","title":"开单模板","short":"开单模板","tag":"开单","desc":"鎏金板每日文字开单模板，快速生成可复制开单内容。"},{"id":"quote-generator","title":"报价单生成器","short":"报价单","tag":"快速报价","desc":"输入产品、规格、数量和费用，自动生成可复制或打印的报价单。"},{"id":"quick-price","title":"快速查价","short":"快速查价","tag":"查底价","desc":"输入产品关键词，快速查看鎏金板、宁波柔岩和混凝土仓各规格底价。"},{"id":"report-template","title":"报备模板","short":"报备模板","tag":"项目报备","desc":"快速填写项目报备信息，生成可复制的报备模板。"},{"id":"hole-1200","title":"1200×600 孔心排版","short":"孔心排版","tag":"孔位图","desc":"快速设置板宽、板高、孔数、孔径和边距，导出 SVG。"},{"id":"freight-gold","title":"鎏金板快速运费提交","short":"鎏金运费","tag":"运费模板","desc":"填写地址、规格和张数，自动生成重量、包装和 DB 模板。"},{"id":"ningbo-weight","title":"宁波重量木箱快速计算","short":"宁波重量","tag":"重量木箱","desc":"搜索产品，选择规格和数量，计算总重及木箱尺寸。"},{"id":"full-board-cut","title":"整板切割计算","short":"整板切割","tag":"切割排版","desc":"输入小板规格数量，自动估算整板用量并生成排版图。"},{"id":"wall-panel","title":"水泥板/混凝土上墙排版","short":"上墙排版","tag":"墙面排版","desc":"多墙面排版、孔位示意、裁切统计，并支持导出 SVG/PNG。"}];
+    const tools = [{"id":"order-template","title":"开单模板","short":"开单模板","tag":"开单","desc":"鎏金板每日文字开单模板，快速生成可复制开单内容。"},{"id":"quote-generator","title":"文字报价","short":"文字报价","tag":"快速报价","desc":"输入产品、规格、数量和费用，自动生成可复制或打印的文字报价。"},{"id":"quick-price","title":"快速查价","short":"快速查价","tag":"查底价","desc":"输入产品关键词，快速查看鎏金板、宁波柔岩和混凝土仓各规格底价。"},{"id":"report-template","title":"报备模板","short":"报备模板","tag":"项目报备","desc":"快速填写项目报备信息，生成可复制的报备模板。"},{"id":"hole-1200","title":"1200×600 孔心排版","short":"孔心排版","tag":"孔位图","desc":"快速设置板宽、板高、孔数、孔径和边距，导出 SVG。"},{"id":"freight-gold","title":"鎏金板快速运费提交","short":"鎏金运费","tag":"运费模板","desc":"填写地址、规格和张数，自动生成重量、包装和 DB 模板。"},{"id":"ningbo-weight","title":"宁波重量木箱快速计算","short":"宁波重量","tag":"重量木箱","desc":"搜索产品，选择规格和数量，计算总重及木箱尺寸。"},{"id":"full-board-cut","title":"整板切割计算","short":"整板切割","tag":"切割排版","desc":"输入小板规格数量，自动估算整板用量并生成排版图。"},{"id":"wall-panel","title":"水泥板/混凝土上墙排版","short":"上墙排版","tag":"墙面排版","desc":"多墙面排版、孔位示意、裁切统计，并支持导出 SVG/PNG。"}];
     const toolPaths = {"order-template":"tools/order-template.html","quote-generator":"tools/quote-generator.html","quick-price":"tools/quick-price.html","report-template":"tools/report-template.html","hole-1200":"tools/hole-1200.html","freight-gold":"tools/freight-gold.html","ningbo-weight":"tools/ningbo-weight.html","full-board-cut":"tools/full-board-cut.html","wall-panel":"tools/wall-panel.html"};
     const nav = document.getElementById('toolNav');
     const frameWrap = document.getElementById('frameWrap');

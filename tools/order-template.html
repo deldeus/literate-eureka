@@ -7,16 +7,17 @@
   <style>
     :root {
       color-scheme: light;
-      --bg: #f5f7f4;
+      --bg: #f5f6f8;
       --panel: #ffffff;
-      --text: #17201b;
-      --muted: #65716a;
-      --line: #d8e0da;
-      --accent: #1f7a52;
-      --accent-soft: #e7f4ed;
-      --gold: #b78324;
-      --warn: #a43f2d;
-      --shadow: 0 16px 42px rgba(22, 40, 30, 0.11);
+      --text: #1a1c1f;
+      --muted: #667085;
+      --line: #d9dee7;
+      --accent: #2f8f5b;
+      --accent-soft: #dff3e9;
+      --gold: #3f6fa8;
+      --warn: #3f6fa8;
+      --aux: #2f8f5b;
+      --shadow: 0 16px 42px rgba(20, 28, 38, 0.08);
     }
 
     * { box-sizing: border-box; }
@@ -26,10 +27,7 @@
       min-height: 100vh;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       color: var(--text);
-      background:
-        linear-gradient(135deg, rgba(31, 122, 82, 0.12), transparent 34%),
-        linear-gradient(225deg, rgba(183, 131, 36, 0.12), transparent 36%),
-        var(--bg);
+      background: var(--bg);
     }
 
     main {
@@ -62,7 +60,7 @@
 
     .pill {
       flex: 0 0 auto;
-      border: 1px solid rgba(31, 122, 82, 0.28);
+      border: 1px solid rgba(95, 128, 108, 0.26);
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.76);
       color: var(--accent);
@@ -133,7 +131,7 @@
     select:focus,
     textarea:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(31, 122, 82, 0.13);
+      box-shadow: 0 0 0 3px rgba(95, 128, 108, 0.13);
     }
 
     .option-row,
@@ -174,19 +172,19 @@
     .option input:checked + span {
       border-color: var(--accent);
       background: var(--accent-soft);
-      color: #0c5436;
+      color: #1f6a42;
     }
 
     .option.default-option span {
-      border-color: rgba(183, 131, 36, 0.55);
-      background: #fff8e7;
-      color: #6a470f;
+      border-color: rgba(63, 111, 168, 0.52);
+      background: rgba(63, 111, 168, 0.13);
+      color: #254b76;
     }
 
     .option.default-option input:checked + span {
       border-color: var(--gold);
-      background: #ffe7a8;
-      color: #5a3700;
+      background: rgba(63, 111, 168, 0.22);
+      color: #1f4168;
     }
 
     .checkline {
@@ -222,7 +220,7 @@
 
     .sub-warehouse-row {
       grid-column: 1 / -1;
-      border-top: 1px solid rgba(31, 122, 82, 0.14);
+      border-top: 1px solid var(--line);
       padding-top: 12px;
     }
 
@@ -237,9 +235,9 @@
       display: grid;
       grid-template-columns: 1fr;
       gap: 14px;
-      border: 1px solid rgba(31, 122, 82, 0.16);
+      border: 1px solid var(--line);
       border-radius: 8px;
-      background: #f8fbf8;
+      background: #fff;
       padding: 16px;
     }
 
@@ -283,7 +281,7 @@
     .tax-field .checkline {
       min-height: 42px;
       white-space: nowrap;
-      background: #fbfdfb;
+      background: #fff;
     }
 
     .freight-panel {
@@ -292,9 +290,9 @@
       grid-template-columns: minmax(280px, 1.45fr) minmax(160px, 0.7fr) minmax(180px, 0.75fr) minmax(220px, 0.9fr);
       gap: 14px;
       align-items: start;
-      border: 1px solid rgba(31, 122, 82, 0.16);
+      border: 1px solid var(--line);
       border-radius: 8px;
-      background: #f8fbf8;
+      background: #fff;
       padding: 14px;
     }
 
@@ -503,8 +501,8 @@
       margin-top: 12px;
       border-left: 4px solid var(--gold);
       border-radius: 6px;
-      background: #fff8e7;
-      color: #594010;
+      background: rgba(63, 111, 168, 0.13);
+      color: #1f4168;
       padding: 10px 11px;
       font-size: 13px;
       line-height: 1.55;
@@ -512,8 +510,8 @@
 
     .notice.error {
       border-left-color: var(--warn);
-      background: #fff0ed;
-      color: #722516;
+      background: rgba(63, 111, 168, 0.13);
+      color: #1f4168;
     }
 
     .product-card {
@@ -523,9 +521,9 @@
       gap: 12px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: #fbfdfb;
+      background: #fff;
       padding: 12px;
-      border-left: 5px solid rgba(31, 122, 82, 0.25);
+      border-left: 5px solid rgba(95, 128, 108, 0.24);
     }
 
     .product-card h3 {
@@ -535,74 +533,74 @@
     }
 
     .product-card.product-tone-1 {
-      background: #f7fbf8;
-      border-left-color: rgba(31, 122, 82, 0.35);
+      background: #fff;
+      border-left-color: rgba(47, 143, 91, 0.42);
     }
 
     .product-card.product-tone-2 {
-      background: #fbf8ef;
-      border-left-color: rgba(183, 131, 36, 0.35);
+      background: #fff;
+      border-left-color: rgba(63, 111, 168, 0.42);
     }
 
     .product-card.product-tone-3 {
-      background: #f3f8fb;
-      border-left-color: rgba(48, 111, 145, 0.3);
+      background: #fff;
+      border-left-color: rgba(47, 143, 91, 0.34);
     }
 
     .product-card.product-tone-4 {
-      background: #f9f5fb;
-      border-left-color: rgba(127, 83, 145, 0.26);
+      background: #fff;
+      border-left-color: rgba(47, 143, 91, 0.32);
     }
 
     .product-card.product-tone-5 {
-      background: #fbf6f4;
-      border-left-color: rgba(158, 85, 62, 0.28);
+      background: #fff;
+      border-left-color: rgba(63, 111, 168, 0.34);
     }
 
     .product-card.cement-card {
-      background: #eef6f2;
-      border-color: rgba(31, 122, 82, 0.22);
-      border-left-color: rgba(15, 118, 110, 0.5);
+      background: #fff;
+      border-color: var(--line);
+      border-left-color: rgba(47, 143, 91, 0.42);
     }
 
     .cement-label {
       display: grid;
       place-items: center;
       min-height: 42px;
-      border: 1px solid rgba(15, 118, 110, 0.35);
+      border: 1px solid rgba(95, 128, 108, 0.28);
       border-radius: 7px;
-      background: #e6f4ee;
-      color: #0f5d45;
+      background: var(--accent-soft);
+      color: #1f6a42;
       font-weight: 850;
     }
 
     .unit-price-field {
-      border: 1px solid rgba(15, 118, 110, 0.18);
+      border: 1px solid var(--line);
       border-radius: 7px;
-      background: #eaf4ef;
+      background: var(--system-gray);
       padding: 8px;
     }
 
     .total-field {
       grid-column: 1 / -1;
-      border: 2px solid rgba(183, 131, 36, 0.48);
+      border: 1px solid rgba(63, 111, 168, 0.45);
       border-radius: 8px;
-      background: #fff7df;
+      background: rgba(63, 111, 168, 0.15);
       padding: 12px;
     }
 
     .total-field .field-label {
-      color: #6a470f;
+      color: #1f4168;
       font-size: 16px;
     }
 
     .total-field input {
       max-width: none;
       min-height: 52px;
-      border-color: rgba(183, 131, 36, 0.55);
+      border-color: rgba(63, 111, 168, 0.48);
       font-size: 20px;
       font-weight: 800;
-      background: #fffdf7;
+      background: #fff;
     }
 
     .payment-panel {
@@ -610,9 +608,9 @@
       display: grid;
       grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
       gap: 14px;
-      border: 1px solid rgba(31, 122, 82, 0.16);
+      border: 1px solid var(--line);
       border-radius: 8px;
-      background: #f8fbf8;
+      background: #fff;
       padding: 14px;
     }
 
@@ -644,18 +642,18 @@
 
     .payment-deduction {
       grid-column: 1 / -1;
-      border: 1px solid rgba(183, 131, 36, 0.34);
+      border: 1px solid rgba(63, 111, 168, 0.36);
       border-radius: 8px;
-      background: #fff8e6;
+      background: rgba(63, 111, 168, 0.13);
       padding: 10px 12px;
-      color: #5f410f;
+      color: #1f4168;
       font-size: 13px;
       line-height: 1.55;
       font-weight: 760;
     }
 
     .payment-deduction strong {
-      color: #17201b;
+      color: var(--text);
       font-size: 15px;
     }
 
@@ -690,10 +688,10 @@
 
     .result-box {
       min-height: 260px;
-      border: 1px solid #15241b;
+      border: 1px solid #141923;
       border-radius: 8px;
-      background: #111813;
-      color: #f8fff9;
+      background: #111827;
+      color: #f9fafb;
       padding: 16px;
       white-space: pre-wrap;
       font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
@@ -705,14 +703,14 @@
 
     .result-box:focus {
       border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(183, 131, 36, 0.2);
+      box-shadow: 0 0 0 3px rgba(63, 111, 168, 0.18);
     }
 
     .freight-question {
       margin-top: 14px;
-      border: 1px solid #d7e4dc;
+      border: 1px solid var(--line);
       border-radius: 10px;
-      background: #fbfffc;
+      background: #fff;
       padding: 14px;
     }
 
@@ -733,11 +731,11 @@
 
     .freight-question-box {
       min-height: 112px;
-      border: 1px solid #cfe3d7;
+      border: 1px solid var(--line);
       border-radius: 8px;
-      background: #f6fbf7;
+      background: var(--system-gray);
       padding: 14px;
-      color: #17251d;
+      color: var(--text);
       white-space: pre-wrap;
       font-size: 17px;
       line-height: 1.65;
@@ -745,9 +743,9 @@
     }
 
     #copyFreightQuestionBtn {
-      background: #238458;
-      color: #fff;
-      border-color: #238458;
+      background: rgba(47, 143, 91, 0.20);
+      color: #155f38;
+      border-color: rgba(47, 143, 91, 0.42);
     }
 
     .actions {
@@ -761,10 +759,6 @@
       width: 100%;
       padding: 0 10px;
       white-space: nowrap;
-    }
-
-    .actions #copyBtn {
-      order: 10;
     }
 
     button {
@@ -781,18 +775,18 @@
 
     button.secondary {
       border: 1px solid var(--line);
-      background: #eef4ef;
-      color: #1c2f24;
+      background: var(--system-gray);
+      color: var(--text);
     }
 
     .reset-next-btn {
       justify-self: stretch;
       width: 100%;
       min-height: 52px;
-      border: 1px solid rgba(168, 58, 47, 0.32);
-      background: #fff0ed;
-      color: #7a231b;
-      box-shadow: 0 8px 18px rgba(168, 58, 47, 0.08);
+      border: 1px solid rgba(63, 111, 168, 0.34);
+      background: rgba(63, 111, 168, 0.13);
+      color: #1f4168;
+      box-shadow: 0 8px 18px rgba(63, 111, 168, 0.09);
     }
 
     .hidden { display: none !important; }
@@ -842,6 +836,385 @@
       .option { min-width: 100%; }
       .actions { grid-template-columns: 1fr; }
       .actions #copyBtn { grid-column: auto; }
+    }
+
+    /* iOS-inspired work-tool layer: neutral system surfaces with restrained status colors. */
+    :root {
+      --bg: #f5f6f8;
+      --panel: rgba(255, 255, 255, 0.92);
+      --text: #1a1c1f;
+      --muted: #667085;
+      --line: rgba(60, 60, 67, 0.18);
+      --accent: #2f8f5b;
+      --accent-soft: rgba(47, 143, 91, 0.18);
+      --gold: #3f6fa8;
+      --warn: #3f6fa8;
+      --aux: #2f8f5b;
+      --system-gray: #f2f2f7;
+      --system-gray-2: #e5e5ea;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.07);
+    }
+
+    body {
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    main {
+      padding-top: max(24px, env(safe-area-inset-top));
+      padding-bottom: max(34px, env(safe-area-inset-bottom));
+    }
+
+    h1 {
+      font-weight: 850;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .pill,
+    .panel,
+    .product-card,
+    .payment-panel,
+    .freight-panel,
+    .concrete-extra-options,
+    .result-box,
+    .freight-question-box,
+    .notice,
+    .total-field {
+      border-color: var(--line);
+    }
+
+    .pill {
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .panel {
+      border-radius: 18px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-inner {
+      padding: 18px;
+    }
+
+    .product-card,
+    .payment-panel,
+    .freight-panel,
+    .concrete-extra-options,
+    .total-field {
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: none;
+    }
+
+    .order-panel,
+    .freight-panel,
+    .payment-panel,
+    .concrete-match-tools,
+    .concrete-extra-options,
+    .ningbo-match-tools {
+      background: rgba(255, 255, 255, 0.68);
+      border-color: var(--line);
+    }
+
+    input,
+    select,
+    textarea {
+      min-height: 48px;
+      border-radius: 12px;
+      border-color: var(--line);
+      background: rgba(255, 255, 255, 0.96);
+      font-size: 16px;
+    }
+
+    textarea {
+      min-height: 92px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(47, 143, 91, 0.82);
+      box-shadow: 0 0 0 4px rgba(47, 143, 91, 0.18);
+    }
+
+    .option span,
+    .checkline,
+    button {
+      min-height: 48px;
+      border-radius: 12px;
+    }
+
+    .option span,
+    .checkline {
+      border-color: var(--line);
+      background: rgba(255, 255, 255, 0.94);
+      border-width: 1px;
+    }
+
+    .option input:checked + span {
+      border-color: rgba(47, 143, 91, 0.88);
+      background: rgba(47, 143, 91, 0.24);
+      color: #155f38;
+      box-shadow:
+        inset 0 0 0 1px rgba(47, 143, 91, 0.28),
+        0 8px 18px rgba(47, 143, 91, 0.12);
+    }
+
+    .checkline:has(input:checked) {
+      border-color: rgba(47, 143, 91, 0.84);
+      background: rgba(47, 143, 91, 0.22);
+      color: #155f38;
+      box-shadow:
+        inset 0 0 0 1px rgba(47, 143, 91, 0.24),
+        0 8px 18px rgba(47, 143, 91, 0.11);
+    }
+
+    button {
+      background: var(--accent);
+      box-shadow: 0 8px 18px rgba(47, 143, 91, 0.16);
+    }
+
+    button.secondary {
+      background: rgba(242, 242, 247, 0.96);
+      color: #1d1d1f;
+      border-color: var(--line);
+      box-shadow: none;
+    }
+
+    .reset-next-btn {
+      background: rgba(63, 111, 168, 0.13);
+      color: #1f4168;
+      border-color: rgba(63, 111, 168, 0.34);
+      box-shadow: none;
+    }
+
+    .result-box,
+    .freight-question-box {
+      border-radius: 12px;
+      background: #111827;
+      color: #f9fafb;
+      font-size: 16px;
+      line-height: 1.72;
+    }
+
+    .freight-question-box {
+      background: rgba(242, 242, 247, 0.88);
+      color: var(--text);
+    }
+
+    .option.default-option span,
+    .option.default-option input:checked + span {
+      border-color: rgba(63, 111, 168, 0.78);
+      background: rgba(63, 111, 168, 0.24);
+      color: #1f4168;
+      box-shadow:
+        inset 0 0 0 1px rgba(63, 111, 168, 0.22),
+        0 8px 18px rgba(63, 111, 168, 0.10);
+    }
+
+    .product-card,
+    .product-card.product-tone-1,
+    .product-card.product-tone-2,
+    .product-card.product-tone-3,
+    .product-card.product-tone-4,
+    .product-card.product-tone-5,
+    .product-card.cement-card {
+      background: rgba(255, 255, 255, 0.88);
+      border-color: var(--line);
+    }
+
+    .product-card.product-tone-1 { border-left-color: rgba(47, 143, 91, 0.42); }
+    .product-card.product-tone-2 { border-left-color: rgba(63, 111, 168, 0.42); }
+    .product-card.product-tone-3 { border-left-color: rgba(47, 143, 91, 0.34); }
+    .product-card.product-tone-4 { border-left-color: rgba(47, 143, 91, 0.34); }
+    .product-card.product-tone-5 { border-left-color: rgba(63, 111, 168, 0.34); }
+
+    .total-field {
+      background: rgba(63, 111, 168, 0.18);
+      border-color: rgba(63, 111, 168, 0.50);
+      box-shadow: inset 0 0 0 1px rgba(63, 111, 168, 0.12);
+    }
+
+    .total-field .field-label {
+      color: #1f4168;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .total-field input {
+      border-color: rgba(63, 111, 168, 0.58);
+      background: rgba(255, 255, 255, 0.96);
+      color: #1a1c1f;
+      font-size: 24px;
+      font-weight: 900;
+      box-shadow: 0 6px 14px rgba(63, 111, 168, 0.08);
+    }
+
+    .notice,
+    .payment-deduction {
+      background: rgba(63, 111, 168, 0.13);
+      border-color: rgba(63, 111, 168, 0.36);
+      color: #1f4168;
+    }
+
+    .notice.error {
+      background: rgba(63, 111, 168, 0.13);
+      color: #1f4168;
+    }
+
+    .unit-price-field,
+    .cement-label,
+    .readonly-pill {
+      background: var(--system-gray);
+      border-color: var(--line);
+      color: var(--text);
+    }
+
+    #copyFreightQuestionBtn {
+      background: rgba(47, 143, 91, 0.20);
+      border-color: rgba(47, 143, 91, 0.42);
+      color: #155f38;
+    }
+
+    .result-actions,
+    .freight-actions {
+      grid-template-columns: 1fr !important;
+      max-width: none;
+    }
+
+    .result-actions #copyBtn,
+    .freight-actions #copyFreightQuestionBtn {
+      width: 100%;
+      min-height: 56px;
+      border-radius: 16px;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .result-actions #copyBtn {
+      background: #4f8265;
+      border: 1px solid #4f8265;
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(79, 130, 101, 0.20);
+    }
+
+    .freight-actions #copyFreightQuestionBtn {
+      background: #4f8265;
+      border: 1px solid #4f8265;
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(79, 130, 101, 0.20);
+    }
+
+    @media (max-width: 760px) {
+      html,
+      body {
+        width: 100%;
+        overflow-x: hidden;
+      }
+
+      main {
+        width: min(100% - 18px, 1280px);
+        padding-top: max(14px, env(safe-area-inset-top));
+      }
+
+      .topbar {
+        margin-bottom: 12px;
+      }
+
+      h1 {
+        font-size: 32px;
+        line-height: 1.08;
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+
+      .panel {
+        border-radius: 18px;
+      }
+
+      .panel-inner {
+        padding: 16px;
+      }
+
+      .form-grid,
+      .product-card,
+      .summary,
+      .mini-grid,
+      .freight-panel,
+      .payment-panel,
+      .custom-mode-grid,
+      .custom-fee-row,
+      .concrete-fee-row,
+      .concrete-extra-grid,
+      .concrete-match-grid,
+      .ningbo-match-grid,
+      .compact-order-row,
+      .concrete-hole-card {
+        grid-template-columns: 1fr !important;
+      }
+
+      .option-row,
+      .checks,
+      #productCount,
+      #otherProductCount,
+      #concreteProductCount,
+      #cementProductCount,
+      .category-options,
+      .payment-method-options,
+      .payment-channel-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .sub-warehouse-row .option-row,
+      .concrete-match-tools .option-row,
+      .payment-channel-options {
+        grid-template-columns: 1fr;
+      }
+
+      .option,
+      .option.compact,
+      .checkline {
+        min-width: 0;
+        width: 100%;
+      }
+
+      .option span,
+      .checkline,
+      button,
+      input,
+      select,
+      textarea {
+        min-height: 50px;
+      }
+
+      .actions,
+      .freight-question-head {
+        grid-template-columns: 1fr;
+      }
+
+      .freight-question-head {
+        display: grid;
+        align-items: stretch;
+      }
+
+      .actions button,
+      #copyFreightQuestionBtn {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -1405,19 +1778,21 @@
             <div class="metric"><b>重量/包装</b><strong id="weightPreview">-</strong></div>
           </div>
           <div id="result" class="result-box" contenteditable="true" spellcheck="false"></div>
-          <div id="freightQuestionWrap" class="freight-question hidden">
-            <div class="freight-question-head">
-              <h3 class="freight-question-title">运费快速提问</h3>
-              <button type="button" id="copyFreightQuestionBtn" class="secondary">复制运费提问</button>
-            </div>
-            <div id="freightQuestion" class="freight-question-box"></div>
-          </div>
-          <div class="actions">
+          <div class="actions result-actions">
             <button type="button" id="copyBtn">复制整段开单信息</button>
             <button type="button" class="secondary hidden" id="resumeAutoBtn">恢复自动生成</button>
             <button type="button" class="secondary hidden" id="fillDemoBtn">填入示例</button>
             <button type="button" class="secondary hidden" id="fillNingboBtn">填入宁波示例</button>
             <button type="button" class="secondary hidden" id="fillSongnuoBtn">填入混凝土示例</button>
+          </div>
+          <div id="freightQuestionWrap" class="freight-question hidden">
+            <div class="freight-question-head">
+              <h3 class="freight-question-title">运费快速提问</h3>
+            </div>
+            <div id="freightQuestion" class="freight-question-box"></div>
+            <div class="actions freight-actions">
+              <button type="button" id="copyFreightQuestionBtn" class="secondary">复制运费提问</button>
+            </div>
           </div>
         </div>
       </section>

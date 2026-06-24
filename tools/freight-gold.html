@@ -340,6 +340,79 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* iPhone-style refinement aligned with the quote module. */
+    :root {
+      --bg: #f5f6f8;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #687385;
+      --line: #d9dee7;
+      --gold: #146c94;
+      --gold-dark: #0f506d;
+      --green: #248a5a;
+      --red: #c2410c;
+      --shadow: 0 18px 44px rgba(20, 36, 55, 0.08);
+    }
+
+    body {
+      background: var(--bg);
+    }
+
+    main {
+      width: min(1120px, calc(100% - 40px));
+    }
+
+    .panel,
+    .result,
+    .copy-box,
+    .status-pill {
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      background: rgba(255, 255, 255, 0.94);
+    }
+
+    .panel-inner {
+      padding: 22px;
+    }
+
+    input,
+    textarea,
+    select {
+      min-height: 52px;
+      border-radius: 14px;
+      border-color: #cfd6e2;
+      padding: 12px 14px;
+      font-size: 16px;
+    }
+
+    button,
+    .segmented label,
+    .spec-card,
+    .product-card {
+      min-height: 52px;
+      border-radius: 16px;
+    }
+
+    button.success,
+    .success {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+
+    .row,
+    .segmented,
+    .spec-grid,
+    .summary {
+      gap: 14px;
+    }
+
+    @media (max-width: 560px) {
+      main {
+        width: min(100% - 18px, 1120px);
+      }
+    }
   </style>
 </head>
 <body>
