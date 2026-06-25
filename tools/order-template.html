@@ -254,10 +254,10 @@
     .compact-order-row {
       grid-column: 1 / -1;
       display: grid;
-      grid-template-columns: 96px 360px 240px 240px;
-      gap: 14px;
+      grid-template-columns: 76px max-content max-content minmax(240px, 1fr);
+      gap: 12px;
       align-items: end;
-      justify-content: start;
+      justify-content: stretch;
     }
 
     .compact-order-row > div {
@@ -328,13 +328,14 @@
 
     .reset-next-field {
       min-width: 0;
+      justify-self: stretch;
     }
 
     @media (max-width: 1100px) {
       .compact-order-row {
-        grid-template-columns: 82px 330px 226px 240px;
-        gap: 12px;
-        justify-content: start;
+        grid-template-columns: 70px max-content max-content minmax(210px, 1fr);
+        gap: 10px;
+        justify-content: stretch;
       }
 
       .x-code-options {
@@ -350,6 +351,29 @@
 
       .reset-next-field .field-label {
         display: block;
+      }
+    }
+
+    @media (max-width: 850px) {
+      .compact-order-row {
+        grid-template-columns: 64px max-content max-content minmax(170px, 1fr);
+        gap: 8px;
+      }
+
+      .green-count-options {
+        grid-template-columns: repeat(6, 34px);
+        gap: 8px;
+      }
+
+      .x-code-options {
+        grid-template-columns: repeat(4, 42px);
+        gap: 5px;
+      }
+
+      .x-code-options .option,
+      .x-code-options .option span {
+        width: 42px;
+        min-width: 42px;
       }
     }
 
@@ -1667,6 +1691,18 @@
       background: #195fc8 !important;
       border-color: #195fc8 !important;
       box-shadow: 0 0 0 4px rgba(31, 111, 235, 0.16), 0 10px 22px rgba(31, 111, 235, 0.22) !important;
+    }
+    @media (max-width: 850px) {
+      .green-count-options .option span {
+        width: 34px !important;
+        min-width: 34px !important;
+        height: 34px !important;
+        min-height: 34px !important;
+        font-size: 15px !important;
+      }
+      .reset-next-field .reset-next-btn {
+        font-size: 15px !important;
+      }
     }
     .total-field {
       background: rgba(51, 156, 255, 0.18) !important;
