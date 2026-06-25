@@ -758,7 +758,506 @@
         grid-template-columns: 1fr;
       }
     }
-  </style>
+  
+
+    /* Codex / ChatGPT unified tool theme. Keep one accent color only. */
+    :root {
+      color-scheme: light !important;
+      --bg: #ffffff !important;
+      --panel: #ffffff !important;
+      --surface: #f7f7f8 !important;
+      --surface-strong: #ececf1 !important;
+      --text: #1a1c1f !important;
+      --ink: #1a1c1f !important;
+      --muted: #6b7280 !important;
+      --line: #e5e5e5 !important;
+      --accent: #339cff !important;
+      --accent-soft: rgba(51, 156, 255, 0.12) !important;
+      --soft: rgba(51, 156, 255, 0.12) !important;
+      --gold: #339cff !important;
+      --warn: #339cff !important;
+      --aux: #339cff !important;
+      --shadow: 0 18px 44px rgba(0, 0, 0, 0.06) !important;
+      --system-gray: #f7f7f8 !important;
+      --system-gray-2: #ececf1 !important;
+    }
+    html,
+    body {
+      background: #ffffff !important;
+      color: #1a1c1f !important;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", sans-serif !important;
+      letter-spacing: 0 !important;
+      -webkit-font-smoothing: antialiased;
+    }
+    main,
+    .page,
+    .app,
+    .workspace,
+    .container {
+      background: #ffffff !important;
+    }
+    h1, h2, h3, h4,
+    .section-title,
+    .field-label,
+    label,
+    b,
+    strong {
+      color: #1a1c1f !important;
+      letter-spacing: 0 !important;
+    }
+    .subtitle,
+    .muted,
+    small,
+    .hint,
+    .desc {
+      color: #6b7280 !important;
+    }
+    .panel,
+    .panel-inner,
+    .card,
+    .product-card,
+    .payment-panel,
+    .freight-panel,
+    .order-panel,
+    .metric,
+    .total-field,
+    .notice,
+    .payment-deduction,
+    .freight-question,
+    .quote-card,
+    .result-panel,
+    .search-card,
+    .preview-card,
+    .input-card,
+    .output-card,
+    .tool-card,
+    .summary-card,
+    .concrete-extra-options,
+    .concrete-match-tools,
+    .ningbo-match-tools,
+    .unit-price-field,
+    .cement-label,
+    .readonly-pill {
+      background: #ffffff !important;
+      border-color: #e5e5e5 !important;
+      color: #1a1c1f !important;
+      box-shadow: none !important;
+    }
+    .panel,
+    .card,
+    .product-card,
+    .payment-panel,
+    .freight-panel,
+    .order-panel,
+    .result-panel,
+    .search-card,
+    .preview-card,
+    .input-card,
+    .output-card,
+    .tool-card,
+    .summary-card {
+      border-radius: 18px !important;
+    }
+    input,
+    select,
+    textarea {
+      background: #ffffff !important;
+      border: 1px solid #d9d9e3 !important;
+      border-radius: 14px !important;
+      color: #1a1c1f !important;
+      font-family: inherit !important;
+      box-shadow: none !important;
+    }
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #339cff !important;
+      box-shadow: 0 0 0 4px rgba(51, 156, 255, 0.16) !important;
+      outline: none !important;
+    }
+    input::placeholder,
+    textarea::placeholder {
+      color: #9ca3af !important;
+    }
+    button,
+    .button,
+    .btn,
+    .tool-button,
+    .action-button,
+    .copy-button {
+      border-radius: 14px !important;
+      border: 1px solid #d9d9e3 !important;
+      background: #ffffff !important;
+      color: #1a1c1f !important;
+      box-shadow: none !important;
+      font-family: inherit !important;
+      font-weight: 650 !important;
+    }
+    button.primary,
+    button:not(.secondary):not(.ghost),
+    #copyBtn,
+    #copyFreightQuestionBtn,
+    .result-actions button,
+    .freight-actions button,
+    .actions button:first-child {
+      background: #1a1c1f !important;
+      border-color: #1a1c1f !important;
+      color: #ffffff !important;
+    }
+    .suggestions,
+    .ningbo-suggestions,
+    .search-suggestions,
+    .autocomplete,
+    .dropdown,
+    .dropdown-menu {
+      background: #ffffff !important;
+      border: 1px solid #d9d9e3 !important;
+      color: #1a1c1f !important;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.12) !important;
+    }
+    .product,
+    button.product,
+    button.product:not(.secondary):not(.ghost),
+    .suggestion,
+    .suggestion:not(.secondary):not(.ghost),
+    button.suggestion,
+    button.suggestion:not(.secondary):not(.ghost),
+    .suggestion-item,
+    .suggestion-item:not(.secondary):not(.ghost),
+    button.suggestion-item,
+    button.suggestion-item:not(.secondary):not(.ghost),
+    .ningbo-suggestion-item,
+    .ningbo-suggestion-item:not(.secondary):not(.ghost),
+    button.ningbo-suggestion-item,
+    button.ningbo-suggestion-item:not(.secondary):not(.ghost),
+    .search-result,
+    .search-result:not(.secondary):not(.ghost),
+    button.search-result,
+    button.search-result:not(.secondary):not(.ghost),
+    .result-item,
+    .result-item:not(.secondary):not(.ghost),
+    button.result-item,
+    button.result-item:not(.secondary):not(.ghost) {
+      background: #ffffff !important;
+      border: 1px solid #e5e5e5 !important;
+      color: #1a1c1f !important;
+      box-shadow: none !important;
+      text-align: left !important;
+    }
+    .product.active,
+    button.product.active,
+    button.product.active:not(.secondary):not(.ghost) {
+      background: rgba(51, 156, 255, 0.10) !important;
+      border-color: rgba(51, 156, 255, 0.72) !important;
+      color: #1a1c1f !important;
+      box-shadow: 0 0 0 4px rgba(51, 156, 255, 0.14) !important;
+    }
+    .product-name,
+    .product .product-name,
+    button.product .product-name {
+      color: #1a1c1f !important;
+    }
+    .product-meta,
+    .product .product-meta,
+    button.product .product-meta,
+    .product-meta span,
+    .product .product-meta span,
+    button.product .product-meta span {
+      color: #6b7280 !important;
+    }
+    .suggestion strong,
+    .suggestion-item strong,
+    .ningbo-suggestion-item strong,
+    .search-result strong,
+    .result-item strong {
+      color: #1a1c1f !important;
+    }
+    .suggestion span,
+    .suggestion-item span,
+    .ningbo-suggestion-item span,
+    .search-result span,
+    .result-item span {
+      color: #6b7280 !important;
+    }
+    .product:hover,
+    .product:focus,
+    .suggestion:hover,
+    .suggestion:focus,
+    .suggestion-item:hover,
+    .suggestion-item:focus,
+    .ningbo-suggestion-item:hover,
+    .ningbo-suggestion-item:focus,
+    .search-result:hover,
+    .search-result:focus,
+    .result-item:hover,
+    .result-item:focus {
+      background: rgba(51, 156, 255, 0.10) !important;
+      border-color: rgba(51, 156, 255, 0.55) !important;
+      color: #1a1c1f !important;
+    }
+    button.secondary,
+    .secondary,
+    .ghost {
+      background: #f7f7f8 !important;
+      border-color: #e5e5e5 !important;
+      color: #1a1c1f !important;
+    }
+    .option span,
+    .checkline,
+    .pill,
+    .chip,
+    .tag,
+    .preset,
+    .tab,
+    .segment,
+    .quick-chip {
+      background: #ffffff !important;
+      border-color: #d9d9e3 !important;
+      color: #1a1c1f !important;
+      box-shadow: none !important;
+    }
+    .option input:checked + span,
+    .checkline:has(input:checked),
+    .option.default-option input:checked + span,
+    .option.default-option span,
+    .active,
+    .selected,
+    .is-active,
+    .chip.active,
+    .tab.active,
+    .segment.active {
+      background: rgba(51, 156, 255, 0.12) !important;
+      border-color: #339cff !important;
+      color: #1a1c1f !important;
+      box-shadow: inset 0 0 0 1px rgba(51, 156, 255, 0.22) !important;
+    }
+    .product-suggest-field {
+      position: relative;
+    }
+    .quote-suggestions {
+      position: absolute;
+      z-index: 30;
+      left: 0;
+      right: 0;
+      top: calc(100% + 6px);
+      max-height: 360px;
+      overflow: auto;
+      border-radius: 14px;
+    }
+    .quote-suggestion-item {
+      display: block;
+      width: 100%;
+      min-height: 58px;
+      padding: 12px 14px;
+      border: 0;
+      border-bottom: 1px solid #e5e5e5;
+      background: #fff;
+      color: #1a1c1f;
+      text-align: left;
+      cursor: pointer;
+    }
+    .quote-suggestion-item:last-child {
+      border-bottom: 0;
+    }
+    .quote-suggestion-item strong,
+    .quote-suggestion-item span {
+      display: block;
+    }
+    .quote-suggestion-item strong {
+      font-size: 15px;
+      line-height: 1.25;
+      font-weight: 800;
+    }
+    .quote-suggestion-item span {
+      margin-top: 4px;
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .notice,
+    .payment-deduction,
+    .total-field {
+      background: #f7f7f8 !important;
+      border-color: #e5e5e5 !important;
+      color: #1a1c1f !important;
+    }
+    .total-field {
+      background: rgba(51, 156, 255, 0.18) !important;
+      border: 2px solid #339cff !important;
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.58),
+        0 10px 30px rgba(51, 156, 255, 0.16) !important;
+    }
+    .total-field .field-label {
+      color: #1a1c1f !important;
+      font-weight: 850 !important;
+      font-size: 17px !important;
+    }
+    .total-field input {
+      background: rgba(255, 255, 255, 0.94) !important;
+      border: 2px solid rgba(51, 156, 255, 0.72) !important;
+      color: #1a1c1f !important;
+      font-size: 28px !important;
+      font-weight: 900 !important;
+      box-shadow: 0 0 0 4px rgba(51, 156, 255, 0.08) !important;
+    }
+    .result-box,
+    .freight-question-box,
+    pre,
+    code,
+    .code,
+    .output,
+    .preview-output {
+      background: #1a1c1f !important;
+      color: #ffffff !important;
+      border-color: #1a1c1f !important;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+    }
+    .freight-question-box {
+      background: #f7f7f8 !important;
+      color: #1a1c1f !important;
+      border-color: #e5e5e5 !important;
+      font-family: inherit !important;
+    }
+    .segmented {
+      background: #f7f7f8 !important;
+      border: 0 !important;
+      border-radius: 15px !important;
+      padding: 3px !important;
+      gap: 3px !important;
+      overflow: visible !important;
+      box-shadow: none !important;
+    }
+    .segmented button {
+      min-height: 38px !important;
+      border: 0 !important;
+      border-radius: 12px !important;
+      background: transparent !important;
+      color: #1a1c1f !important;
+      box-shadow: none !important;
+      font-weight: 650 !important;
+    }
+    .segmented button.active {
+      background: #1a1c1f !important;
+      color: #ffffff !important;
+      box-shadow: none !important;
+    }
+    .segmented.three {
+      gap: 3px !important;
+    }
+    .toolbar button:not(.primary) {
+      background: #f7f7f8 !important;
+      color: #1a1c1f !important;
+      border-color: #e5e5e5 !important;
+    }
+    .concrete-fee-list {
+      display: grid !important;
+      gap: 14px !important;
+      margin-bottom: 16px !important;
+    }
+    .concrete-fee-row {
+      display: grid !important;
+      grid-template-columns: minmax(280px, 1fr) minmax(180px, 0.6fr) 104px !important;
+      gap: 14px !important;
+      align-items: end !important;
+    }
+    .concrete-fee-row > div {
+      min-width: 0 !important;
+    }
+    .concrete-promo-delete {
+      min-height: 46px !important;
+      width: 104px !important;
+    }
+    #addConcretePromoBtn {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-height: 46px !important;
+      min-width: 150px !important;
+      margin-top: 2px !important;
+    }
+    #addConcretePromoBtn + .hint {
+      display: block !important;
+      margin-top: 14px !important;
+      clear: both !important;
+    }
+    @media (max-width: 760px) {
+      .concrete-fee-row {
+        grid-template-columns: 1fr !important;
+      }
+      .concrete-promo-delete,
+      #addConcretePromoBtn {
+        width: 100% !important;
+      }
+    }
+    header {
+      background: transparent !important;
+      border-color: transparent !important;
+      color: #1a1c1f !important;
+    }
+    header h1,
+    .topbar h1,
+    main > h1 {
+      font-size: clamp(30px, 3.5vw, 42px) !important;
+      line-height: 1.08 !important;
+      font-weight: 800 !important;
+      color: #1a1c1f !important;
+    }
+    header .hint,
+    header p,
+    header small,
+    .topbar .subtitle {
+      color: #6b7280 !important;
+    }
+    @media (max-width: 760px) {
+      header h1,
+      .topbar h1,
+      main > h1 {
+        font-size: 26px !important;
+      }
+    }
+    header input,
+    header select {
+      background: #ffffff !important;
+      color: #1a1c1f !important;
+      border-color: #d9d9e3 !important;
+    }
+    .stage {
+      background: #f7f7f8 !important;
+      border-color: #d9d9e3 !important;
+    }
+    .plate,
+    .hole {
+      stroke: #1a1c1f !important;
+    }
+    .dim {
+      stroke: #1a1c1f !important;
+    }
+    .dimText,
+    .smallText {
+      fill: #1a1c1f !important;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+    }
+    svg,
+    canvas {
+      color: #1a1c1f !important;
+    }
+    * {
+      text-shadow: none !important;
+      letter-spacing: 0 !important;
+    }
+
+    #noteExtra {
+      min-height: 260px !important;
+      height: 260px !important;
+      resize: vertical !important;
+      line-height: 1.55 !important;
+    }
+    .note-section .field {
+      min-height: 0 !important;
+    }
+
+</style>
 </head>
 <body>
   <main>
@@ -781,13 +1280,14 @@
             </div>
           </div>
           <div id="singleProductFields">
-            <div class="field">
+            <div class="field product-suggest-field">
             <label for="product">产品</label>
             <input id="product" value="白锈鎏金板" placeholder="例如：白锈鎏金板">
+            <div id="productSuggestions" class="quote-suggestions hidden"></div>
             </div>
 
             <div id="liujinSpecs" class="spec-actions">
-            <label for="quickSpec">鎏金板快捷规格</label>
+            <label for="quickSpec">快捷规格</label>
             <select id="quickSpec">
               <option value="">请选择或手动填写</option>
               <option>硬质-1220*2440*6mm</option>
@@ -985,6 +1485,7 @@
       multiCalcLine: document.querySelector("#multiCalcLine"),
       addProduct: document.querySelector("#addProduct"),
       product: document.querySelector("#product"),
+      productSuggestions: document.querySelector("#productSuggestions"),
       quickSpec: document.querySelector("#quickSpec"),
       liujinSpecs: document.querySelector("#liujinSpecs"),
       pricingMode: () => document.querySelector('input[name="pricingMode"]:checked')?.value || "area",
@@ -1018,12 +1519,109 @@
     };
 
     const historyKey = "jiege.quote.history.v1";
-    const liujinOptions = new Set([
+    const liujinSpecOptions = [
       "硬质-1220*2440*6mm",
       "硬质-1220*3050*6mm",
       "软质-1200*2440*2~3mm",
       "软质-1200*3000*2~3mm",
-    ]);
+    ];
+    const liujinOptions = new Set(liujinSpecOptions);
+    const ningboProductCatalog = [
+      { name: "水泥浇筑板", price: 70, specs: ["3100*1180"] },
+      { name: "水波纹板", price: 90, specs: ["3000*1150", "2750*1060", "2800*540"] },
+      { name: "木浇筑板", price: 70, specs: ["2830*1140"] },
+      { name: "洞石", price: 70, specs: ["2800*1200", "2400*1200", "1200*600"] },
+      { name: "新洞石（密孔）", price: 70, specs: ["2380*1160"] },
+      { name: "海洞石", price: 75, specs: ["2400*1200"] },
+      { name: "新版洞石", price: 70, specs: ["3000*1200", "2400*1200"] },
+      { name: "粗纹线石", price: 80, specs: ["2800*1200", "2380*1180", "2360*580"] },
+      { name: "新线石", price: 75, specs: ["2950*1200", "2700*1200"] },
+      { name: "炭烧木", price: 75, specs: ["2850*930"] },
+      { name: "大竹纹（凸模）", price: 85, specs: ["2950*1000", "2880*580"] },
+      { name: "大竹纹（凹模）", price: 95, specs: ["2800*980"] },
+      { name: "波浪石", price: 80, specs: ["2750*980"] },
+      { name: "波浪", price: 90, specs: ["2800*1200"] },
+      { name: "中线石", price: 90, specs: ["2800*1200"] },
+      { name: "脊线石", price: 80, specs: ["2800*1200"] },
+      { name: "环型石", price: 90, specs: ["2800*1200"] },
+      { name: "粗布纹", price: 80, specs: ["2800*1200"] },
+      { name: "星云石", price: 85, specs: ["2830*1150"] },
+      { name: "星云石B款", price: 85, specs: ["3000*1200"] },
+      { name: "星月石", price: 85, specs: ["3100*1160", "2830*1150"] },
+      { name: "星月石", price: 70, specs: ["1200*600"] },
+      { name: "花岗岩", price: 78, specs: ["3000*1150"] },
+      { name: "花岗岩", price: 48, specs: ["1200*600"] },
+      { name: "花岗岩拼接", price: 80, specs: ["2700*1200"] },
+      { name: "阡陌石（方线石）", price: 85, specs: ["2800*1000", "2800*580"] },
+      { name: "脉络石", price: 85, specs: ["2800*990", "2800*1200", "2800*600"] },
+      { name: "双线石", price: 90, specs: ["2650*1180"] },
+      { name: "三角板（山纹）", price: 85, specs: ["2850*990"] },
+      { name: "泡沫铝", price: 100, specs: ["2800*1130"] },
+      { name: "圆铝", price: 90, specs: ["2360*1180"] },
+      { name: "锯木板", price: 85, specs: ["3100*1160"] },
+      { name: "马赛克", price: 90, specs: ["2850*1080"] },
+      { name: "方形马赛克", price: 80, specs: ["2900*1180"] },
+      { name: "50马赛克小板1", price: 75, specs: ["1200*600"] },
+      { name: "22马赛克小板2", price: 75, specs: ["1200*600"] },
+      { name: "条石拼接", price: 75, specs: ["600*150"] },
+      { name: "斧开石", price: 95, specs: ["3000*1200"] },
+      { name: "黑山岩、劈开岩", price: 95, specs: ["3100*1160"] },
+      { name: "黑山岩小板", price: 70, specs: ["1200*600"] },
+      { name: "溶积岩", price: 100, specs: ["3000*1160"] },
+      { name: "叠纹石（山岳石）", price: 100, specs: ["3100*1160"] },
+      { name: "沉积岩", price: 125, specs: ["2850*1100"] },
+      { name: "页岩", price: 125, specs: ["3100*1160"] },
+      { name: "古木纹细", price: 80, specs: ["2950*1200"] },
+      { name: "古木纹粗", price: 80, specs: ["3000*1200"] },
+      { name: "大布纹石", price: 70, specs: ["2500*1160"] },
+      { name: "玄武岩", price: 80, specs: ["3000*600"] },
+      { name: "水泥板（打印）", price: 90, specs: ["2850*1150"] },
+      { name: "平板", price: 80, specs: ["2850*1150"] },
+      { name: "锈石", price: 100, specs: ["2850*950"] },
+      { name: "平面锈石", price: 100, specs: ["2950*1160"] },
+      { name: "鎏金板软质", price: 95, specs: ["2950*1160"] },
+      { name: "鎏金板硬质", price: 85, specs: ["3000*1220", "2440*1220"] },
+      { name: "麻编（小）", price: 70, specs: ["1420*560"] },
+      { name: "麻编（大）", price: 77, specs: ["2650*1160"] },
+      { name: "竹编/人字编", price: 75, specs: ["2360*1160"] },
+      { name: "积木纹", price: 80, specs: ["2950*1180"] },
+      { name: "条石纹", price: 80, specs: ["2850*990"] },
+      { name: "苹果叶", price: 90, specs: ["2900*1160"] },
+      { name: "芭蕉叶", price: 90, specs: ["3000*1150"] },
+      { name: "齿木纹", price: 90, specs: ["2360*1160"] },
+      { name: "大齿木", price: 90, specs: ["2360*1160"] },
+      { name: "水立方", price: 90, specs: ["3000*1140"] },
+      { name: "木立方（山竹板）", price: 90, specs: ["2950*1160"] },
+      { name: "夯土砖", price: 95, specs: ["2850*1000"] },
+      { name: "15线石（金属色）", price: 95, specs: ["2950*1180"] },
+      { name: "35线石（金属色）", price: 95, specs: ["2950*1180"] },
+      { name: "23线石（金属色）", price: 95, specs: ["2950*1180"] },
+      { name: "71线石（金属色）", price: 95, specs: ["2950*1180"] },
+      { name: "摩洛石（金属色）", price: 95, specs: ["2950*1180"] },
+      { name: "峭壁岩", price: 75, specs: ["1060*590"] },
+      { name: "岩板", price: 80, specs: ["2900*1160"] },
+      { name: "岩板3D", price: 90, specs: ["2900*1160"] },
+      { name: "大理石3D", price: 90, specs: ["2950*1160"] },
+      { name: "莱姆石3D", price: 90, specs: ["2800*1200"] },
+      { name: "粗夯土3D", price: 85, specs: ["2800*1200"] },
+      { name: "云丘", price: 90, specs: ["2950*1160"] },
+      { name: "山丘", price: 90, specs: ["2700*1200"] },
+      { name: "20内圆", price: 95, specs: ["3000*1200"] },
+      { name: "30内圆", price: 95, specs: ["3000*1200"] },
+      { name: "100内圆", price: 105, specs: ["3000*590"] },
+      { name: "大峭壁岩", price: 95, specs: ["3000*1200"] },
+      { name: "腾编", price: 95, specs: ["3000*1200"] },
+      { name: "麻编", price: 95, specs: ["3000*1200"] },
+      { name: "洞石拼接", price: 100, specs: ["3000*1200"] },
+      { name: "岁月痕", price: 95, specs: ["3000*1200"] },
+      { name: "斧凿石", price: 95, specs: ["3000*1200"] },
+      { name: "山峰石", price: 115, specs: ["3000*1200"] },
+      { name: "拼接文化石", price: 95, specs: ["2800*1200"] },
+      { name: "条形文化石", price: 95, specs: ["2800*1200"] },
+      { name: "大板岩", price: 90, specs: ["3000*1200"] },
+      { name: "3D洞石", price: 75, specs: ["1200*600", "1200*2400", "1200*2800"] },
+      { name: "3D新版洞石", price: 75, specs: ["1200*600", "1200*2400", "1200*2800", "1200*3000"] }
+    ];
 
     function money(value) {
       const num = Number(value);
@@ -1058,6 +1656,138 @@
       const looksLikeMillimeters = match && (Number(match[1]) > 20 || Number(match[2]) > 20);
       if (hasMm || !looksLikeMillimeters) return compact;
       return `${compact}mm`;
+    }
+
+    function normalizeLookupText(value) {
+      return String(value || "").replace(/\s+/g, "").toLowerCase();
+    }
+
+    function formatNingboSpecNumber(value) {
+      const num = Number(value);
+      if (!Number.isFinite(num)) return String(value || "").trim();
+      return Number.isInteger(num) ? String(num) : String(num).replace(/\.?0+$/, "");
+    }
+
+    function formatNingboSpec(spec) {
+      const raw = String(spec || "").trim();
+      if (!raw) return "";
+      const clean = raw.replace(/\s+/g, "").replace(/[xX×]/g, "*").replace(/mm$/i, "");
+      const parts = clean.split("*").filter(Boolean);
+      const nums = parts.map((part) => Number(part));
+      if (parts.length >= 2 && Number.isFinite(nums[0]) && Number.isFinite(nums[1])) {
+        let first = nums[0];
+        let second = nums[1];
+        const isSmallPanel = (first === 1200 && second === 600) || (first === 600 && second === 1200);
+        if (isSmallPanel) {
+          first = 1200;
+          second = 600;
+        } else if (first > second) {
+          [first, second] = [second, first];
+        }
+        const rest = parts.slice(2).map(formatNingboSpecNumber);
+        return `${formatNingboSpecNumber(first)}*${formatNingboSpecNumber(second)}${rest.length ? `*${rest.join("*")}` : ""}mm`;
+      }
+      return `${clean}mm`;
+    }
+
+    function uniqueNingboProducts(items) {
+      const seen = new Set();
+      return items.filter((item) => {
+        const key = normalizeLookupText(item.name);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    function ningboProductMatches(value) {
+      const keyword = normalizeLookupText(value);
+      if (!keyword) return [];
+      const exact = ningboProductCatalog.filter((item) => normalizeLookupText(item.name) === keyword);
+      if (exact.length) return uniqueNingboProducts(exact);
+      return uniqueNingboProducts(ningboProductCatalog.filter((item) =>
+        normalizeLookupText(item.name).includes(keyword) || keyword.includes(normalizeLookupText(item.name))
+      ));
+    }
+
+    function findNingboProduct(value) {
+      const keyword = normalizeLookupText(value);
+      if (!keyword) return null;
+      return ningboProductCatalog.find((item) => normalizeLookupText(item.name) === keyword) || null;
+    }
+
+    function ningboProductVariants(product) {
+      if (!product) return [];
+      const key = normalizeLookupText(product.name);
+      return ningboProductCatalog.filter((item) => normalizeLookupText(item.name) === key);
+    }
+
+    function ningboSpecsForProduct(product) {
+      return [...new Set(ningboProductVariants(product).flatMap((item) => item.specs).map(formatNingboSpec).filter(Boolean))];
+    }
+
+    function renderQuickSpecOptions(options, selected = "") {
+      const selectedValue = selected || options[0] || "";
+      els.quickSpec.innerHTML = [
+        '<option value="">请选择或手动填写</option>',
+        ...options.map((option) => `<option value="${escapeHtml(option)}"${option === selectedValue ? " selected" : ""}>${escapeHtml(option)}</option>`)
+      ].join("");
+      els.quickSpec.value = selectedValue;
+    }
+
+    function syncProductQuickSpecs({ applyFirstSpec = false } = {}) {
+      const product = findNingboProduct(els.product.value);
+      const specs = product ? ningboSpecsForProduct(product) : liujinSpecOptions;
+      const shouldShow = product || els.product.value.includes("鎏金板");
+      els.liujinSpecs.classList.toggle("show", shouldShow);
+      renderQuickSpecOptions(specs, specs.includes(els.spec.value.trim()) ? els.spec.value.trim() : "");
+      if (product && applyFirstSpec && specs[0]) {
+        els.quickSpec.value = specs[0];
+        els.spec.value = specs[0];
+      } else {
+        syncQuickSpec();
+      }
+    }
+
+    function summarizeNingboProduct(product) {
+      const variants = ningboProductVariants(product);
+      const prices = [...new Set(variants.map((item) => `${item.price}元/平`))].join(" / ");
+      const specs = ningboSpecsForProduct(product).slice(0, 4).join("、");
+      return `${prices}${specs ? ` | ${specs}` : ""}`;
+    }
+
+    function hideProductSuggestions() {
+      els.productSuggestions.classList.add("hidden");
+      els.productSuggestions.innerHTML = "";
+    }
+
+    function renderProductSuggestions() {
+      const exact = findNingboProduct(els.product.value);
+      const matches = ningboProductMatches(els.product.value);
+      if (!matches.length || exact) {
+        hideProductSuggestions();
+        return;
+      }
+      els.productSuggestions.innerHTML = matches.slice(0, 12).map((item) => `
+        <button type="button" class="quote-suggestion-item" data-product="${escapeHtml(item.name)}">
+          <strong>${escapeHtml(item.name)}</strong>
+          <span>${escapeHtml(summarizeNingboProduct(item))}</span>
+        </button>
+      `).join("");
+      els.productSuggestions.classList.remove("hidden");
+    }
+
+    function selectNingboProduct(productName) {
+      const product = findNingboProduct(productName);
+      if (!product) return;
+      const specs = ningboSpecsForProduct(product);
+      els.product.value = product.name;
+      if (specs[0]) {
+        renderQuickSpecOptions(specs, specs[0]);
+        els.spec.value = specs[0];
+      }
+      hideProductSuggestions();
+      render();
     }
 
     function meterText(value) {
@@ -1239,7 +1969,7 @@
       const includeTax = els.includeTax.checked;
       const freightFee = includeFreight ? enteredFreightFee : 0;
       const specSize = parseSpec(spec);
-      els.liujinSpecs.classList.toggle("show", product.includes("鎏金板"));
+      syncProductQuickSpecs();
       els.taxBox.hidden = !includeTax;
       els.includeFreight.checked = includeFreight;
       els.originalPriceLabel.textContent = isSheetPricing ? "原价（元/张，可不填）" : "原价（元/平方，可不填）";
@@ -1316,7 +2046,8 @@
 
     function syncQuickSpec() {
       const value = els.spec.value.trim();
-      els.quickSpec.value = liujinOptions.has(value) ? value : "";
+      const option = [...els.quickSpec.options].find((item) => item.value === value);
+      els.quickSpec.value = option ? value : "";
     }
 
     function getCheckedValue(name) { return document.querySelector(`input[name="${name}"]:checked`)?.value || ""; }
@@ -1441,6 +2172,23 @@
       els.copyState.textContent = "已重置";
       setTimeout(() => { els.copyState.textContent = ""; }, 1400);
     }
+
+    els.product.addEventListener("input", () => {
+      renderProductSuggestions();
+      syncProductQuickSpecs();
+    });
+    els.product.addEventListener("change", () => {
+      syncProductQuickSpecs({ applyFirstSpec: Boolean(findNingboProduct(els.product.value)) && !els.spec.value.trim() });
+    });
+    els.product.addEventListener("blur", () => {
+      window.setTimeout(hideProductSuggestions, 120);
+    });
+    els.productSuggestions.addEventListener("mousedown", (event) => {
+      const button = event.target.closest(".quote-suggestion-item");
+      if (!button) return;
+      event.preventDefault();
+      selectNingboProduct(button.dataset.product || "");
+    });
 
     document.addEventListener("input", (event) => { if (event.target === els.quote) return; if (event.target === els.spec) syncQuickSpec(); render(); });
     document.addEventListener("change", (event) => { if (event.target === els.spec) syncQuickSpec(); render(); });

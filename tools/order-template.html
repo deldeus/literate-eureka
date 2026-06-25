@@ -1216,7 +1216,518 @@
         width: 100%;
       }
     }
-  </style>
+  
+
+    /* Codex / ChatGPT unified tool theme. Keep one accent color only. */
+    :root {
+      color-scheme: light !important;
+      --bg: #ffffff !important;
+      --panel: #ffffff !important;
+      --surface: #f7f7f8 !important;
+      --surface-strong: #ececf1 !important;
+      --text: #1a1c1f !important;
+      --ink: #1a1c1f !important;
+      --muted: #6b7280 !important;
+      --line: #e5e5e5 !important;
+      --accent: #339cff !important;
+      --accent-soft: rgba(51, 156, 255, 0.12) !important;
+      --soft: rgba(51, 156, 255, 0.12) !important;
+      --gold: #339cff !important;
+      --warn: #339cff !important;
+      --aux: #339cff !important;
+      --shadow: 0 18px 44px rgba(0, 0, 0, 0.06) !important;
+      --system-gray: #f7f7f8 !important;
+      --system-gray-2: #ececf1 !important;
+    }
+    html,
+    body {
+      background: #ffffff !important;
+      color: #1a1c1f !important;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", sans-serif !important;
+      letter-spacing: 0 !important;
+      -webkit-font-smoothing: antialiased;
+    }
+    main,
+    .page,
+    .app,
+    .workspace,
+    .container {
+      background: #ffffff !important;
+    }
+    h1, h2, h3, h4,
+    .section-title,
+    .field-label,
+    label,
+    b,
+    strong {
+      color: #1a1c1f !important;
+      letter-spacing: 0 !important;
+    }
+    .subtitle,
+    .muted,
+    small,
+    .hint,
+    .desc {
+      color: #6b7280 !important;
+    }
+    .panel,
+    .panel-inner,
+    .card,
+    .product-card,
+    .payment-panel,
+    .freight-panel,
+    .order-panel,
+    .metric,
+    .total-field,
+    .notice,
+    .payment-deduction,
+    .freight-question,
+    .quote-card,
+    .result-panel,
+    .search-card,
+    .preview-card,
+    .input-card,
+    .output-card,
+    .tool-card,
+    .summary-card,
+    .concrete-extra-options,
+    .concrete-match-tools,
+    .ningbo-match-tools,
+    .unit-price-field,
+    .cement-label,
+    .readonly-pill {
+      background: #ffffff !important;
+      border-color: #e5e5e5 !important;
+      color: #1a1c1f !important;
+      box-shadow: none !important;
+    }
+    .panel,
+    .card,
+    .product-card,
+    .payment-panel,
+    .freight-panel,
+    .order-panel,
+    .result-panel,
+    .search-card,
+    .preview-card,
+    .input-card,
+    .output-card,
+    .tool-card,
+    .summary-card {
+      border-radius: 18px !important;
+    }
+    input,
+    select,
+    textarea {
+      background: #ffffff !important;
+      border: 1px solid #d9d9e3 !important;
+      border-radius: 14px !important;
+      color: #1a1c1f !important;
+      font-family: inherit !important;
+      box-shadow: none !important;
+    }
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #339cff !important;
+      box-shadow: 0 0 0 4px rgba(51, 156, 255, 0.16) !important;
+      outline: none !important;
+    }
+    input::placeholder,
+    textarea::placeholder {
+      color: #9ca3af !important;
+    }
+    button,
+    .button,
+    .btn,
+    .tool-button,
+    .action-button,
+    .copy-button {
+      border-radius: 14px !important;
+      border: 1px solid #d9d9e3 !important;
+      background: #ffffff !important;
+      color: #1a1c1f !important;
+      box-shadow: none !important;
+      font-family: inherit !important;
+      font-weight: 650 !important;
+    }
+    button.primary,
+    button:not(.secondary):not(.ghost),
+    #copyBtn,
+    #copyFreightQuestionBtn,
+    .result-actions button,
+    .freight-actions button,
+    .actions button:first-child {
+      background: #1a1c1f !important;
+      border-color: #1a1c1f !important;
+      color: #ffffff !important;
+    }
+    .suggestions,
+    .ningbo-suggestions,
+    .search-suggestions,
+    .autocomplete,
+    .dropdown,
+    .dropdown-menu {
+      background: #ffffff !important;
+      border: 1px solid #d9d9e3 !important;
+      color: #1a1c1f !important;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.12) !important;
+    }
+    .product,
+    button.product,
+    button.product:not(.secondary):not(.ghost),
+    .suggestion,
+    .suggestion:not(.secondary):not(.ghost),
+    button.suggestion,
+    button.suggestion:not(.secondary):not(.ghost),
+    .suggestion-item,
+    .suggestion-item:not(.secondary):not(.ghost),
+    button.suggestion-item,
+    button.suggestion-item:not(.secondary):not(.ghost),
+    .ningbo-suggestion-item,
+    .ningbo-suggestion-item:not(.secondary):not(.ghost),
+    button.ningbo-suggestion-item,
+    button.ningbo-suggestion-item:not(.secondary):not(.ghost),
+    .search-result,
+    .search-result:not(.secondary):not(.ghost),
+    button.search-result,
+    button.search-result:not(.secondary):not(.ghost),
+    .result-item,
+    .result-item:not(.secondary):not(.ghost),
+    button.result-item,
+    button.result-item:not(.secondary):not(.ghost) {
+      background: #ffffff !important;
+      border: 1px solid #e5e5e5 !important;
+      color: #1a1c1f !important;
+      box-shadow: none !important;
+      text-align: left !important;
+    }
+    .product.active,
+    button.product.active,
+    button.product.active:not(.secondary):not(.ghost) {
+      background: rgba(51, 156, 255, 0.10) !important;
+      border-color: rgba(51, 156, 255, 0.72) !important;
+      color: #1a1c1f !important;
+      box-shadow: 0 0 0 4px rgba(51, 156, 255, 0.14) !important;
+    }
+    .product-name,
+    .product .product-name,
+    button.product .product-name {
+      color: #1a1c1f !important;
+    }
+    .product-meta,
+    .product .product-meta,
+    button.product .product-meta,
+    .product-meta span,
+    .product .product-meta span,
+    button.product .product-meta span {
+      color: #6b7280 !important;
+    }
+    .result-actions {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+    }
+    .result-actions #copyBtn,
+    .result-actions #resumeAutoBtn {
+      min-height: 56px !important;
+      border-radius: 16px !important;
+      font-size: 17px !important;
+      font-weight: 800 !important;
+      text-align: center !important;
+    }
+    .result-actions #copyBtn {
+      background: #1a1c1f !important;
+      border-color: #1a1c1f !important;
+      color: #ffffff !important;
+    }
+    .result-actions #resumeAutoBtn {
+      background: #e8f2ff !important;
+      border-color: rgba(51, 156, 255, 0.55) !important;
+      color: #145a9f !important;
+    }
+    .suggestion strong,
+    .suggestion-item strong,
+    .ningbo-suggestion-item strong,
+    .search-result strong,
+    .result-item strong {
+      color: #1a1c1f !important;
+    }
+    .suggestion span,
+    .suggestion-item span,
+    .ningbo-suggestion-item span,
+    .search-result span,
+    .result-item span {
+      color: #6b7280 !important;
+    }
+    .product:hover,
+    .product:focus,
+    .suggestion:hover,
+    .suggestion:focus,
+    .suggestion-item:hover,
+    .suggestion-item:focus,
+    .ningbo-suggestion-item:hover,
+    .ningbo-suggestion-item:focus,
+    .search-result:hover,
+    .search-result:focus,
+    .result-item:hover,
+    .result-item:focus {
+      background: rgba(51, 156, 255, 0.10) !important;
+      border-color: rgba(51, 156, 255, 0.55) !important;
+      color: #1a1c1f !important;
+    }
+    button.secondary,
+    .secondary,
+    .ghost {
+      background: #f7f7f8 !important;
+      border-color: #e5e5e5 !important;
+      color: #1a1c1f !important;
+    }
+    .option span,
+    .checkline,
+    .pill,
+    .chip,
+    .tag,
+    .preset,
+    .tab,
+    .segment,
+    .quick-chip {
+      background: #ffffff !important;
+      border-color: #d9d9e3 !important;
+      color: #1a1c1f !important;
+      box-shadow: none !important;
+    }
+    .option input:checked + span,
+    .checkline:has(input:checked),
+    .option.default-option input:checked + span,
+    .option.default-option span,
+    .active,
+    .selected,
+    .is-active,
+    .chip.active,
+    .tab.active,
+    .segment.active {
+      background: rgba(51, 156, 255, 0.12) !important;
+      border-color: #339cff !important;
+      color: #1a1c1f !important;
+      box-shadow: inset 0 0 0 1px rgba(51, 156, 255, 0.22) !important;
+    }
+    .notice,
+    .payment-deduction,
+    .total-field {
+      background: #f7f7f8 !important;
+      border-color: #e5e5e5 !important;
+      color: #1a1c1f !important;
+    }
+    .total-field {
+      background: rgba(51, 156, 255, 0.18) !important;
+      border: 2px solid #339cff !important;
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.58),
+        0 10px 30px rgba(51, 156, 255, 0.16) !important;
+    }
+    .total-field .field-label {
+      color: #1a1c1f !important;
+      font-weight: 850 !important;
+      font-size: 17px !important;
+    }
+    .total-field input {
+      background: rgba(255, 255, 255, 0.94) !important;
+      border: 2px solid rgba(51, 156, 255, 0.72) !important;
+      color: #1a1c1f !important;
+      font-size: 28px !important;
+      font-weight: 900 !important;
+      box-shadow: 0 0 0 4px rgba(51, 156, 255, 0.08) !important;
+    }
+    .result-box,
+    .freight-question-box,
+    pre,
+    code,
+    .code,
+    .output,
+    .preview-output {
+      background: #1a1c1f !important;
+      color: #ffffff !important;
+      border-color: #1a1c1f !important;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+    }
+    .freight-question-box {
+      background: #f7f7f8 !important;
+      color: #1a1c1f !important;
+      border-color: #e5e5e5 !important;
+      font-family: inherit !important;
+    }
+    .segmented {
+      background: #f7f7f8 !important;
+      border: 0 !important;
+      border-radius: 15px !important;
+      padding: 3px !important;
+      gap: 3px !important;
+      overflow: visible !important;
+      box-shadow: none !important;
+    }
+    .segmented button {
+      min-height: 38px !important;
+      border: 0 !important;
+      border-radius: 12px !important;
+      background: transparent !important;
+      color: #1a1c1f !important;
+      box-shadow: none !important;
+      font-weight: 650 !important;
+    }
+    .segmented button.active {
+      background: #1a1c1f !important;
+      color: #ffffff !important;
+      box-shadow: none !important;
+    }
+    .segmented.three {
+      gap: 3px !important;
+    }
+    .toolbar button:not(.primary) {
+      background: #f7f7f8 !important;
+      color: #1a1c1f !important;
+      border-color: #e5e5e5 !important;
+    }
+    .concrete-fee-list {
+      display: grid !important;
+      gap: 14px !important;
+      margin-bottom: 16px !important;
+    }
+    .concrete-fee-row {
+      display: grid !important;
+      grid-template-columns: minmax(280px, 1fr) minmax(180px, 0.6fr) 104px !important;
+      gap: 14px !important;
+      align-items: end !important;
+    }
+    .concrete-fee-row > div {
+      min-width: 0 !important;
+    }
+    .concrete-promo-delete {
+      min-height: 46px !important;
+      width: 104px !important;
+    }
+    #addConcretePromoBtn {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-height: 46px !important;
+      min-width: 150px !important;
+      margin-top: 2px !important;
+    }
+    #addConcretePromoBtn + .hint {
+      display: block !important;
+      margin-top: 14px !important;
+      clear: both !important;
+    }
+    @media (max-width: 760px) {
+      .concrete-fee-row {
+        grid-template-columns: 1fr !important;
+      }
+      .concrete-promo-delete,
+      #addConcretePromoBtn {
+        width: 100% !important;
+      }
+    }
+    header {
+      background: transparent !important;
+      border-color: transparent !important;
+      color: #1a1c1f !important;
+    }
+    header h1,
+    .topbar h1,
+    main > h1 {
+      font-size: clamp(30px, 3.5vw, 42px) !important;
+      line-height: 1.08 !important;
+      font-weight: 800 !important;
+      color: #1a1c1f !important;
+    }
+    header .hint,
+    header p,
+    header small,
+    .topbar .subtitle {
+      color: #6b7280 !important;
+    }
+    @media (max-width: 760px) {
+      header h1,
+      .topbar h1,
+      main > h1 {
+        font-size: 26px !important;
+      }
+    }
+    header input,
+    header select {
+      background: #ffffff !important;
+      color: #1a1c1f !important;
+      border-color: #d9d9e3 !important;
+    }
+    .stage {
+      background: #f7f7f8 !important;
+      border-color: #d9d9e3 !important;
+    }
+    .plate,
+    .hole {
+      stroke: #1a1c1f !important;
+    }
+    .dim {
+      stroke: #1a1c1f !important;
+    }
+    .dimText,
+    .smallText {
+      fill: #1a1c1f !important;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+    }
+    svg,
+    canvas {
+      color: #1a1c1f !important;
+    }
+    * {
+      text-shadow: none !important;
+      letter-spacing: 0 !important;
+    }
+
+    .ningbo-suggestions {
+      background: #ffffff !important;
+      border: 1px solid #d9d9e3 !important;
+      border-radius: 16px !important;
+      padding: 8px !important;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.12) !important;
+      z-index: 50 !important;
+    }
+    .ningbo-suggestion-item,
+    button.ningbo-suggestion-item,
+    button.ningbo-suggestion-item:not(.secondary):not(.ghost) {
+      display: block !important;
+      width: 100% !important;
+      min-height: 64px !important;
+      background: #ffffff !important;
+      border: 1px solid #e5e5e5 !important;
+      color: #1a1c1f !important;
+      box-shadow: none !important;
+      text-align: left !important;
+    }
+    .ningbo-suggestion-item strong {
+      display: block !important;
+      color: #1a1c1f !important;
+      font-weight: 800 !important;
+    }
+    .ningbo-suggestion-item span {
+      display: block !important;
+      margin-top: 5px !important;
+      color: #6b7280 !important;
+      font-weight: 650 !important;
+    }
+    .ningbo-suggestion-item:hover,
+    .ningbo-suggestion-item:focus {
+      background: rgba(51, 156, 255, 0.10) !important;
+      border-color: rgba(51, 156, 255, 0.55) !important;
+      color: #1a1c1f !important;
+    }
+    .ningbo-suggestion-item:hover span,
+    .ningbo-suggestion-item:focus span {
+      color: #334155 !important;
+    }
+
+</style>
 </head>
 <body>
   <main>
@@ -1400,6 +1911,7 @@
                     <label class="field-label">价格选项</label>
                     <div class="checks">
                       <label class="checkline"><input class="ningbo-print-addon" type="checkbox">打印 +10元/平</label>
+                      <label class="checkline"><input class="ningbo-uv-addon" type="checkbox">UV +10元/平</label>
                       <label class="checkline"><input class="ningbo-metal-addon" type="checkbox">金属色 +5元/平</label>
                     </div>
                   </div>
@@ -1780,7 +2292,7 @@
           <div id="result" class="result-box" contenteditable="true" spellcheck="false"></div>
           <div class="actions result-actions">
             <button type="button" id="copyBtn">复制整段开单信息</button>
-            <button type="button" class="secondary hidden" id="resumeAutoBtn">恢复自动生成</button>
+            <button type="button" class="secondary" id="resumeAutoBtn">恢复自动生成</button>
             <button type="button" class="secondary hidden" id="fillDemoBtn">填入示例</button>
             <button type="button" class="secondary hidden" id="fillNingboBtn">填入宁波示例</button>
             <button type="button" class="secondary hidden" id="fillSongnuoBtn">填入混凝土示例</button>
@@ -1929,8 +2441,25 @@
       { name: "拼接文化石", price: 95, specs: ["2800*1200"] },
       { name: "条形文化石", price: 95, specs: ["2800*1200"] },
       { name: "大板岩", price: 90, specs: ["3000*1200"] },
-      { name: "3D洞石", price: 75, specs: ["2800*1200", "2400*1200"] },
-      { name: "3D洞石", price: 55, specs: ["1200*600"] }
+      { name: "3D洞石", price: 75, specs: ["1200*600", "1200*2400", "1200*2800"] },
+      { name: "3D新版洞石", price: 75, specs: ["1200*600", "1200*2400", "1200*2800", "1200*3000"] }
+    ];
+
+    const ningboUvStyleKeywords = [
+      "伊朗红",
+      "瑰红",
+      "瑰黄",
+      "喀山浅灰",
+      "中国黄",
+      "云山琥珀",
+      "云烟",
+      "云南红",
+      "烟灰",
+      "清水",
+      "喀山米",
+      "喀山灰",
+      "琥珀黑",
+      "古洞石"
     ];
 
     const logisticsByWarehouse = {
@@ -2772,6 +3301,7 @@
                   <label class="field-label">价格选项</label>
                   <div class="checks">
                     <label class="checkline"><input class="ningbo-print-addon" type="checkbox">打印 +10元/平</label>
+                    <label class="checkline"><input class="ningbo-uv-addon" type="checkbox">UV +10元/平</label>
                     <label class="checkline"><input class="ningbo-metal-addon" type="checkbox">金属色 +5元/平</label>
                   </div>
                 </div>
@@ -2885,6 +3415,7 @@
           row.unitPrice,
           row.specSelect,
           row.printAddon,
+          row.uvAddon,
           row.metalAddon
         ].filter(Boolean).forEach((input) => {
           if (input.dataset.otherRowBound === "1") return;
@@ -2898,7 +3429,7 @@
               syncNingboSpecSelect(row);
               syncNingboProductPrice(row);
             }
-            if (input === row.printAddon || input === row.metalAddon) {
+            if (input === row.printAddon || input === row.uvAddon || input === row.metalAddon) {
               syncNingboProductPrice(row);
             }
             calculate();
@@ -2911,7 +3442,7 @@
             if (input === row.specSelect) {
               applyNingboSpecSelection(row);
             }
-            if (input === row.printAddon || input === row.metalAddon) {
+            if (input === row.printAddon || input === row.uvAddon || input === row.metalAddon) {
               syncNingboProductPrice(row);
             }
             calculate();
@@ -3220,7 +3751,9 @@
         row.suggestions = row.card.querySelector(".ningbo-suggestions");
         row.specSelect = row.card.querySelector(".ningbo-spec-select");
         row.printAddon = row.card.querySelector(".ningbo-print-addon");
+        row.uvAddon = row.card.querySelector(".ningbo-uv-addon");
         row.metalAddon = row.card.querySelector(".ningbo-metal-addon");
+        row.ningboHint = row.card.querySelector(".ningbo-hint");
       });
 
       return rows;
@@ -3270,13 +3803,47 @@
       return /金属色/.test(name || "");
     }
 
+    function isNingbo3DProductName(name) {
+      const key = normalizeLookupText(name);
+      return key === "3d洞石" || key === "3d新版洞石";
+    }
+
+    function isNingboNew3DProductName(name) {
+      return normalizeLookupText(name) === "3d新版洞石";
+    }
+
+    function hasNingboUvStyle(value) {
+      const keyword = normalizeLookupText(value);
+      return ningboUvStyleKeywords.some((item) => keyword.includes(normalizeLookupText(item)));
+    }
+
+    function shouldUseNingboUvStyle(row, product) {
+      return Boolean(product && isNingbo3DProductName(product.name) && hasNingboUvStyle(row.productName?.value));
+    }
+
+    function isNingboThreeMeterSpec(spec) {
+      return formatNingboSpec(spec).replace(/mm$/i, "") === "1200*3000";
+    }
+
+    function shouldDisableNingboThreeMeter(row, product) {
+      return Boolean(product && isNingboNew3DProductName(product.name) && shouldUseNingboUvStyle(row, product));
+    }
+
     function findNingboProduct(value, allowPartial = false) {
       const keyword = normalizeLookupText(value);
       if (!keyword) return null;
-      const exact = ningboProductCatalog.find((item) => normalizeLookupText(item.name) === keyword);
+      const catalog = [...ningboProductCatalog].sort((a, b) => normalizeLookupText(b.name).length - normalizeLookupText(a.name).length);
+      const exact = catalog.find((item) => normalizeLookupText(item.name) === keyword);
       if (exact || !allowPartial) return exact || null;
-      const matched = ningboProductCatalog.filter((item) => normalizeLookupText(item.name).includes(keyword));
-      return matched.length === 1 ? matched[0] : null;
+      const matched = uniqueNingboProducts(catalog.filter((item) => {
+        const name = normalizeLookupText(item.name);
+        return name.includes(keyword) || keyword.includes(name);
+      }));
+      if (matched.length <= 1) return matched[0] || null;
+      const ranked = matched.sort((a, b) => normalizeLookupText(b.name).length - normalizeLookupText(a.name).length);
+      const firstLength = normalizeLookupText(ranked[0].name).length;
+      const secondLength = normalizeLookupText(ranked[1].name).length;
+      return firstLength > secondLength ? ranked[0] : null;
     }
 
     function uniqueNingboProducts(items) {
@@ -3295,7 +3862,7 @@
       const exact = ningboProductCatalog.filter((item) => normalizeLookupText(item.name) === keyword);
       if (exact.length) return uniqueNingboProducts(exact);
       return uniqueNingboProducts(ningboProductCatalog.filter((item) =>
-        normalizeLookupText(item.name).includes(keyword)
+        normalizeLookupText(item.name).includes(keyword) || keyword.includes(normalizeLookupText(item.name))
       ));
     }
 
@@ -3377,11 +3944,13 @@
     function ningboEffectiveSqmPrice(product, row) {
       if (!product) return numberValue(row.sqmPrice);
       const selectedProduct = ningboProductForSelectedSpec(product, row);
+      if (isNingbo3DProductName(selectedProduct.name)) return Math.max(0, selectedProduct.price);
       let price = selectedProduct.price;
       const includedPrint = hasIncludedPrint(selectedProduct.name);
       const includedMetal = hasIncludedMetal(selectedProduct.name);
       if (includedPrint && row.printAddon && !row.printAddon.checked) price -= 10;
       if (!includedPrint && row.printAddon?.checked) price += 10;
+      if (row.uvAddon?.checked) price += 10;
       if (includedMetal && row.metalAddon && !row.metalAddon.checked) price -= 5;
       if (!includedMetal && row.metalAddon?.checked) price += 5;
       return Math.max(0, price);
@@ -3400,8 +3969,16 @@
       const specs = ningboProductVariants(product).flatMap((item) => item.specs).map(formatNingboSpec).filter(Boolean);
       const uniqueSpecs = [...new Set(specs)];
       if (manualSpec && !uniqueSpecs.includes(manualSpec)) uniqueSpecs.push(manualSpec);
-      row.specSelect.innerHTML = uniqueSpecs.map((spec) => `<option value="${spec}">${spec}</option>`).join("");
+      const disableThreeMeter = shouldDisableNingboThreeMeter(row, product);
+      row.specSelect.innerHTML = uniqueSpecs.map((spec) => {
+        const disabled = disableThreeMeter && isNingboThreeMeterSpec(spec);
+        return `<option value="${spec}"${disabled ? " disabled" : ""}>${spec}${disabled ? "（UV款不可选3米）" : ""}</option>`;
+      }).join("");
       if (uniqueSpecs.includes(selected)) row.specSelect.value = selected;
+      if (row.specSelect.selectedOptions[0]?.disabled) {
+        const firstEnabled = [...row.specSelect.options].find((item) => !item.disabled);
+        if (firstEnabled) row.specSelect.value = firstEnabled.value;
+      }
     }
 
     function applyNingboSpecSelection(row) {
@@ -3432,15 +4009,33 @@
       const previousProduct = row.matchTools.dataset.product || "";
       const changedProduct = previousProduct !== product.name;
       row.matchTools.dataset.product = product.name;
+      const usesUvStyle = shouldUseNingboUvStyle(row, product);
 
       renderNingboSpecOptions(row, product);
       if (changedProduct) {
-        if (row.printAddon) row.printAddon.checked = hasIncludedPrint(product.name);
+        if (row.printAddon) row.printAddon.checked = usesUvStyle ? false : hasIncludedPrint(product.name);
+        if (row.uvAddon) row.uvAddon.checked = usesUvStyle;
         if (row.metalAddon) row.metalAddon.checked = hasIncludedMetal(product.name);
         row.specSelect.value = formatNingboSpec(product.specs[0]);
         applyNingboSpecSelection(row);
       } else {
         syncNingboSpecSelect(row);
+      }
+      if (usesUvStyle) {
+        if (row.printAddon) row.printAddon.checked = false;
+        if (row.uvAddon) row.uvAddon.checked = true;
+      }
+      if (shouldDisableNingboThreeMeter(row, product) && isNingboThreeMeterSpec(row.specSelect?.value)) {
+        const firstEnabled = [...row.specSelect.options].find((item) => !item.disabled);
+        if (firstEnabled) {
+          row.specSelect.value = firstEnabled.value;
+          applyNingboSpecSelection(row);
+        }
+      }
+      if (row.ningboHint) {
+        row.ningboHint.textContent = shouldDisableNingboThreeMeter(row, product)
+          ? "UV款不可选3米，因为以上颜色不能选这个尺寸。"
+          : "选择表格产品后自动带出规格和平方单价；也可直接在下方规格框里手填规格。";
       }
       syncNingboProductPrice(row);
     }
@@ -4213,6 +4808,13 @@
       }
     });
 
+    els.resumeAutoBtn.addEventListener("click", () => {
+      manualResultMode = false;
+      calculate();
+      els.resumeAutoBtn.textContent = "已恢复";
+      window.setTimeout(() => { els.resumeAutoBtn.textContent = "恢复自动生成"; }, 1200);
+    });
+
     els.copyFreightQuestionBtn.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(els.freightQuestion.textContent);
@@ -4233,11 +4835,6 @@
       manualResultMode = true;
       els.formNotice.textContent = "右侧结果已进入手动编辑模式。复制会使用你编辑后的文字。";
       els.formNotice.className = "notice";
-    });
-
-    els.resumeAutoBtn?.addEventListener("click", () => {
-      manualResultMode = false;
-      calculate();
     });
 
     els.resetNextBtn.addEventListener("click", resetForNextOrder);
