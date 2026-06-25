@@ -1044,20 +1044,23 @@
       overflow: auto;
       border-radius: 14px;
     }
-    .quote-suggestion-item {
+    button.quote-suggestion-item,
+    button.quote-suggestion-item:not(.secondary):not(.ghost) {
       display: block;
       width: 100%;
       min-height: 58px;
       padding: 12px 14px;
-      border: 0;
-      border-bottom: 1px solid #e5e5e5;
-      background: #fff;
-      color: #1a1c1f;
-      text-align: left;
+      border: 0 !important;
+      border-bottom: 1px solid #e5e5e5 !important;
+      border-radius: 0 !important;
+      background: #ffffff !important;
+      color: #1a1c1f !important;
+      text-align: left !important;
       cursor: pointer;
+      box-shadow: none !important;
     }
-    .quote-suggestion-item:last-child {
-      border-bottom: 0;
+    button.quote-suggestion-item:last-child {
+      border-bottom: 0 !important;
     }
     .quote-suggestion-item strong,
     .quote-suggestion-item span {
@@ -1067,10 +1070,11 @@
       font-size: 15px;
       line-height: 1.25;
       font-weight: 800;
+      color: #1a1c1f !important;
     }
     .quote-suggestion-item span {
       margin-top: 4px;
-      color: #6b7280;
+      color: #6b7280 !important;
       font-size: 13px;
       line-height: 1.35;
     }
