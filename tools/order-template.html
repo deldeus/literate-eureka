@@ -254,14 +254,103 @@
     .compact-order-row {
       grid-column: 1 / -1;
       display: grid;
-      grid-template-columns: 150px 160px 220px minmax(180px, 1fr);
-      gap: 12px;
+      grid-template-columns: 96px 360px 240px 240px;
+      gap: 14px;
       align-items: end;
+      justify-content: start;
+    }
+
+    .compact-order-row > div {
+      min-width: 0;
+    }
+
+    .compact-order-field {
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      justify-content: end;
+    }
+
+    .compact-order-row .field-label {
+      min-height: 20px;
+      margin-bottom: 8px;
+      line-height: 20px;
     }
 
     .compact-order-row input {
-      min-height: 40px;
+      min-height: 48px;
       font-size: 18px;
+    }
+
+    .x-code-options {
+      display: grid;
+      grid-template-columns: repeat(4, 50px);
+      gap: 8px;
+      min-height: 48px;
+      align-items: center;
+      justify-content: start;
+    }
+
+    .green-count-options {
+      display: grid;
+      grid-template-columns: repeat(6, 38px);
+      gap: 14px;
+      justify-content: start;
+      min-height: 48px;
+      align-items: center;
+    }
+
+    .green-count-options .option {
+      min-width: 0;
+    }
+
+    .green-count-options .option span {
+      min-height: 40px;
+      padding: 8px 4px;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .x-code-options .option {
+      min-width: 0;
+      width: 50px;
+    }
+
+    .x-code-options .option span {
+      width: 50px;
+      min-width: 50px;
+      height: 48px;
+      min-height: 48px;
+      padding: 8px 6px;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .reset-next-field {
+      min-width: 0;
+    }
+
+    @media (max-width: 1100px) {
+      .compact-order-row {
+        grid-template-columns: 82px 330px 226px 240px;
+        gap: 12px;
+        justify-content: start;
+      }
+
+      .x-code-options {
+        grid-template-columns: repeat(4, 46px);
+        gap: 6px;
+      }
+
+      .x-code-options .option,
+      .x-code-options .option span {
+        width: 46px;
+        min-width: 46px;
+      }
+
+      .reset-next-field .field-label {
+        display: block;
+      }
     }
 
     .tax-field {
@@ -1519,6 +1608,66 @@
       border-color: #e5e5e5 !important;
       color: #1a1c1f !important;
     }
+    .green-count-options {
+      align-items: center;
+      max-width: none;
+    }
+    .green-count-options .option span {
+      width: 38px !important;
+      min-width: 38px !important;
+      height: 38px !important;
+      min-height: 38px !important;
+      padding: 0 !important;
+      display: grid !important;
+      place-items: center !important;
+      border-radius: 8px !important;
+      background: var(--swatch) !important;
+      border: 2px solid rgba(26, 28, 31, 0.10) !important;
+      color: var(--swatch-text, #ffffff) !important;
+      font-size: 16px !important;
+      font-weight: 850 !important;
+      line-height: 1 !important;
+      text-align: center !important;
+      position: relative !important;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18) !important;
+    }
+    .green-count-options .option input:checked + span {
+      border-color: #1a1c1f !important;
+      outline: 3px solid rgba(26, 28, 31, 0.88) !important;
+      outline-offset: 2px !important;
+      transform: translateY(-1px);
+      box-shadow:
+        0 8px 16px rgba(26, 28, 31, 0.18),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.18) !important;
+    }
+    .green-count-options .option input:checked + span::after {
+      content: "";
+      position: absolute;
+      right: -4px;
+      top: -4px;
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #1a1c1f;
+      border: 2px solid #ffffff;
+    }
+    .reset-next-field .reset-next-btn {
+      width: 100% !important;
+      min-height: 48px !important;
+      border-radius: 14px !important;
+      background: #1f6feb !important;
+      border: 1px solid #1f6feb !important;
+      color: #ffffff !important;
+      font-size: 16px !important;
+      font-weight: 850 !important;
+      box-shadow: 0 10px 22px rgba(31, 111, 235, 0.22) !important;
+    }
+    .reset-next-field .reset-next-btn:hover,
+    .reset-next-field .reset-next-btn:focus {
+      background: #195fc8 !important;
+      border-color: #195fc8 !important;
+      box-shadow: 0 0 0 4px rgba(31, 111, 235, 0.16), 0 10px 22px rgba(31, 111, 235, 0.22) !important;
+    }
     .total-field {
       background: rgba(51, 156, 255, 0.18) !important;
       border: 2px solid #339cff !important;
@@ -1776,19 +1925,34 @@
               </div>
 
               <div class="compact-order-row">
-                <div>
+                <div class="compact-order-field">
                   <label class="field-label" for="orderIndex">当日第几单</label>
                   <input id="orderIndex" type="number" min="1" step="1" inputmode="numeric" placeholder="4">
                 </div>
-                <div>
-                  <label class="field-label" for="greenCount">张苗苗数字</label>
-                  <input id="greenCount" type="number" min="0" step="1" inputmode="numeric" placeholder="5">
+                <div class="compact-order-field">
+                  <label class="field-label">张苗苗数字</label>
+                  <div class="green-count-options">
+                    <label class="option compact" style="--swatch:#4f8d3c;"><input type="radio" name="greenCount" value="1"><span>1</span></label>
+                    <label class="option compact" style="--swatch:#69bdc5;"><input type="radio" name="greenCount" value="2"><span>2</span></label>
+                    <label class="option compact" style="--swatch:#f0c21a;--swatch-text:#1a1c1f;"><input type="radio" name="greenCount" value="3"><span>3</span></label>
+                    <label class="option compact" style="--swatch:#ef7aa8;--swatch-text:#1a1c1f;"><input type="radio" name="greenCount" value="4"><span>4</span></label>
+                    <label class="option compact" style="--swatch:#b92b22;"><input type="radio" name="greenCount" value="5"><span>5</span></label>
+                    <label class="option compact" style="--swatch:#9671ee;"><input type="radio" name="greenCount" value="6"><span>6</span></label>
+                  </div>
                 </div>
-                <div>
-                  <label class="field-label" for="xCode">X 内容</label>
-                  <input id="xCode" value="X" placeholder="例如 X">
+                <div class="compact-order-field">
+                  <label class="field-label">X 内容</label>
+                  <div class="x-code-options">
+                    <label class="option compact"><input type="radio" name="xCode" value="X" checked><span>X</span></label>
+                    <label class="option compact"><input type="radio" name="xCode" value="L"><span>L</span></label>
+                    <label class="option compact"><input type="radio" name="xCode" value="LS"><span>LS</span></label>
+                    <label class="option compact"><input type="radio" name="xCode" value="J"><span>J</span></label>
+                  </div>
                 </div>
-                <button type="button" class="secondary reset-next-btn" id="resetNextBtn">重置下一个</button>
+                <div class="compact-order-field reset-next-field">
+                  <label class="field-label" aria-hidden="true">&nbsp;</label>
+                  <button type="button" class="secondary reset-next-btn" id="resetNextBtn">重置下一个</button>
+                </div>
               </div>
 
               <div class="wide">
@@ -2529,8 +2693,6 @@
     const els = {
       todayPill: document.querySelector("#todayPill"),
       orderIndex: document.querySelector("#orderIndex"),
-      greenCount: document.querySelector("#greenCount"),
-      xCode: document.querySelector("#xCode"),
       receiverRaw: document.querySelector("#receiverRaw"),
       receiverName: document.querySelector("#receiverName"),
       receiverPhone: document.querySelector("#receiverPhone"),
@@ -3117,6 +3279,25 @@
 
     function setProductCount(value) {
       const input = document.querySelector(`input[name='productCount'][value='${value}']`);
+      if (input) input.checked = true;
+    }
+
+    function currentGreenCount() {
+      return document.querySelector("input[name='greenCount']:checked")?.value || "0";
+    }
+
+    function setGreenCount(value) {
+      document.querySelectorAll("input[name='greenCount']").forEach((input) => {
+        input.checked = input.value === String(value);
+      });
+    }
+
+    function currentXCode() {
+      return document.querySelector("input[name='xCode']:checked")?.value || "X";
+    }
+
+    function setXCode(value) {
+      const input = document.querySelector(`input[name='xCode'][value='${value}']`);
       if (input) input.checked = true;
     }
 
@@ -4374,8 +4555,8 @@
       const rawName = els.receiverName.value.trim();
       const rawPhone = els.receiverPhone.value.trim();
       const rawAddress = els.receiverAddress.value.trim();
-      const greenCount = els.greenCount.value.trim() || "0";
-      const xCode = els.xCode.value.trim() || "X";
+      const greenCount = currentGreenCount();
+      const xCode = currentXCode();
 
       const dbPart = warehouse === "浙江仓" && !dbAsSeparateLine ? `，DB：${money(built.db)}` : "";
       const dbLine = dbAsSeparateLine && built.db > 0 ? `DB${money(built.db)}` : "";
@@ -4442,8 +4623,8 @@
       manualResultMode = false;
       els.orderIndex.value = 4;
       document.querySelector("input[name='warehouse'][value='浙江仓']").checked = true;
-      els.greenCount.value = 5;
-      els.xCode.value = "X";
+      setGreenCount(5);
+      setXCode("X");
       els.receiverRaw.value = "陈道存 18119682562 安徽省合肥市瑶海区三十头街道铜陵北路1683号招商奥体公园4期";
       els.receiverName.value = "";
       els.receiverPhone.value = "";
@@ -4478,8 +4659,8 @@
       manualResultMode = false;
       els.orderIndex.value = 1;
       document.querySelector("input[name='warehouse'][value='宁波仓']").checked = true;
-      els.greenCount.value = 5;
-      els.xCode.value = "X";
+      setGreenCount(5);
+      setXCode("X");
       els.receiverRaw.value = "袁工13770736013苏州市吴中区星海街198号星海大厦10楼";
       els.receiverName.value = "";
       els.receiverPhone.value = "";
@@ -4521,8 +4702,8 @@
       els.orderIndex.value = 4;
       document.querySelector("input[name='warehouse'][value='混凝土仓']").checked = true;
       document.querySelector("input[name='concreteWarehouse'][value='松诺']").checked = true;
-      els.greenCount.value = 5;
-      els.xCode.value = "L";
+      setGreenCount(5);
+      setXCode("L");
       els.receiverRaw.value = "杨明收18721378741江西省南昌市红谷滩九龙湖杨帆东街建发湾悦天地";
       els.receiverName.value = "";
       els.receiverPhone.value = "";
@@ -4583,8 +4764,8 @@
       manualResultMode = false;
       const currentIndex = Number.parseInt(els.orderIndex.value || "0", 10) || 0;
       els.orderIndex.value = currentIndex > 0 ? currentIndex + 1 : "";
-      els.greenCount.value = "";
-      els.xCode.value = "X";
+      setGreenCount("");
+      setXCode("X");
       document.querySelector("input[name='warehouse'][value='浙江仓']").checked = true;
       document.querySelector("input[name='concreteWarehouse'][value='松诺']").checked = true;
       document.querySelector("input[name='freightPay'][value='到付']").checked = true;
@@ -4709,6 +4890,8 @@
         calculate();
       });
     });
+    document.querySelectorAll("input[name='greenCount']").forEach((input) => input.addEventListener("change", calculate));
+    document.querySelectorAll("input[name='xCode']").forEach((input) => input.addEventListener("change", calculate));
 
     document.querySelectorAll("input[name='cementWarehouse']").forEach((input) => {
       input.addEventListener("change", () => {
