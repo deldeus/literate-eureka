@@ -1286,7 +1286,7 @@
           <div id="singleProductFields">
             <div class="field product-suggest-field">
             <label for="product">产品</label>
-            <input id="product" value="白锈鎏金板" placeholder="例如：白锈鎏金板">
+            <input id="product" value="" placeholder="例如：白锈鎏金板">
             <div id="productSuggestions" class="quote-suggestions hidden"></div>
             </div>
 
@@ -2054,6 +2054,13 @@
       els.quickSpec.value = option ? value : "";
     }
 
+    function applyQuickSpecSelection() {
+      const value = els.quickSpec.value;
+      if (!value) return;
+      els.spec.value = value;
+      render();
+    }
+
     function getCheckedValue(name) { return document.querySelector(`input[name="${name}"]:checked`)?.value || ""; }
     function setCheckedValue(name, value) { const radio = document.querySelector(`input[name="${name}"][value="${value}"]`); if (radio) radio.checked = true; }
 
@@ -2205,7 +2212,14 @@
       render();
     });
 
-    els.quickSpec.addEventListener("change", () => { if (els.quickSpec.value) els.spec.value = els.quickSpec.value; render(); });
+    els.quickSpec.addEventListener("change", applyQuickSpecSelection);
+    els.quickSpec.addEventListener("input", applyQuickSpecSelection);
+    els.quickSpec.addEventListener("blur", applyQuickSpecSelection);
+    els.quickSpec.addEventListener("keyup", (event) => {
+      if (event.key === "Enter" || event.key === " " || event.key === "ArrowUp" || event.key === "ArrowDown") {
+        applyQuickSpecSelection();
+      }
+    });
     els.addProduct.addEventListener("click", () => addProduct());
     els.copyBtn.addEventListener("click", async () => { await navigator.clipboard.writeText(els.quote.innerText); els.copyState.textContent = "已复制"; setTimeout(() => { els.copyState.textContent = ""; }, 1400); });
     els.historyBtn.addEventListener("click", showHistory);
