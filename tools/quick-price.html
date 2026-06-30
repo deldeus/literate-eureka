@@ -654,7 +654,8 @@
       { name: "条形文化石", price: 95, specs: ["2800*1200"] },
       { name: "大板岩", price: 90, specs: ["3000*1200"] },
       { name: "3D洞石", price: 75, specs: ["2800*1200", "2400*1200"] },
-      { name: "3D洞石", price: 55, specs: ["1200*600"] }
+      { name: "3D洞石", price: 55, specs: ["1200*600"] },
+      { name: "3D洞石", price: 60, specs: ["1200*600（清水）"] }
     ];
     const concretePriceTable = {
       "松诺": {
@@ -884,7 +885,14 @@
     function esc(value) { return String(value ?? '').replace(/[&<>"']/g, (ch) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
     function normalize(value) { return String(value || '').replace(/[\s（）()、/·-]+/g, '').toLowerCase(); }
     function money(value) { const num = Number(value); if (value === '' || value === null || value === undefined || Number.isNaN(num)) return String(value ?? ''); return Number.isInteger(num) ? String(num) : String(num).replace(/\.?0+$/, ''); }
-    function specLabel(value) { const text = String(value || ''); return text + (text.toLowerCase().includes('mm') ? '' : 'mm'); }
+    function specLabel(value) {
+      const text = String(value || '').trim();
+      const clean = text.replace(/\s+/g, '').replace(/[xX×]/g, '*').replace(/mm(?![a-z])/ig, '');
+      const noteMatch = clean.match(/([（(][^）)]*[）)])$/);
+      const note = noteMatch ? noteMatch[1] : '';
+      const main = note ? clean.slice(0, -note.length) : clean;
+      return `${main}mm${note}`;
+    }
     function liujinEntries() {
       const specNames = { 'hard-2440':'硬质 1220*2440*6mm', 'hard-3050':'硬质 1220*3050*6mm', 'hard-600':'硬质 1200*600*6mm（按硬质短板底价）', 'soft-2440':'软质 1200*2440*2~3mm', 'soft-3000':'软质 1200*3000*2~3mm' };
       const order = ['hard-2440','hard-3050','soft-2440','soft-3000'];

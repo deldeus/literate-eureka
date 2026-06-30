@@ -2463,7 +2463,7 @@
             <div class="wide">
               <label class="field-label">备注快捷项</label>
               <div class="checks">
-                <label class="checkline"><input type="checkbox" class="remarkPreset" value="【有尾款】">【有尾款】</label>
+                <label class="checkline"><input type="checkbox" class="remarkPreset" value="【有尾款等通知发货】">【有尾款等通知发货】</label>
                 <label class="checkline"><input type="checkbox" class="remarkPreset" value="【货好拍照】" checked>【货好拍照】</label>
                 <label class="checkline"><input type="checkbox" class="remarkPreset" value="修补剂随货发，谢谢！" checked>修补剂随货发，谢谢！</label>
                 <label class="checkline"><input type="checkbox" class="remarkPreset" value="【耐磨罩面】">【耐磨罩面】</label>
@@ -2552,7 +2552,8 @@
       { name: "水泥浇筑板", price: 70, specs: ["3100*1180"] },
       { name: "水波纹板", price: 90, specs: ["3000*1150", "2750*1060", "2800*540"] },
       { name: "木浇筑板", price: 70, specs: ["2830*1140"] },
-      { name: "洞石", price: 70, specs: ["2800*1200", "2400*1200", "1200*600"] },
+      { name: "洞石", price: 70, specs: ["2800*1200", "2400*1200"] },
+      { name: "洞石", price: 50, specs: ["1200*600"] },
       { name: "新洞石（密孔）", price: 70, specs: ["2380*1160"] },
       { name: "海洞石", price: 75, specs: ["2400*1200"] },
       { name: "新版洞石", price: 70, specs: ["3000*1200", "2400*1200"] },
@@ -2641,8 +2642,11 @@
       { name: "拼接文化石", price: 95, specs: ["2800*1200"] },
       { name: "条形文化石", price: 95, specs: ["2800*1200"] },
       { name: "大板岩", price: 90, specs: ["3000*1200"] },
-      { name: "3D洞石", price: 75, specs: ["1200*600", "1200*2400", "1200*2800"] },
-      { name: "3D新版洞石", price: 75, specs: ["1200*600", "1200*2400", "1200*2800", "1200*3000"] }
+      { name: "3D洞石", price: 75, specs: ["1200*2400", "1200*2800"] },
+      { name: "3D洞石", price: 55, specs: ["1200*600"] },
+      { name: "3D洞石", price: 60, specs: ["1200*600（清水）"] },
+      { name: "3D新版洞石", price: 75, specs: ["1200*2400", "1200*2800", "1200*3000"] },
+      { name: "3D新版洞石", price: 55, specs: ["1200*600"] }
     ];
 
     const ningboUvStyleKeywords = [
@@ -3658,6 +3662,8 @@
             }
             if (input === row.specSelect) {
               applyNingboSpecSelection(row);
+              syncNingboProductRow(row, true);
+              syncNingboProductPrice(row);
             }
             if (input === row.printAddon || input === row.uvAddon || input === row.metalAddon) {
               syncNingboProductPrice(row);
@@ -3993,8 +3999,11 @@
     function formatNingboSpec(spec) {
       const raw = String(spec || "").trim();
       if (!raw) return "";
-      const clean = raw.replace(/\s+/g, "").replace(/[xX×]/g, "*").replace(/mm$/i, "");
-      const parts = clean.split("*").filter(Boolean);
+      const clean = raw.replace(/\s+/g, "").replace(/[xX×]/g, "*").replace(/mm(?![a-z])/ig, "");
+      const noteMatch = clean.match(/([（(][^）)]*[）)])$/);
+      const note = noteMatch ? noteMatch[1] : "";
+      const main = note ? clean.slice(0, -note.length) : clean;
+      const parts = main.split("*").filter(Boolean);
       const nums = parts.map((part) => Number(part));
       if (parts.length >= 2 && Number.isFinite(nums[0]) && Number.isFinite(nums[1])) {
         let first = nums[0];
@@ -4007,9 +4016,9 @@
           [first, second] = [second, first];
         }
         const rest = parts.slice(2).map(formatNingboSpecNumber);
-        return `${formatNingboSpecNumber(first)}*${formatNingboSpecNumber(second)}${rest.length ? `*${rest.join("*")}` : ""}mm`;
+        return `${formatNingboSpecNumber(first)}*${formatNingboSpecNumber(second)}${rest.length ? `*${rest.join("*")}` : ""}mm${note}`;
       }
-      return `${clean}mm`;
+      return `${main}mm${note}`;
     }
 
     function hasIncludedPrint(name) {
