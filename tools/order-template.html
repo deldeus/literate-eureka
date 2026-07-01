@@ -2499,7 +2499,7 @@
           </div>
           <div id="freightQuestionWrap" class="freight-question hidden">
             <div class="freight-question-head">
-              <h3 class="freight-question-title">运费快速提问</h3>
+              <h3 class="freight-question-title" id="freightQuestionTitle">运费快速提问</h3>
             </div>
             <div id="freightQuestion" class="freight-question-box"></div>
             <div class="actions freight-actions">
@@ -2698,6 +2698,19 @@
       ]
     };
 
+    const ningboWeightProfiles = [
+      { keys: ["脉络石", "圆线石"], kgPerSqm: 10, thickness: 8, family: "" },
+      { keys: ["洞石", "3d洞石", "3d新版洞石"], kgPerSqm: 6.5, smallKgPerSqm: 5, thickness: 4, smallThickness: 3, family: "洞石" },
+      { keys: ["花岗岩"], kgPerSqm: 7, thickness: 5, family: "花岗岩" },
+      { keys: ["星月石"], kgPerSqm: 10, smallKgPerSqm: 8, thickness: 8, family: "星月石" },
+      { keys: ["黑山岩", "劈开岩"], kgPerSqm: 10, smallKgPerSqm: 8, thickness: 8, family: "黑山岩" },
+      { keys: ["莱姆石", "平板", "水泥浇筑板", "木浇筑板", "木纹板"], kgPerSqm: 6.5, thickness: 5, family: "" },
+      { keys: ["波纹", "粗线石", "线石", "波浪石", "脊线石", "粗布纹"], kgPerSqm: 7.5, thickness: 7, family: "" },
+      { keys: ["竹纹", "阡陌石", "方线石"], kgPerSqm: 9, thickness: 8, family: "" },
+      { keys: ["马赛克", "条石拼接"], kgPerSqm: 7, thickness: 6, family: "" },
+      { keys: ["斧开石", "叠纹", "沉积岩", "页岩", "山岩石"], kgPerSqm: 11, thickness: 12, family: "" }
+    ];
+
     const concretePriceTable = {
       "松诺": {
         flat: {
@@ -2853,6 +2866,7 @@
       weightPreview: document.querySelector("#weightPreview"),
       result: document.querySelector("#result"),
       freightQuestionWrap: document.querySelector("#freightQuestionWrap"),
+      freightQuestionTitle: document.querySelector("#freightQuestionTitle"),
       freightQuestion: document.querySelector("#freightQuestion"),
       copyFreightQuestionBtn: document.querySelector("#copyFreightQuestionBtn"),
       copyBtn: document.querySelector("#copyBtn"),
@@ -3816,6 +3830,79 @@
       return width * length;
     }
 
+    function specDimensionsFromText(text) {
+      const match = String(text || "").replace(/×/g, "*").match(/(\d+(?:\.\d+)?)\s*\*\s*(\d+(?:\.\d+)?)/);
+      if (!match) return { length: 0, width: 0 };
+      const first = Number(match[1]) || 0;
+      const second = Number(match[2]) || 0;
+      return { length: Math.max(first, second), width: Math.min(first, second) };
+    }
+
+    function formatPlainWeight(value, digits = 0) {
+      if (!Number.isFinite(value)) return "-";
+      return String(Number(value.toFixed(digits)));
+    }
+
+    function roundUpHalf(value) {
+      return Math.ceil(value * 2) / 2;
+    }
+
+    function normalizedNingboWeightText(value) {
+      return normalizeLookupText(value).replace(/新版/g, "").replace(/新款/g, "");
+    }
+
+    function ningboWeightProfile(productName, specText) {
+      const productKey = normalizedNingboWeightText(productName);
+      const specKey = formatNingboSpec(specText).replace(/mm$/i, "");
+      const profile = ningboWeightProfiles.find((item) =>
+        item.keys.some((key) => productKey.includes(normalizedNingboWeightText(key)))
+      ) || null;
+      const isSmall = specKey === "1200*600" || specKey === "600*1200";
+      const defaultProfile = { kgPerSqm: isSmall ? 7 : 7.5, thickness: isSmall ? 5 : 8, family: "" };
+      const source = profile || defaultProfile;
+      return {
+        kgPerSqm: isSmall && source.smallKgPerSqm ? source.smallKgPerSqm : source.kgPerSqm,
+        thickness: isSmall && source.smallThickness ? source.smallThickness : source.thickness,
+        family: source.family || ""
+      };
+    }
+
+    function ningboRequiresFinishChoice(productName, specText) {
+      const specKey = formatNingboSpec(specText).replace(/mm$/i, "");
+      if (specKey === "1200*600") return false;
+      return ["莱姆石", "洞石", "平板"].some((keyword) => String(productName || "").includes(keyword));
+    }
+
+    function ningboCrateInfo(productName, specText, qty, calculation) {
+      const profile = ningboWeightProfile(productName, specText);
+      const family = profile.family;
+      const specKey = formatNingboSpec(specText).replace(/mm$/i, "");
+      const isSmallSize = specKey === "1200*600";
+      const plywoodLimits = { "洞石": 10, "花岗岩": 10, "星月石": 6, "黑山岩": 6 };
+      const smallCrateLimits = { "洞石": 240, "花岗岩": 160, "星月石": 80, "黑山岩": 80 };
+
+      if (isSmallSize && family) {
+        if (qty > 0 && qty <= plywoodLimits[family]) return { type: "夹板", weight: 10, rule: `${family} 1200*600，${plywoodLimits[family]}片以内` };
+        if (qty > 0 && qty <= smallCrateLimits[family]) return { type: "小木箱", weight: 30, rule: `${family} 1200*600，${smallCrateLimits[family]}片以内` };
+        return { type: "大木箱", weight: 65, rule: `${family} 1200*600，超过${smallCrateLimits[family]}片` };
+      }
+
+      if (!isSmallSize && family && qty === 1 && calculation.kgPerSqm <= 7.5) {
+        const standardPlywoodArea = 1.22 * 2.44;
+        const plywoodSheets = roundUpHalf(calculation.area * 2 / standardPlywoodArea);
+        const plywoodWeight = plywoodSheets * 20;
+        const packedWeight = calculation.totalWeight + plywoodWeight;
+        if (packedWeight <= 80) return { type: "大夹板", weight: plywoodWeight, plywoodSheets, packedWeight, rule: `${family}非1200*600单张夹板` };
+      }
+
+      if (ningboRequiresFinishChoice(productName, specText)) {
+        if (qty > 0 && qty <= 6) return { type: "小木箱", weight: 30, rule: "打印产品 6片以内" };
+        return { type: "大木箱", weight: 65, rule: "打印产品超过6片" };
+      }
+
+      return { type: "大木箱", weight: 65, rule: "其他产品统一使用大木箱" };
+    }
+
     function liujinSpecForDetail(text) {
       const normalized = String(text || "").trim().replace(/×/g, "*");
       const isSoft = /^软质[-－]?/.test(normalized);
@@ -4288,7 +4375,71 @@
         : (sqmPrice ? `（${money(sqmPrice)}/平）` : "");
       const detail = `${productName}${specText}*${qty}片*${money(unitPrice)}=${money(materialAmount)}${priceNote}`;
 
-      return { detail, materialAmount, qty, hasInput };
+      return { detail, materialAmount, qty, hasInput, productName, specText };
+    }
+
+    function ningboFreightRows() {
+      return otherRows()
+        .map(readOtherProduct)
+        .filter((item) => item.qty > 0 && item.productName && item.specText && item.specText !== "请填写规格");
+    }
+
+    function ningboFreightCalculation() {
+      const rows = ningboFreightRows();
+      if (!rows.length) return null;
+      const lines = [];
+      let productWeight = 0;
+      let packageWeight = 0;
+      const crateLines = [];
+      const warnings = [];
+
+      rows.forEach((row) => {
+        const dims = specDimensionsFromText(row.specText);
+        if (!dims.length || !dims.width) {
+          warnings.push(`${row.productName}未识别规格`);
+          return;
+        }
+        const profile = ningboWeightProfile(row.productName, row.specText);
+        const area = dims.length / 1000 * dims.width / 1000;
+        const rawWeight = area * profile.kgPerSqm;
+        const sheetWeight = Math.ceil(rawWeight);
+        const rowProductWeight = sheetWeight * row.qty;
+        const crate = ningboCrateInfo(row.productName, row.specText, row.qty, {
+          area,
+          kgPerSqm: profile.kgPerSqm,
+          sheetWeight,
+          totalWeight: rowProductWeight,
+          length: dims.length,
+          width: dims.width
+        });
+        const crateHeight = Math.ceil(profile.thickness * row.qty + 200);
+        productWeight += rowProductWeight;
+        packageWeight += crate.weight;
+        lines.push(`${row.qty}*${sheetWeight}`);
+        const crateLabel = crate.type.includes("夹板") ? "夹板" : "木箱";
+        crateLines.push(`${crateLabel}：${dims.length + 100}*${dims.width + 100}*${crateHeight}mm`);
+      });
+
+      return {
+        productWeight,
+        packageWeight,
+        shippingWeight: productWeight + packageWeight,
+        expression: `${lines.join("+")}+${formatPlainWeight(packageWeight)}=${formatPlainWeight(productWeight + packageWeight)}KG`,
+        crateLines,
+        warnings
+      };
+    }
+
+    function ningboFreightQuestionText() {
+      const address = els.receiverAddress.value.trim();
+      const calc = ningboFreightCalculation();
+      if (!calc) return "请选择宁波产品、规格并填写数量和地址。";
+      return [
+        address || "请填写收货地址",
+        calc.expression,
+        ...calc.crateLines,
+        ...calc.warnings.map((item) => `提示：${item}`)
+      ].filter(Boolean).join("\n");
     }
 
     function buildCement() {
@@ -4630,15 +4781,18 @@
       els.materialPreview.textContent = money(built.materialAmount);
       els.kdPreview.textContent = isCustom ? "-" : money(kd);
       els.weightPreview.textContent = weightPart || "-";
-      const freightQuestionLines = [
+      const zhejiangFreightQuestion = [
         rawAddress,
         built.weightLine,
         built.packageLine,
         warehouse === "浙江仓" && built.db > 0 ? `DB： ${money(built.db)}` : ""
-      ].filter(Boolean);
-      const showFreightQuestion = warehouse === "浙江仓";
+      ].filter(Boolean).join("\n");
+      const ningboFreightQuestion = isNingboWarehouseActive() ? ningboFreightQuestionText() : "";
+      const showFreightQuestion = warehouse === "浙江仓" || isNingboWarehouseActive();
       els.freightQuestionWrap.classList.toggle("hidden", !showFreightQuestion);
-      els.freightQuestion.textContent = showFreightQuestion ? freightQuestionLines.join("\n") : "";
+      els.freightQuestion.textContent = isNingboWarehouseActive() ? ningboFreightQuestion : zhejiangFreightQuestion;
+      els.freightQuestionTitle.textContent = isNingboWarehouseActive() ? "宁波运费询价模板" : "运费快速提问";
+      els.copyFreightQuestionBtn.textContent = isNingboWarehouseActive() ? "复制宁波运费询价" : "复制运费提问";
       if (!manualResultMode) {
         renderingResult = true;
         els.result.textContent = lines.join("\n");
@@ -5043,10 +5197,11 @@
     });
 
     els.copyFreightQuestionBtn.addEventListener("click", async () => {
+      const defaultText = isNingboWarehouseActive() ? "复制宁波运费询价" : "复制运费提问";
       try {
         await navigator.clipboard.writeText(els.freightQuestion.textContent);
         els.copyFreightQuestionBtn.textContent = "已复制";
-        window.setTimeout(() => { els.copyFreightQuestionBtn.textContent = "复制运费提问"; }, 1200);
+        window.setTimeout(() => { els.copyFreightQuestionBtn.textContent = defaultText; }, 1200);
       } catch (error) {
         const range = document.createRange();
         range.selectNodeContents(els.freightQuestion);
