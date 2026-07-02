@@ -1743,9 +1743,11 @@
       const product = findNingboProduct(els.product.value);
       const specs = product ? ningboSpecsForProduct(product) : liujinSpecOptions;
       const shouldShow = product || els.product.value.includes("鎏金板");
+      const currentSpec = els.spec.value.trim();
+      const shouldAutoPickOnlySpec = product && specs.length === 1 && currentSpec !== specs[0];
       els.liujinSpecs.classList.toggle("show", shouldShow);
-      renderQuickSpecOptions(specs, specs.includes(els.spec.value.trim()) ? els.spec.value.trim() : "");
-      if (product && applyFirstSpec && specs[0]) {
+      renderQuickSpecOptions(specs, specs.includes(currentSpec) ? currentSpec : "");
+      if (product && (applyFirstSpec || shouldAutoPickOnlySpec) && specs[0]) {
         els.quickSpec.value = specs[0];
         els.spec.value = specs[0];
       } else {

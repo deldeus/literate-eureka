@@ -1006,7 +1006,7 @@
       background: #ffffff !important;
       box-shadow: none !important;
       display: grid !important;
-      grid-template-columns: minmax(0, 1fr) minmax(150px, 0.24fr) 88px !important;
+      grid-template-columns: minmax(190px, 0.38fr) minmax(0, 1fr) minmax(150px, 0.22fr) 88px !important;
       gap: 8px 14px !important;
       padding: 16px !important;
       align-items: stretch !important;
@@ -1018,6 +1018,7 @@
     }
 
     .freight-item-title,
+    .freight-item-spec-label,
     .freight-item-quantity-label {
       min-height: 30px !important;
       display: flex !important;
@@ -1033,7 +1034,7 @@
     }
 
     .freight-item-remove {
-      grid-column: 3 !important;
+      grid-column: 4 !important;
       grid-row: 1 / span 2 !important;
       align-self: center !important;
       justify-self: stretch !important;
@@ -1042,8 +1043,30 @@
       padding: 0 10px !important;
     }
 
-    .freight-item .spec-grid {
+    .item-material {
       grid-column: 1 !important;
+      align-self: stretch !important;
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      gap: 8px !important;
+      background: transparent !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+    }
+
+    .item-material .option span {
+      min-height: 42px !important;
+      height: 42px !important;
+      padding: 0 12px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 14px !important;
+      line-height: 1.15 !important;
+    }
+
+    .freight-item .spec-grid {
+      grid-column: 2 !important;
       grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
       gap: 12px !important;
     }
@@ -1057,7 +1080,7 @@
     }
 
     .item-quantity {
-      grid-column: 2 !important;
+      grid-column: 3 !important;
       align-self: stretch !important;
       min-height: 64px !important;
       height: 64px !important;
@@ -1080,13 +1103,131 @@
         grid-template-columns: 1fr !important;
       }
       .freight-item-title,
+      .freight-item-spec-label,
       .freight-item-quantity-label,
       .freight-item-remove,
+      .item-material,
       .freight-item .spec-grid {
         grid-template-columns: 1fr !important;
         grid-column: 1 !important;
         grid-row: auto !important;
         width: 100% !important;
+      }
+    }
+
+    .freight-item {
+      display: block !important;
+      padding: 18px !important;
+    }
+
+    .freight-item-head {
+      display: grid !important;
+      grid-template-columns: minmax(220px, 0.28fr) minmax(0, 1fr) 88px !important;
+      gap: 14px !important;
+      align-items: center !important;
+      margin-bottom: 16px !important;
+    }
+
+    .freight-item-title,
+    .freight-item-spec-label,
+    .freight-item-quantity-label {
+      min-height: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      margin: 0 !important;
+      color: #1a1c1f !important;
+      font-size: 16px !important;
+      font-weight: 850 !important;
+      line-height: 1.2 !important;
+      white-space: nowrap !important;
+    }
+
+    .freight-item .item-material {
+      grid-column: 2 !important;
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+      min-width: 0 !important;
+      background: transparent !important;
+      padding: 0 !important;
+    }
+
+    .freight-item .item-material .option span {
+      min-height: 42px !important;
+      height: 42px !important;
+      padding: 0 14px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 15px !important;
+      font-weight: 850 !important;
+    }
+
+    .freight-item-remove {
+      grid-column: 3 !important;
+      grid-row: auto !important;
+      align-self: center !important;
+      justify-self: stretch !important;
+      width: 88px !important;
+      min-height: 42px !important;
+    }
+
+    .freight-item-grid {
+      display: grid !important;
+      grid-template-columns: minmax(220px, 0.28fr) minmax(0, 1fr) !important;
+      gap: 14px !important;
+      align-items: end !important;
+    }
+
+    .freight-quantity-field,
+    .freight-spec-field {
+      min-width: 0 !important;
+    }
+
+    .freight-item .spec-grid {
+      grid-column: auto !important;
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+    }
+
+    .freight-item .spec-grid .option span {
+      min-height: 58px !important;
+      padding: 9px 12px !important;
+      justify-content: center !important;
+    }
+
+    .item-quantity {
+      grid-column: auto !important;
+      width: 100% !important;
+      min-height: 58px !important;
+      height: 58px !important;
+      font-size: 18px !important;
+      font-weight: 750 !important;
+    }
+
+    .freight-item-quantity-label,
+    .freight-item-spec-label {
+      margin-bottom: 8px !important;
+    }
+
+    @media (max-width: 900px) {
+      .freight-item-head,
+      .freight-item-grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      .freight-item .item-material,
+      .freight-item-remove {
+        grid-column: 1 !important;
+      }
+
+      .freight-item-remove {
+        width: 100% !important;
+      }
+
+      .freight-item .spec-grid {
+        grid-template-columns: 1fr !important;
       }
     }
 
@@ -1110,19 +1251,7 @@
           <label for="address">1. 地址</label>
           <textarea id="address" placeholder="例如：辽宁省大连市甘井子区和硕园25-7"></textarea>
 
-          <label>2. 材质</label>
-          <div class="segmented" id="materialGroup">
-            <label class="option">
-              <input type="radio" name="material" value="hard" checked>
-              <span>硬质 6mm厚</span>
-            </label>
-            <label class="option">
-              <input type="radio" name="material" value="soft">
-              <span>软质 2mm厚</span>
-            </label>
-          </div>
-
-          <label>3. 规格与数量</label>
+          <label>2. 规格与数量</label>
           <div class="freight-items" id="itemList"></div>
           <div class="add-item-row">
             <button type="button" class="secondary" id="addItemBtn">新增一组规格</button>
@@ -1208,9 +1337,8 @@
     };
 
     const state = {
-      material: "hard",
       items: [
-        { id: 1, specKey: "hard-2440", quantity: "" }
+        { id: 1, material: "hard", specKey: "hard-2440", quantity: "" }
       ],
       nextItemId: 2
     };
@@ -1228,14 +1356,15 @@
       clearBtn: document.querySelector("#clearBtn")
     };
 
-    function specByKey(specKey) {
-      const currentSpecs = specs[state.material];
+    function specByKey(material, specKey) {
+      const currentSpecs = specs[material] || specs.hard;
       return currentSpecs.find((item) => item.key === specKey) || currentSpecs[0];
     }
 
     function renderItems() {
-      const currentSpecs = specs[state.material];
       state.items.forEach((item) => {
+        item.material = item.material || "hard";
+        const currentSpecs = specs[item.material] || specs.hard;
         if (!currentSpecs.some((spec) => spec.key === item.specKey)) {
           item.specKey = currentSpecs[0].key;
         }
@@ -1244,20 +1373,35 @@
       els.itemList.innerHTML = state.items.map((item, index) => `
         <div class="freight-item" data-item-id="${item.id}">
           <div class="freight-item-head">
-            <div class="freight-item-title">明细 ${index + 1}<span>规格</span></div>
-            <div class="freight-item-quantity-label">数量</div>
+            <div class="freight-item-title">明细 ${index + 1}</div>
+            <div class="item-material segmented">
+              <label class="option">
+                <input type="radio" name="material-${item.id}" value="hard" ${item.material === "hard" ? "checked" : ""}>
+                <span>硬质 6mm厚</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="material-${item.id}" value="soft" ${item.material === "soft" ? "checked" : ""}>
+                <span>软质 2mm厚</span>
+              </label>
+            </div>
             <button type="button" class="secondary freight-item-remove" ${state.items.length <= 1 ? "disabled" : ""}>删除</button>
           </div>
           <div class="freight-item-grid">
-            <div class="spec-grid">
-              ${currentSpecs.map((spec) => `
-                <label class="option">
-                  <input type="radio" name="spec-${item.id}" value="${spec.key}" ${spec.key === item.specKey ? "checked" : ""}>
-                  <span>${spec.label}<small>单张 ${spec.unitWeight}KG</small></span>
-                </label>
-              `).join("")}
+            <div class="freight-quantity-field">
+              <div class="freight-item-quantity-label">数量</div>
+              <input id="quantity-${item.id}" class="item-quantity" type="number" min="1" step="1" value="${item.quantity}" placeholder="张数" inputmode="numeric">
             </div>
-            <input id="quantity-${item.id}" class="item-quantity" type="number" min="1" step="1" value="${item.quantity}" placeholder="张数" inputmode="numeric">
+            <div class="freight-spec-field">
+              <div class="freight-item-spec-label">规格</div>
+              <div class="spec-grid">
+                ${(specs[item.material] || specs.hard).map((spec) => `
+                  <label class="option">
+                    <input type="radio" name="spec-${item.id}" value="${spec.key}" ${spec.key === item.specKey ? "checked" : ""}>
+                    <span>${spec.label}<small>单张 ${spec.unitWeight}KG</small></span>
+                  </label>
+                `).join("")}
+              </div>
+            </div>
           </div>
         </div>
       `).join("");
@@ -1265,6 +1409,14 @@
       els.itemList.querySelectorAll(".freight-item").forEach((row) => {
         const id = Number.parseInt(row.dataset.itemId, 10);
         const item = state.items.find((entry) => entry.id === id);
+        row.querySelectorAll(`input[name="material-${id}"]`).forEach((input) => {
+          input.addEventListener("change", () => {
+            item.material = input.value;
+            item.specKey = specs[item.material][0].key;
+            renderItems();
+            calculate();
+          });
+        });
         row.querySelectorAll(`input[name="spec-${id}"]`).forEach((input) => {
           input.addEventListener("change", () => {
             item.specKey = input.value;
@@ -1287,7 +1439,8 @@
     function addItem() {
       state.items.push({
         id: state.nextItemId,
-        specKey: specs[state.material][0].key,
+        material: "hard",
+        specKey: specs.hard[0].key,
         quantity: ""
       });
       state.nextItemId += 1;
@@ -1297,9 +1450,10 @@
 
     function shipmentItems() {
       return state.items.map((item) => {
-        const spec = specByKey(item.specKey);
+        const material = item.material || "hard";
+        const spec = specByKey(material, item.specKey);
         const quantity = Number.parseInt(String(item.quantity).trim(), 10);
-        return { ...item, spec, quantity };
+        return { ...item, material, spec, quantity };
       });
     }
 
@@ -1314,7 +1468,7 @@
     }
 
     function shipmentSpecLabel(items) {
-      return items.map((item) => `${item.spec.label} ${item.quantity}张`).join(" + ");
+      return items.map((item) => `${item.spec.label} ${materialLabel(item.material)} ${item.quantity}张`).join(" + ");
     }
 
     function boardWeightLine(items) {
@@ -1325,11 +1479,20 @@
       return items.reduce((sum, item) => sum + item.quantity * item.spec.unitWeight, 0);
     }
 
+    function materialLabel(material) {
+      return material === "soft" ? "软质" : "硬质";
+    }
+
+    function hardEquivalentQuantity(items) {
+      return items.reduce((sum, item) => sum + item.quantity * (item.material === "soft" ? 0.5 : 1), 0);
+    }
+
     function formatWeight(value) {
       return Number.isInteger(value) ? String(value) : value.toFixed(1).replace(/\.0$/, "");
     }
 
-    function choosePackage(quantity, material, lengthType) {
+    function choosePackage(items, lengthType) {
+      const quantity = items.reduce((sum, item) => sum + item.quantity, 0);
       if (lengthType === "small") {
         const palletCount = quantity > 100 ? Math.ceil(quantity / 100) : 1;
         const weight = pallets.small.weight * palletCount;
@@ -1341,13 +1504,12 @@
         };
       }
 
-      const palletLimit = material === "hard" ? 10 : 20;
-      if (quantity <= palletLimit) {
+      const equivalentQuantity = hardEquivalentQuantity(items);
+      if (equivalentQuantity <= 10) {
         return { ...pallets[lengthType], type: "pallet", output: pallets[lengthType].label };
       }
 
-      const capKey = material === "hard" ? "hardCap" : "softCap";
-      const crate = crates[lengthType].find((item) => quantity <= item[capKey]);
+      const crate = crates[lengthType].find((item) => equivalentQuantity <= item.hardCap);
       if (crate) {
         return { ...crate, type: "crate", output: crate.outer };
       }
@@ -1355,10 +1517,9 @@
       return null;
     }
 
-    function maxCapacity(material, lengthType) {
+    function maxCapacity(lengthType) {
       if (lengthType === "small") return 100;
-      if (material === "hard") return lengthType === "short" ? 88 : 60;
-      return lengthType === "short" ? 176 : 120;
+      return lengthType === "short" ? 88 : 60;
     }
 
     function calculate() {
@@ -1387,13 +1548,13 @@
 
       const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
       const lengthType = shipmentLengthType(items);
-      const pkg = choosePackage(totalQuantity, state.material, lengthType);
+      const pkg = choosePackage(items, lengthType);
       const boardTotal = boardWeight(items);
       const db = Math.ceil(totalQuantity * 1.5);
 
       if (!pkg) {
-        const max = maxCapacity(state.material, lengthType);
-        const message = `当前合计 ${totalQuantity} 张超过表格最大可装数量（${max}张），请拆分多箱后再提交。`;
+        const max = maxCapacity(lengthType);
+        const message = `当前合计 ${formatWeight(hardEquivalentQuantity(items))} 张硬质等效数量超过表格最大可装数量（${max}张），请拆分多箱后再提交。`;
         els.result.textContent = message;
         els.notice.textContent = message;
         els.notice.className = "notice error";
@@ -1416,23 +1577,11 @@
       els.result.textContent = template;
 
       const packDescription = pkg.type === "pallet"
-        ? `合计${totalQuantity}张在优先托盘范围内，使用${pkg.output}，包装重量 ${pkg.weight}KG。`
-        : `合计${totalQuantity}张按最长规格匹配${pkg.name}，外径 ${pkg.outer}，木箱重量 ${pkg.weight}KG。`;
+        ? `合计${totalQuantity}张，硬软混装按硬质等效 ${formatWeight(hardEquivalentQuantity(items))} 张核算，在优先托盘范围内，使用${pkg.output}，包装重量 ${pkg.weight}KG。`
+        : `合计${totalQuantity}张，硬软混装按硬质等效 ${formatWeight(hardEquivalentQuantity(items))} 张核算，按最长规格匹配${pkg.name}，外径 ${pkg.outer}，木箱重量 ${pkg.weight}KG。`;
       els.notice.textContent = packDescription;
       els.notice.className = "notice";
     }
-
-    document.querySelectorAll("input[name='material']").forEach((input) => {
-      input.addEventListener("change", () => {
-        state.material = input.value;
-        state.items = state.items.map((item, index) => ({
-          ...item,
-          specKey: specs[state.material][Math.min(index, specs[state.material].length - 1)].key
-        }));
-        renderItems();
-        calculate();
-      });
-    });
 
     els.address.addEventListener("input", calculate);
     els.addItemBtn.addEventListener("click", addItem);
