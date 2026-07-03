@@ -1468,7 +1468,7 @@
     }
 
     function shipmentSpecLabel(items) {
-      return items.map((item) => `${item.spec.label} ${materialLabel(item.material)} ${item.quantity}张`).join(" + ");
+      return items.map((item) => `${item.spec.label} ${item.quantity}张`).join(" + ");
     }
 
     function boardWeightLine(items) {
@@ -1477,10 +1477,6 @@
 
     function boardWeight(items) {
       return items.reduce((sum, item) => sum + item.quantity * item.spec.unitWeight, 0);
-    }
-
-    function materialLabel(material) {
-      return material === "soft" ? "软质" : "硬质";
     }
 
     function hardEquivalentQuantity(items) {
@@ -1567,7 +1563,7 @@
       const total = boardTotal + pkg.weight;
       const address = els.address.value.trim() || "请粘贴地址";
       const detailLine = shipmentSpecLabel(items);
-      const weightLine = `${boardWeightLine(items)}+${pkg.weight}=${formatWeight(total)}公斤`;
+      const weightLine = `${boardWeightLine(items)}+${pkg.weight}=${formatWeight(total)}KG`;
       const dbLine = `DB${db}`;
       const template = `${address}\n\n${detailLine}\n${weightLine}\n${pkg.output}\n${dbLine}`;
 
