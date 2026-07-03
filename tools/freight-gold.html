@@ -1468,7 +1468,7 @@
     }
 
     function shipmentSpecLabel(items) {
-      return items.map((item) => `${item.spec.label} ${item.quantity}张`).join(" + ");
+      return items.map((item) => item.spec.label).join(" + ");
     }
 
     function boardWeightLine(items) {
