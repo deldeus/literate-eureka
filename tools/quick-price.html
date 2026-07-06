@@ -526,38 +526,50 @@
   </main>
   <script>
     const specs = [
-      { value: "hard-2440", label: "硬质-1220*2440*6mm", width: 1.22, length: 2.44, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 75 },
-      { value: "hard-3050", label: "硬质-1220*3050*6mm", width: 1.22, length: 3.05, unitWeight: 38, lengthType: "long", material: "hard", defaultSqmPrice: 75 },
-      { value: "hard-600", label: "硬质-1200*600*6mm", width: 1.2, length: 0.6, unitWeight: 7.5, lengthType: "small", material: "hard", defaultSqmPrice: 75 },
-      { value: "soft-2440", label: "软质-1200*2440*2~3mm", width: 1.2, length: 2.44, unitWeight: 15, lengthType: "short", material: "soft", defaultSqmPrice: 85 },
-      { value: "soft-3000", label: "软质-1200*3000*2~3mm", width: 1.2, length: 3, unitWeight: 20, lengthType: "long", material: "soft", defaultSqmPrice: 85 }
+      { value: "hard-2440", label: "硬质-1220*2440*6mm", width: 1.22, length: 2.44, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 70 },
+      { value: "hard-3050", label: "硬质-1220*3050*6mm", width: 1.22, length: 3.05, unitWeight: 38, lengthType: "long", material: "hard", defaultSqmPrice: 70 },
+      { value: "hard-600", label: "硬质-1200*600*6mm", width: 1.2, length: 0.6, unitWeight: 7.5, lengthType: "small", material: "hard", defaultSqmPrice: 70 },
+      { value: "soft-2440", label: "软质-1200*2440*2~3mm", width: 1.2, length: 2.44, unitWeight: 15, lengthType: "short", material: "soft", defaultSqmPrice: 80 },
+      { value: "soft-3000", label: "软质-1200*3000*2~3mm", width: 1.2, length: 3, unitWeight: 20, lengthType: "long", material: "soft", defaultSqmPrice: 80 }
     ];
     const liujinSeriesPriceGroups = [
       {
-        names: ["珠光釉", "珍珠绒", "鎏金", "大漠", "仿锈", "金丝纹", "琼花", "云绸"],
+        names: ["珠光釉", "鎏金", "大漠", "仿锈", "金丝绒", "琼花", "星闪砂"],
+        prices: { "hard-2440": 70, "hard-3050": 70, "soft-2440": 80, "soft-3000": 80 }
+      },
+      {
+        names: ["珍珠绒", "云绸"],
         prices: { "hard-2440": 75, "hard-3050": 75, "soft-2440": 85, "soft-3000": 85 }
       },
       {
-        names: ["铜铁锈", "古铜", "绫罗", "凤尾", "绢丝", "熔岩"],
+        names: ["铜铁锈", "古铜", "绫罗", "熔岩", "锈语", "铜话"],
+        prices: { "hard-2440": 80, "hard-3050": 80, "soft-2440": 90, "soft-3000": 90 }
+      },
+      {
+        names: ["凤尾", "绢丝", "德克德勒"],
         prices: { "hard-2440": 85, "hard-3050": 85, "soft-2440": 95, "soft-3000": 95 }
       },
       {
-        names: ["德克德勒", "烟花", "幻影"],
+        names: ["烟花", "幻影"],
         prices: { "hard-2440": 90, "hard-3050": 90, "soft-2440": 100, "soft-3000": 100 }
       },
       {
-        names: ["仿金属"],
-        prices: { "hard-2440": 105, "hard-3050": 105, "soft-2440": 115, "soft-3000": 115 }
+        names: ["仿金属", "钛金"],
+        prices: { "hard-2440": 100, "hard-3050": 100, "soft-2440": 110, "soft-3000": 110 }
       },
       {
         names: ["珠光"],
-        prices: { "hard-2440": 170, "hard-3050": 170, "soft-2440": 180, "soft-3000": 180 }
+        prices: { "hard-2440": 155, "hard-3050": 155, "soft-2440": 165, "soft-3000": 165 }
+      },
+      {
+        names: ["液态金属"],
+        prices: { "hard-2440": 105 }
       }
     ];
     const sandstoneSpecs = [
-      { value: "sand-2440", label: "1220*2440*6mm", width: 1.22, length: 2.44, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 150 },
-      { value: "sand-2400", label: "1200*2400*6mm", width: 1.2, length: 2.4, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 150 },
-      { value: "sand-600", label: "1200*600*6mm", width: 1.2, length: 0.6, unitWeight: 7.5, lengthType: "small", material: "hard", defaultSqmPrice: 135 }
+      { value: "sand-2440", label: "1220*2440*6mm", width: 1.22, length: 2.44, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 140 },
+      { value: "sand-2400", label: "1200*2400*6mm", width: 1.2, length: 2.4, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 140 },
+      { value: "sand-600", label: "1200*600*6mm", width: 1.2, length: 0.6, unitWeight: 7.5, lengthType: "small", material: "hard", defaultSqmPrice: 130 }
     ];
     const ningboProductCatalog = [
       { name: "水泥浇筑板", price: 70, specs: ["3100*1180"] },

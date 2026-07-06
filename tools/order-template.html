@@ -645,6 +645,23 @@
       font-size: 15px;
     }
 
+    .liujin-price-note {
+      grid-column: span 2;
+      align-self: end;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      color: #8a94a3;
+      font-size: 12px;
+      line-height: 1.45;
+      padding: 0 4px 2px;
+    }
+
+    .liujin-price-note b {
+      color: #6b7280 !important;
+      font-weight: 850;
+    }
+
     .product-card.product-tone-1 {
       background: #fff;
       border-left-color: rgba(47, 143, 91, 0.42);
@@ -2071,6 +2088,9 @@
                   <label class="field-label" for="sqmPrice">平方单价</label>
                   <input id="sqmPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="75">
                 </div>
+                <div class="liujin-price-note">
+                  备注：大漠沙丘：银+中国红，古铜系列-库存（红铜/古铜）<b>底价75元/㎡</b>
+                </div>
               </div>
             <div id="additionalProducts" class="wide form-grid"></div>
 
@@ -2515,37 +2535,53 @@
 
   <script>
     const specs = [
-      { value: "hard-2440", label: "硬质-1220*2440*6mm", width: 1.22, length: 2.44, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 75 },
-      { value: "hard-3050", label: "硬质-1220*3050*6mm", width: 1.22, length: 3.05, unitWeight: 38, lengthType: "long", material: "hard", defaultSqmPrice: 75 },
-      { value: "hard-600", label: "硬质-1200*600*6mm", width: 1.2, length: 0.6, unitWeight: 7.5, lengthType: "small", material: "hard", defaultSqmPrice: 75 },
-      { value: "soft-2440", label: "软质-1200*2440*2~3mm", width: 1.2, length: 2.44, unitWeight: 15, lengthType: "short", material: "soft", defaultSqmPrice: 85 },
-      { value: "soft-3000", label: "软质-1200*3000*2~3mm", width: 1.2, length: 3, unitWeight: 20, lengthType: "long", material: "soft", defaultSqmPrice: 85 }
+      { value: "hard-2440", label: "硬质-1220*2440*6mm", width: 1.22, length: 2.44, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 70 },
+      { value: "hard-3050", label: "硬质-1220*3050*6mm", width: 1.22, length: 3.05, unitWeight: 38, lengthType: "long", material: "hard", defaultSqmPrice: 70 },
+      { value: "hard-600", label: "硬质-1200*600*6mm", width: 1.2, length: 0.6, unitWeight: 7.5, lengthType: "small", material: "hard", defaultSqmPrice: 70 },
+      { value: "soft-2440", label: "软质-1200*2440*2~3mm", width: 1.2, length: 2.44, unitWeight: 15, lengthType: "short", material: "soft", defaultSqmPrice: 80 },
+      { value: "soft-3000", label: "软质-1200*3000*2~3mm", width: 1.2, length: 3, unitWeight: 20, lengthType: "long", material: "soft", defaultSqmPrice: 80 }
     ];
 
     const liujinSeriesPriceGroups = [
       {
-        names: ["珠光釉", "珍珠绒", "鎏金", "大漠", "仿锈", "金丝纹", "琼花", "云绸"],
+        names: ["珠光釉", "鎏金", "大漠", "仿锈", "金丝绒", "琼花", "星闪砂"],
+        prices: { "hard-2440": 70, "hard-3050": 70, "soft-2440": 80, "soft-3000": 80 }
+      },
+      {
+        names: ["珍珠绒", "云绸"],
         prices: { "hard-2440": 75, "hard-3050": 75, "soft-2440": 85, "soft-3000": 85 }
       },
       {
-        names: ["铜铁锈", "古铜", "绫罗", "凤尾", "绢丝", "熔岩"],
+        names: ["铜铁锈", "古铜", "绫罗", "熔岩", "锈语", "铜话"],
+        prices: { "hard-2440": 80, "hard-3050": 80, "soft-2440": 90, "soft-3000": 90 }
+      },
+      {
+        names: ["凤尾", "绢丝", "德克德勒"],
         prices: { "hard-2440": 85, "hard-3050": 85, "soft-2440": 95, "soft-3000": 95 }
       },
       {
-        names: ["德克德勒", "烟花", "幻影"],
+        names: ["烟花", "幻影"],
         prices: { "hard-2440": 90, "hard-3050": 90, "soft-2440": 100, "soft-3000": 100 }
       },
       {
-        names: ["仿金属"],
-        prices: { "hard-2440": 105, "hard-3050": 105, "soft-2440": 115, "soft-3000": 115 }
+        names: ["仿金属", "钛金"],
+        prices: { "hard-2440": 100, "hard-3050": 100, "soft-2440": 110, "soft-3000": 110 }
+      },
+      {
+        names: ["珠光"],
+        prices: { "hard-2440": 155, "hard-3050": 155, "soft-2440": 165, "soft-3000": 165 }
+      },
+      {
+        names: ["液态金属"],
+        prices: { "hard-2440": 105 }
       }
     ];
     const defaultRemarkPresets = new Set(["【货好拍照】", "修补剂随货发，谢谢！"]);
 
     const sandstoneSpecs = [
-      { value: "sand-2440", label: "1220*2440*6mm", width: 1.22, length: 2.44, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 150 },
-      { value: "sand-2400", label: "1200*2400*6mm", width: 1.2, length: 2.4, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 150 },
-      { value: "sand-600", label: "1200*600*6mm", width: 1.2, length: 0.6, unitWeight: 7.5, lengthType: "small", material: "hard", defaultSqmPrice: 135 }
+      { value: "sand-2440", label: "1220*2440*6mm", width: 1.22, length: 2.44, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 140 },
+      { value: "sand-2400", label: "1200*2400*6mm", width: 1.2, length: 2.4, unitWeight: 30, lengthType: "short", material: "hard", defaultSqmPrice: 140 },
+      { value: "sand-600", label: "1200*600*6mm", width: 1.2, length: 0.6, unitWeight: 7.5, lengthType: "small", material: "hard", defaultSqmPrice: 130 }
     ];
 
     const ningboProductCatalog = [
@@ -3451,7 +3487,7 @@
       });
       if (!bestMatch) return null;
       const key = normalizeLiujinPriceSpec(specValue);
-      return bestMatch.group.prices[key] ?? null;
+      return Object.prototype.hasOwnProperty.call(bestMatch.group.prices, key) ? bestMatch.group.prices[key] : "";
     }
 
     function defaultSqmPriceForSpec(spec, productName) {
@@ -3492,6 +3528,9 @@
             <div>
               <label class="field-label" for="sqmPrice${index}">平方单价</label>
               <input id="sqmPrice${index}" class="liujin-sqm-price" type="number" min="0" step="0.01" value="${els.sqmPrice.value || ""}" inputmode="decimal" placeholder="75">
+            </div>
+            <div class="liujin-price-note">
+              备注：大漠沙丘：银+中国红，古铜系列-库存（红铜/古铜）<b>底价75元/㎡</b>
             </div>
           </div>
         `);
@@ -4713,6 +4752,7 @@
       els.fixedCategoryLabel.classList.toggle("hidden", !fixedCategoryText);
       els.liujinFields.classList.toggle("hidden", isCement || isConcrete || isCustom || (!isLiujin && !isSandstone));
       els.otherFields.classList.toggle("hidden", isCement || isConcrete || isCustom || isLiujin || isSandstone);
+      document.querySelectorAll(".liujin-price-note").forEach((item) => item.classList.toggle("hidden", !isLiujin));
       els.customFields.classList.toggle("hidden", !isCustom);
       els.songnuoFields.classList.toggle("hidden", !isConcrete);
       els.cementFields.classList.toggle("hidden", !isCement);
@@ -5178,11 +5218,16 @@
       input.addEventListener("change", calculate);
     });
 
-    document.addEventListener("wheel", (event) => {
-      if (event.target instanceof HTMLInputElement && event.target.type === "number") {
-        event.target.blur();
-      }
-    }, { passive: true, capture: true });
+    function preventNumberInputWheelChange() {
+      document.addEventListener("wheel", (event) => {
+        const active = document.activeElement;
+        if (!(active instanceof HTMLInputElement) || active.type !== "number") return;
+        active.blur();
+        event.preventDefault();
+      }, { passive: false, capture: true });
+    }
+
+    preventNumberInputWheelChange();
 
     els.copyBtn.addEventListener("click", async () => {
       try {

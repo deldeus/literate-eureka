@@ -2236,6 +2236,16 @@
       if (event.target.closest(".delete-history")) { writeHistory(items.filter((entry) => entry.id !== item.id)); renderHistory(); return; }
       if (event.target.closest(".load-history")) { applyState(item.state); els.quote.textContent = item.quote; hideHistory(); }
     });
+    function preventNumberInputWheelChange() {
+      document.addEventListener("wheel", (event) => {
+        const active = document.activeElement;
+        if (!(active instanceof HTMLInputElement) || active.type !== "number") return;
+        active.blur();
+        event.preventDefault();
+      }, { passive: false, capture: true });
+    }
+
+    preventNumberInputWheelChange();
     addProduct();
     addProduct();
     syncQuickSpec();

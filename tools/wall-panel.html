@@ -2217,6 +2217,16 @@
     els.resetAll.addEventListener("click", resetAllWalls);
     els.loadExample.addEventListener("click", loadExampleWalls);
 
+    function preventNumberInputWheelChange() {
+      document.addEventListener("wheel", (event) => {
+        const active = document.activeElement;
+        if (!(active instanceof HTMLInputElement) || active.type !== "number") return;
+        active.blur();
+        event.preventDefault();
+      }, { passive: false, capture: true });
+    }
+
+    preventNumberInputWheelChange();
     refresh();
   </script>
 </body>

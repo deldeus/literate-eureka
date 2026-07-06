@@ -796,6 +796,16 @@ function clearInput() {
   document.getElementById('boards').innerHTML = '';
 }
 
+function preventNumberInputWheelChange() {
+  document.addEventListener('wheel', (event) => {
+    const active = document.activeElement;
+    if (!(active instanceof HTMLInputElement) || active.type !== 'number') return;
+    active.blur();
+    event.preventDefault();
+  }, { passive: false, capture: true });
+}
+
+preventNumberInputWheelChange();
 run();
 </script>
 </body>
