@@ -1331,8 +1331,8 @@
     };
 
     const pallets = {
-      short: { label: "2米拖盘", weight: 46 },
-      long: { label: "3米拖盘", weight: 65 },
+      short: { label: "2米拖盘", size: "2.46*1.25*0.25", weight: 46 },
+      long: { label: "3米拖盘", size: "3.15*1.35*0.16", weight: 65 },
       small: { label: "小托盘", weight: 16 }
     };
 
@@ -1487,6 +1487,12 @@
       return Number.isInteger(value) ? String(value) : value.toFixed(1).replace(/\.0$/, "");
     }
 
+    function packageQuestionLine(pkg) {
+      if (!pkg) return "";
+      if (pkg.type === "pallet" && pkg.size) return `${pkg.label}：${pkg.size}`;
+      return pkg.output;
+    }
+
     function choosePackage(items, lengthType) {
       const quantity = items.reduce((sum, item) => sum + item.quantity, 0);
       if (lengthType === "small") {
@@ -1564,11 +1570,12 @@
       const address = els.address.value.trim() || "请粘贴地址";
       const detailLine = shipmentSpecLabel(items);
       const weightLine = `${boardWeightLine(items)}+${pkg.weight}=${formatWeight(total)}KG`;
+      const packageLine = packageQuestionLine(pkg);
       const dbLine = `DB${db}`;
-      const template = `${address}\n\n${detailLine}\n${weightLine}\n${pkg.output}\n${dbLine}`;
+      const template = `${address}\n\n${weightLine}\n${packageLine}\n${dbLine}`;
 
       els.weightLine.innerHTML = `${weightLine}<span class="shipment-lines">${detailLine}</span>`;
-      els.packageLine.textContent = pkg.output;
+      els.packageLine.textContent = packageLine;
       els.dbLine.textContent = dbLine;
       els.result.textContent = template;
 

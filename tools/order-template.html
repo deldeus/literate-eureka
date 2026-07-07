@@ -2714,8 +2714,8 @@
     };
 
     const pallets = {
-      short: { label: "2米拖盘", weight: 46 },
-      long: { label: "3米拖盘", weight: 65 },
+      short: { label: "2米拖盘", size: "2.46*1.25*0.25", weight: 46 },
+      long: { label: "3米拖盘", size: "3.15*1.35*0.16", weight: 65 },
       small: { label: "小托盘", weight: 16 }
     };
 
@@ -3828,6 +3828,12 @@
       };
     }
 
+    function freightPackageQuestionLine(packageLine) {
+      if (packageLine === "2米拖盘") return "2米拖盘：2.46*1.25*0.25";
+      if (packageLine === "3米拖盘") return "3米拖盘：3.15*1.35*0.16";
+      return packageLine;
+    }
+
     function freightText() {
       const logistics = currentLogistics();
       const pay = currentFreightPay();
@@ -4827,7 +4833,7 @@
         "",
         ...[
           built.weightLine,
-          built.packageLine,
+          freightPackageQuestionLine(built.packageLine),
           warehouse === "浙江仓" && built.db > 0 ? `DB： ${money(built.db)}` : ""
         ].filter(Boolean)
       ].join("\n");
