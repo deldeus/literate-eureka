@@ -120,6 +120,23 @@
       margin: 0;
     }
 
+    .section-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .clear-mini-button {
+      flex: 0 0 auto;
+      min-width: 96px;
+      min-height: 40px;
+      padding: 0 16px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
     label {
       display: block;
       margin-bottom: 6px;
@@ -166,6 +183,80 @@
 
     .field:last-child {
       margin-bottom: 0;
+    }
+
+    .quote-freight-panel {
+      overflow: hidden;
+    }
+
+    .quote-freight-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .quote-freight-inner {
+      display: grid;
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .quote-freight-inner textarea {
+      min-height: 92px;
+    }
+
+    .quote-freight-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .quote-freight-metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      min-height: 76px;
+    }
+
+    .quote-freight-metric b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .quote-freight-metric strong {
+      display: block;
+      overflow-wrap: anywhere;
+      font-size: 17px;
+      line-height: 1.35;
+    }
+
+    .freight-question-box {
+      min-height: 190px;
+      border-radius: 8px;
+      background: #171a1d;
+      color: #fff;
+      padding: 18px;
+      white-space: pre-wrap;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 15px;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+    }
+
+    .freight-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .freight-actions button {
+      flex: 1 1 240px;
     }
 
     #singleProductFields {
@@ -561,6 +652,20 @@
 
       .panel {
         margin-bottom: 14px;
+      }
+
+      .section-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .quote-freight-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .quote-freight-summary {
+        grid-template-columns: 1fr;
       }
 
       .grid-2,
@@ -1278,9 +1383,12 @@
         <div class="section product-section">
           <div class="section-head">
             <p class="section-title">产品信息</p>
-            <div class="compact-mode-toggle">
-              <input id="multiMode" type="checkbox">
-              <label for="multiMode">多产品报价</label>
+            <div class="section-actions">
+              <button id="clearQuoteTopBtn" class="secondary clear-mini-button" type="button">清空</button>
+              <div class="compact-mode-toggle">
+                <input id="multiMode" type="checkbox">
+                <label for="multiMode">多产品报价</label>
+              </div>
             </div>
           </div>
           <div id="singleProductFields">
@@ -1460,6 +1568,41 @@
         </div>
         <div id="quote" class="quote" contenteditable="true" spellcheck="false" aria-label="可编辑报价单正文"></div>
       </section>
+
+      <section class="panel quote-freight-panel" aria-label="鎏金板运费快速提问">
+        <div class="quote-freight-head">
+          <div>
+            <div class="preview-title">鎏金板运费快速提问</div>
+            <p class="hint">只识别鎏金板产品；根据上方规格和数量自动生成运费提交模板。</p>
+          </div>
+          <button id="clearQuoteFreightBtn" class="secondary clear-mini-button" type="button">清空</button>
+        </div>
+        <div class="quote-freight-inner">
+          <div class="field">
+            <label for="quoteFreightAddress">1. 地址</label>
+            <textarea id="quoteFreightAddress" placeholder="例如：辽宁省大连市甘井子区和硕园25-7"></textarea>
+          </div>
+          <div class="quote-freight-summary">
+            <div class="quote-freight-metric">
+              <b>重量公式</b>
+              <strong id="quoteFreightWeight">-</strong>
+            </div>
+            <div class="quote-freight-metric">
+              <b>包装</b>
+              <strong id="quoteFreightPackage">-</strong>
+            </div>
+            <div class="quote-freight-metric">
+              <b>打包费</b>
+              <strong id="quoteFreightDb">-</strong>
+            </div>
+          </div>
+          <div id="quoteFreightBox" class="freight-question-box">请填写鎏金板产品、规格、数量和地址。</div>
+          <div class="freight-actions">
+            <button id="copyQuoteFreightBtn" type="button">复制运费提问</button>
+          </div>
+          <div id="quoteFreightNotice" class="calc-line">会跟随上方鎏金板报价自动更新。</div>
+        </div>
+      </section>
     </div>
 
     <section id="historyView" class="history-view">
@@ -1474,6 +1617,8 @@
     </section>
   </main>
 
+  <script src="kye-rates.js"></script>
+  <script src="freight-gold-core.js"></script>
   <script>
     const els = {
       multiMode: document.querySelector("#multiMode"),
@@ -1488,6 +1633,7 @@
       multiFreightFee: document.querySelector("#multiFreightFee"),
       multiCalcLine: document.querySelector("#multiCalcLine"),
       addProduct: document.querySelector("#addProduct"),
+      clearQuoteTopBtn: document.querySelector("#clearQuoteTopBtn"),
       product: document.querySelector("#product"),
       productSuggestions: document.querySelector("#productSuggestions"),
       quickSpec: document.querySelector("#quickSpec"),
@@ -1517,6 +1663,14 @@
       historyBtn: document.querySelector("#historyBtn"),
       resetBtn: document.querySelector("#resetBtn"),
       copyState: document.querySelector("#copyState"),
+      quoteFreightAddress: document.querySelector("#quoteFreightAddress"),
+      quoteFreightWeight: document.querySelector("#quoteFreightWeight"),
+      quoteFreightPackage: document.querySelector("#quoteFreightPackage"),
+      quoteFreightDb: document.querySelector("#quoteFreightDb"),
+      quoteFreightBox: document.querySelector("#quoteFreightBox"),
+      quoteFreightNotice: document.querySelector("#quoteFreightNotice"),
+      copyQuoteFreightBtn: document.querySelector("#copyQuoteFreightBtn"),
+      clearQuoteFreightBtn: document.querySelector("#clearQuoteFreightBtn"),
       historyView: document.querySelector("#historyView"),
       historyList: document.querySelector("#historyList"),
       backToQuote: document.querySelector("#backToQuote"),
@@ -1943,6 +2097,79 @@
       };
     }
 
+    function isGoldQuoteProduct(product, spec) {
+      const productText = product || "";
+      if (/鎏金|鎏金板/.test(productText)) return true;
+      if (findNingboProduct(productText)) return false;
+      return liujinOptions.has(spec || "");
+    }
+
+    function goldFreightMaterial(spec) {
+      return /软质|2mm|2~3/.test(spec || "") ? "soft" : "hard";
+    }
+
+    function goldFreightSpecKey(spec, material) {
+      const text = String(spec || "").replace(/\s+/g, "").replace(/[×xX]/g, "*");
+      if (material === "soft") {
+        return /3000/.test(text) ? "soft-3000" : "soft-2440";
+      }
+      if (/600/.test(text)) return "hard-600";
+      if (/3050|3000/.test(text)) return "hard-3050";
+      return "hard-2440";
+    }
+
+    function currentGoldFreightItems() {
+      const sourceItems = els.multiMode.checked
+        ? getProductCards().map(readProductCard)
+        : [{
+          product: els.product.value.trim(),
+          spec: els.spec.value.trim(),
+          quantity: money(els.quantity.value)
+        }];
+
+      return sourceItems
+        .filter((item) => isGoldQuoteProduct(item.product, item.spec))
+        .map((item) => {
+          const material = goldFreightMaterial(item.spec);
+          return {
+            material,
+            specKey: goldFreightSpecKey(item.spec, material),
+            quantity: item.quantity
+          };
+        })
+        .filter((item) => Number.isFinite(item.quantity) && item.quantity > 0);
+    }
+
+    function setQuoteFreightEmpty(message, notice = "会跟随上方鎏金板报价自动更新。") {
+      els.quoteFreightWeight.textContent = "-";
+      els.quoteFreightPackage.textContent = "-";
+      els.quoteFreightDb.textContent = "-";
+      els.quoteFreightBox.textContent = message;
+      els.quoteFreightNotice.textContent = notice;
+    }
+
+    function updateQuoteFreight() {
+      const items = currentGoldFreightItems();
+      if (!items.length) {
+        setQuoteFreightEmpty("请填写鎏金板产品、规格和数量。", "其它产品不生成鎏金板运费提问。");
+        return;
+      }
+
+      const shipment = window.GoldFreightCore.calculateShipment(items);
+      if (!shipment.ok) {
+        setQuoteFreightEmpty(shipment.message || "请检查鎏金板规格数量。", shipment.message || "请检查鎏金板规格数量。");
+        return;
+      }
+
+      const address = els.quoteFreightAddress.value.trim() || "请粘贴地址";
+      const template = `${address}\n\n${shipment.weightLine}\n${shipment.packageLine}\n${shipment.dbLine}`;
+      els.quoteFreightWeight.innerHTML = `${shipment.weightLine}<span class="shipment-lines">${shipment.detailLine}</span>`;
+      els.quoteFreightPackage.textContent = shipment.packageLine;
+      els.quoteFreightDb.textContent = shipment.dbLine;
+      els.quoteFreightBox.textContent = template;
+      els.quoteFreightNotice.textContent = shipment.notice;
+    }
+
     function updateModeUi() {
       const multi = els.multiMode.checked;
       els.singleProductFields.classList.toggle("hidden", multi);
@@ -2047,6 +2274,7 @@
       updateModeUi();
       if (els.multiMode.checked) renderMulti();
       else renderSingle();
+      updateQuoteFreight();
       autoSaveHistory();
     }
 
@@ -2074,6 +2302,7 @@
         taxType: getCheckedValue("taxType"),
         customTax: els.customTax.value,
         noteExtra: els.noteExtra.value,
+        quoteFreightAddress: els.quoteFreightAddress.value,
         fees: { processingFee: els.processingFee.value, accessoryFee: els.accessoryFee.value, manualTaxFee: els.manualTaxFee.value },
         single: { product: els.product.value, spec: els.spec.value, quantity: els.quantity.value, originalPrice: els.originalPrice.value, unitPrice: els.unitPrice.value, pricingMode: els.pricingMode(), boxFee: els.boxFee.value, freightFee: els.freightFee.value },
         multi: { boxFee: els.multiBoxFee.value, freightFee: els.multiFreightFee.value, products: getProductCards().map((card) => ({ product: card.querySelector(".multi-product").value, spec: card.querySelector(".multi-spec").value, quantity: card.querySelector(".multi-quantity").value, originalPrice: card.querySelector(".multi-original-price").value, unitPrice: card.querySelector(".multi-unit-price").value, pricingMode: card.querySelector('input[type="radio"]:checked')?.value || "area", boxFee: card.querySelector(".multi-box-fee").value, freightFee: card.querySelector(".multi-freight-fee").value })) },
@@ -2086,6 +2315,7 @@
       els.includeTax.checked = !!state.includeTax;
       els.customTax.value = state.customTax ?? 10;
       els.noteExtra.value = state.noteExtra || "";
+      els.quoteFreightAddress.value = state.quoteFreightAddress || "";
       els.processingFee.value = state.fees?.processingFee ?? 0;
       els.accessoryFee.value = state.fees?.accessoryFee ?? 0;
       els.manualTaxFee.value = state.fees?.manualTaxFee ?? 0;
@@ -2175,6 +2405,7 @@
       els.manualTaxFee.value = 0;
       els.customTax.value = 10;
       els.noteExtra.value = "";
+      els.quoteFreightAddress.value = "";
       els.multiBoxFee.value = 0;
       els.multiFreightFee.value = 0;
       els.multiProducts.innerHTML = "";
@@ -2203,7 +2434,7 @@
       selectNingboProduct(button.dataset.product || "");
     });
 
-    document.addEventListener("input", (event) => { if (event.target === els.quote) return; if (event.target === els.spec) syncQuickSpec(); render(); });
+    document.addEventListener("input", (event) => { if (event.target === els.quote || event.target === els.quoteFreightAddress) return; if (event.target === els.spec) syncQuickSpec(); render(); });
     document.addEventListener("change", (event) => { if (event.target === els.spec) syncQuickSpec(); render(); });
 
     els.multiProducts.addEventListener("click", (event) => {
@@ -2224,6 +2455,18 @@
     });
     els.addProduct.addEventListener("click", () => addProduct());
     els.copyBtn.addEventListener("click", async () => { await navigator.clipboard.writeText(els.quote.innerText); els.copyState.textContent = "已复制"; setTimeout(() => { els.copyState.textContent = ""; }, 1400); });
+    els.copyQuoteFreightBtn.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(els.quoteFreightBox.textContent);
+      els.copyQuoteFreightBtn.textContent = "已复制";
+      setTimeout(() => { els.copyQuoteFreightBtn.textContent = "复制运费提问"; }, 1200);
+    });
+    els.clearQuoteFreightBtn.addEventListener("click", () => {
+      els.quoteFreightAddress.value = "";
+      updateQuoteFreight();
+      els.quoteFreightAddress.focus();
+    });
+    els.clearQuoteTopBtn.addEventListener("click", resetQuoteForm);
+    els.quoteFreightAddress.addEventListener("input", updateQuoteFreight);
     els.historyBtn.addEventListener("click", showHistory);
     els.resetBtn.addEventListener("click", resetQuoteForm);
     els.backToQuote.addEventListener("click", hideHistory);

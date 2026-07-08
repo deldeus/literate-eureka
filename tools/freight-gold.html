@@ -100,6 +100,24 @@
       font-size: 18px;
     }
 
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-head .section-title {
+      margin: 0;
+    }
+
+    .clear-mini-button {
+      flex: 0 0 auto;
+      min-width: 108px;
+      min-height: 40px;
+    }
+
     label {
       display: block;
       margin: 16px 0 8px;
@@ -370,6 +388,104 @@
       color: #6f2019;
     }
 
+    .kye-section {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 14px 34px rgba(88, 28, 135, 0.08);
+    }
+
+    .kye-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(90deg, rgba(91, 33, 182, 0.09), rgba(255,255,255,0));
+    }
+
+    .kye-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      font-weight: 900;
+      color: #1f2937;
+    }
+
+    .kye-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 38px;
+      border-radius: 999px;
+      background: #6b21a8;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing: 0;
+      flex: 0 0 auto;
+    }
+
+    .kye-subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .kye-total {
+      color: #6b21a8;
+      font-size: 24px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .kye-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 14px;
+      padding: 16px 18px 18px;
+      align-items: stretch;
+    }
+
+    .kye-box {
+      min-height: 170px;
+      border-radius: 14px;
+      background: #18181b;
+      color: #fafafa;
+      padding: 16px;
+      white-space: pre-wrap;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .kye-process {
+      border-radius: 14px;
+      background: #faf5ff;
+      border: 1px solid #e9d5ff;
+      color: #4c1d95;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .kye-actions {
+      padding: 0 18px 18px;
+    }
+
+    .kye-actions button {
+      background: #6b21a8;
+      min-width: 190px;
+    }
+
     .rules {
       margin-top: 18px;
       color: var(--muted);
@@ -399,6 +515,16 @@
       .grid,
       .summary {
         grid-template-columns: 1fr;
+      }
+
+      .kye-head,
+      .kye-body {
+        grid-template-columns: 1fr;
+      }
+
+      .kye-head {
+        align-items: flex-start;
+        flex-direction: column;
       }
     }
 
@@ -1246,7 +1372,10 @@
     <div class="grid">
       <section class="panel">
         <div class="panel-inner">
-          <h2 class="section-title">填写信息</h2>
+          <div class="section-head">
+            <h2 class="section-title">填写信息</h2>
+            <button type="button" class="secondary clear-mini-button" id="resetFreightBtn">清空</button>
+          </div>
 
           <label for="address">1. 地址</label>
           <textarea id="address" placeholder="例如：辽宁省大连市甘井子区和硕园25-7"></textarea>
@@ -1297,44 +1426,38 @@
             <button type="button" class="secondary" id="clearBtn">清空地址</button>
           </div>
           <div id="notice" class="notice"></div>
+
+          <div class="kye-section" id="kyeSection">
+            <div class="kye-head">
+              <div class="kye-title">
+                <span class="kye-logo">KYE</span>
+                <div>
+                  <div>跨越速运自动查询</div>
+                  <div class="kye-subtitle">仅用于鎏金板，根据地址、重量和包装自动估算。</div>
+                </div>
+              </div>
+              <div class="kye-total" id="kyeTotal">-</div>
+            </div>
+            <div class="kye-body">
+              <div class="kye-box" id="kyeQuote">请填写地址和规格数量</div>
+              <div class="kye-process" id="kyeProcess">自动显示计算过程</div>
+            </div>
+            <div class="kye-actions">
+              <button type="button" id="copyKyeBtn">复制跨越运费</button>
+            </div>
+          </div>
         </div>
       </section>
     </div>
   </main>
 
+  <script src="kye-rates.js"></script>
+  <script src="freight-gold-core.js"></script>
   <script>
-    const specs = {
-      hard: [
-        { label: "1220*2440mm", key: "hard-2440", unitWeight: 30, lengthType: "short" },
-        { label: "1220*3050mm", key: "hard-3050", unitWeight: 38, lengthType: "long" },
-        { label: "1200*600mm", key: "hard-600", unitWeight: 7.5, lengthType: "small" }
-      ],
-      soft: [
-        { label: "1200*2440mm", key: "soft-2440", unitWeight: 15, lengthType: "short" },
-        { label: "1200*3000mm", key: "soft-3000", unitWeight: 20, lengthType: "long" }
-      ]
-    };
-
-    const crates = {
-      short: [
-        { name: "木箱7", outer: "2.53*1.31*0.25", weight: 65, hardCap: 15, softCap: 30 },
-        { name: "木箱7", outer: "2.53*1.31*0.35", weight: 70, hardCap: 30, softCap: 60 },
-        { name: "木箱7", outer: "2.53*1.31*0.45", weight: 75, hardCap: 45, softCap: 90 },
-        { name: "木箱7", outer: "2.53*1.31*0.7", weight: 90, hardCap: 88, softCap: 176 }
-      ],
-      long: [
-        { name: "木箱9", outer: "3.09*1.31*0.3", weight: 92, hardCap: 15, softCap: 30 },
-        { name: "木箱9", outer: "3.09*1.31*0.35", weight: 100, hardCap: 30, softCap: 60 },
-        { name: "木箱9", outer: "3.09*1.31*0.45", weight: 108, hardCap: 45, softCap: 90 },
-        { name: "木箱9", outer: "3.09*1.28*0.55", weight: 116, hardCap: 60, softCap: 120 }
-      ]
-    };
-
-    const pallets = {
-      short: { label: "2米拖盘", size: "2.46*1.25*0.25", weight: 46 },
-      long: { label: "3米拖盘", size: "3.15*1.35*0.16", weight: 65 },
-      small: { label: "小托盘", weight: 16 }
-    };
+    const freightCore = window.GoldFreightCore;
+    const specs = freightCore.specs;
+    const crates = freightCore.crates;
+    const pallets = freightCore.pallets;
 
     const state = {
       items: [
@@ -1353,7 +1476,12 @@
       packageLine: document.querySelector("#packageLine"),
       dbLine: document.querySelector("#dbLine"),
       copyBtn: document.querySelector("#copyBtn"),
-      clearBtn: document.querySelector("#clearBtn")
+      clearBtn: document.querySelector("#clearBtn"),
+      resetFreightBtn: document.querySelector("#resetFreightBtn"),
+      kyeTotal: document.querySelector("#kyeTotal"),
+      kyeQuote: document.querySelector("#kyeQuote"),
+      kyeProcess: document.querySelector("#kyeProcess"),
+      copyKyeBtn: document.querySelector("#copyKyeBtn")
     };
 
     function specByKey(material, specKey) {
@@ -1524,6 +1652,62 @@
       return lengthType === "short" ? 88 : 60;
     }
 
+    function allKyeRateRows() {
+      const data = window.KYE_RATE_DATA || {};
+      return [...(data.outside || []), ...(data.anhui || [])];
+    }
+
+    function isJiangZheHu(address) {
+      return /江苏|浙江|上海/.test(address || "");
+    }
+
+    function matchKyeRate(address) {
+      const text = String(address || "").replace(/\s+/g, "");
+      if (!text || text === "请粘贴地址") return { type: "empty" };
+      if (isJiangZheHu(text)) return { type: "self" };
+
+      const rows = allKyeRateRows();
+      const cityMatch = rows.find((row) => (row.cities || []).some((city) => city && text.includes(city)));
+      if (cityMatch) return { type: "rate", row: cityMatch };
+
+      const provinceMatch = rows.find((row) => row.province && text.includes(row.province));
+      if (provinceMatch) return { type: "rate", row: provinceMatch };
+
+      return { type: "none" };
+    }
+
+    function kyeInterval(row, totalWeight) {
+      return (row.intervals || []).find(([low, high]) => totalWeight > low && totalWeight <= high)
+        || (row.intervals || [])[row.intervals.length - 1];
+    }
+
+    function packageDimensionText(pkg) {
+      if (!pkg) return "";
+      return pkg.size || pkg.outer || "";
+    }
+
+    function hasOversizePackage(pkg) {
+      const dims = packageDimensionText(pkg).match(/\d+(?:\.\d+)?/g);
+      if (!dims) return false;
+      return dims.some((value) => Number.parseFloat(value) > 1.8);
+    }
+
+    function formatMoney(value) {
+      if (!Number.isFinite(value)) return "-";
+      return Number.isInteger(value) ? String(value) : value.toFixed(2).replace(/\.?0+$/, "");
+    }
+
+    function setKyeResult(totalText, quoteText, processText) {
+      els.kyeTotal.textContent = totalText;
+      els.kyeQuote.textContent = quoteText;
+      els.kyeProcess.textContent = processText;
+    }
+
+    function updateKyeQuote({ address, totalWeight, pkg, weightLine, packageLine, dbLine }) {
+      const result = freightCore.buildKyeQuote({ address, totalWeight, pkg, weightLine, packageLine, dbLine });
+      setKyeResult(result.totalText, result.quoteText, result.processText);
+    }
+
     function calculate() {
       const allItems = shipmentItems();
       const invalidItem = allItems.find((item) => String(item.quantity || "").trim() && (!Number.isFinite(item.quantity) || item.quantity <= 0));
@@ -1532,6 +1716,7 @@
         els.packageLine.textContent = "-";
         els.dbLine.textContent = "-";
         els.result.textContent = `${els.address.value.trim() || "请粘贴地址"}\n\n请输入大于 0 的数量`;
+        setKyeResult("-", "请输入大于 0 的数量", "需要先完成自动核算。");
         els.notice.textContent = "每一组规格的数量都需要填写大于 0 的整数。";
         els.notice.className = "notice error";
         return;
@@ -1543,6 +1728,7 @@
         els.packageLine.textContent = "-";
         els.dbLine.textContent = "-";
         els.result.textContent = `${els.address.value.trim() || "请粘贴地址"}\n\n请填写至少一组规格数量`;
+        setKyeResult("-", "请填写至少一组规格数量", "需要先完成自动核算。");
         els.notice.textContent = "可以新增多组规格；同一票发货会按总张数、最长规格统一核算包装。";
         els.notice.className = "notice";
         return;
@@ -1563,6 +1749,7 @@
         els.weightLine.textContent = "-";
         els.packageLine.textContent = "需拆分";
         els.dbLine.textContent = `DB${db}元`;
+        setKyeResult("-", "当前规格数量需拆分后再查询跨越运费", "超过工具当前包装规则，无法自动核算跨越。");
         return;
       }
 
@@ -1578,6 +1765,7 @@
       els.packageLine.textContent = packageLine;
       els.dbLine.textContent = dbLine;
       els.result.textContent = template;
+      updateKyeQuote({ address, totalWeight: total, pkg, weightLine, packageLine, dbLine });
 
       const packDescription = pkg.type === "pallet"
         ? `合计${totalQuantity}张，硬软混装按硬质等效 ${formatWeight(hardEquivalentQuantity(items))} 张核算，在优先托盘范围内，使用${pkg.output}，包装重量 ${pkg.weight}KG。`
@@ -1595,6 +1783,17 @@
       calculate();
     });
 
+    els.resetFreightBtn.addEventListener("click", () => {
+      els.address.value = "";
+      state.items = [
+        { id: 1, material: "hard", specKey: "hard-2440", quantity: "" }
+      ];
+      state.nextItemId = 2;
+      renderItems();
+      calculate();
+      els.address.focus();
+    });
+
     els.copyBtn.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(els.result.textContent);
@@ -1609,6 +1808,23 @@
         selection.removeAllRanges();
         selection.addRange(range);
         els.copyBtn.textContent = "已选中，可手动复制";
+      }
+    });
+
+    els.copyKyeBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(els.kyeQuote.textContent);
+        els.copyKyeBtn.textContent = "已复制";
+        window.setTimeout(() => {
+          els.copyKyeBtn.textContent = "复制跨越运费";
+        }, 1200);
+      } catch (error) {
+        const range = document.createRange();
+        range.selectNodeContents(els.kyeQuote);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        els.copyKyeBtn.textContent = "已选中，可手动复制";
       }
     });
 

@@ -18,6 +18,8 @@
     label { display:block; margin:0 0 8px; font-size:13px; color:#2f3a34; font-weight:850; }
     .search-wrap { position:relative; }
     input { width:100%; min-height:58px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); font:inherit; font-size:24px; font-weight:800; padding:12px 16px; outline:none; }
+    #query { padding-right:112px; }
+    .search-clear { position:absolute; right:10px; top:50%; transform:translateY(-50%); z-index:22; min-width:84px; min-height:38px; border:1px solid var(--line); border-radius:8px; background:#f7f7f8; color:var(--ink); font:inherit; font-size:14px; font-weight:850; cursor:pointer; }
     input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(31,122,82,.13); }
     .suggestions { position:absolute; left:0; right:0; top:calc(100% + 8px); z-index:20; display:none; max-height:340px; overflow:auto; border:1px solid rgba(15,23,42,.14); border-radius:10px; background:#fff; box-shadow:0 18px 38px rgba(15,23,42,.18); padding:6px; }
     .suggestions.show { display:block; }
@@ -511,6 +513,35 @@
     canvas {
       color: #1a1c1f !important;
     }
+    #query {
+      padding-right: 112px !important;
+    }
+    .search-wrap #clearSearchBtn.search-clear {
+      position: absolute !important;
+      right: 10px !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      z-index: 22 !important;
+      min-width: 84px !important;
+      min-height: 38px !important;
+      border: 1px solid #e5e5e5 !important;
+      border-radius: 12px !important;
+      background: #f7f7f8 !important;
+      color: #1a1c1f !important;
+      font-size: 14px !important;
+      font-weight: 850 !important;
+      box-shadow: none !important;
+      padding: 0 14px !important;
+    }
+    @media (max-width: 760px) {
+      #query {
+        padding-right: 92px !important;
+      }
+      .search-wrap #clearSearchBtn.search-clear {
+        min-width: 72px !important;
+        padding: 0 10px !important;
+      }
+    }
     * {
       text-shadow: none !important;
       letter-spacing: 0 !important;
@@ -521,7 +552,7 @@
 <body>
   <main>
     <div class="topbar"><div><h1>快速查价</h1><p class="subtitle">输入产品关键词，快速查看鎏金板、宁波柔岩板、水泥板、松诺仓和 168 仓各规格底价。</p></div><div class="pill">按关键词查底价</div></div>
-    <section class="panel search-panel"><label for="query">产品关键词</label><div class="search-wrap"><input id="query" autocomplete="off" placeholder="例如 雪岩 / 拉丝 / 仿金属 / 星月石"><div id="suggestions" class="suggestions"></div></div><div class="quick-tags" id="quickTags"></div></section>
+    <section class="panel search-panel"><label for="query">产品关键词</label><div class="search-wrap"><input id="query" autocomplete="off" placeholder="例如 雪岩 / 拉丝 / 仿金属 / 星月石"><button id="clearSearchBtn" class="search-clear" type="button">清空</button><div id="suggestions" class="suggestions"></div></div><div class="quick-tags" id="quickTags"></div></section>
     <section id="results" class="results"><div class="panel empty">输入关键词后显示底价。比如输入“仿”会出现“仿金属”，点击后显示硬质、软质各规格价格。</div></section>
   </main>
   <script>
@@ -891,7 +922,7 @@
       { name:'粗纹星云石', price:67, specs:[{ size:'1150*2850', thickness:'3-5mm', weight:'17.5KG/块' }] },
       { name:'三棱砖', price:80, specs:[{ size:'1200*3200', thickness:'3-5mm', weight:'27KG/块' }] }
     ];
-    const els = { query: document.querySelector('#query'), suggestions: document.querySelector('#suggestions'), results: document.querySelector('#results'), quickTags: document.querySelector('#quickTags') };
+    const els = { query: document.querySelector('#query'), clearSearchBtn: document.querySelector('#clearSearchBtn'), suggestions: document.querySelector('#suggestions'), results: document.querySelector('#results'), quickTags: document.querySelector('#quickTags') };
     const quickWordsDefault = ['鎏金板', 'NB柔岩板', '混凝土', '陨石板', '雪岩', '美岩', 'MLL柔岩板', '夯土板', '透光板', '坐凳', '拉丝', '洞石'];
     function esc(value) { return String(value ?? '').replace(/[&<>"']/g, (ch) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
     function normalize(value) { return String(value || '').replace(/[\s（）()、/·-]+/g, '').toLowerCase(); }
@@ -1174,7 +1205,7 @@
     function renderSuggestions(query) { const matches = matchingEntries(query).slice(0,12); els.suggestions.classList.toggle('show', Boolean(query.trim()) && matches.length > 0); els.suggestions.innerHTML = matches.map((entry,index) => '<button class="suggestion" type="button" data-index="' + index + '"><strong>' + esc(entry.title) + '</strong><span>' + esc(entry.warehouse) + ' · ' + esc(entry.category) + (entry.aliases.length ? ' · ' + esc(entry.aliases.join(' / ')) : '') + '</span></button>').join(''); els.suggestions.querySelectorAll('.suggestion').forEach((button) => { button.addEventListener('click', () => { const entry = matches[Number(button.dataset.index)]; els.query.value = entry.aliases[0] || entry.title; els.suggestions.classList.remove('show'); renderResults([entry]); }); }); }
     function renderResults(entries) { if (!entries.length) { els.results.innerHTML = '<div class="panel empty">没有匹配到价格。换一个关键词试试，例如“陨石板”“夯土板”“透光板”“坐凳”。</div>'; return; } els.results.innerHTML = entries.map((entry) => '<article class="card"><div class="card-head"><div class="card-title"><strong>' + esc(entry.title) + '</strong><span class="meta">' + esc(entry.warehouse) + ' · ' + esc(entry.category) + (entry.aliases.length ? ' · 关键词：' + esc(entry.aliases.join('、')) : '') + '</span></div><span class="badge">' + esc(entry.unit || '底价 / 元每平') + '</span></div><div class="price-grid' + (entry.layout === 'single' ? ' single' : '') + '">' + entry.rows.map((row) => '<div class="price-row"><span><strong class="row-main">' + esc(row.label) + '</strong>' + (row.subLabel ? '<small class="row-sub">' + (row.tag ? '<mark class="row-tag ' + esc(row.tagClass || '') + '">' + esc(row.tag) + '</mark>' : '') + esc(row.subLabel) + '</small>' : '') + (row.priceItems ? '<span class="sub-price-list">' + row.priceItems.map((item) => '<span class="sub-price">' + esc(item.label) + '<strong>底价</strong><b>' + esc(money(item.price)) + '</b></span>').join('') + '</span>' : '') + '</span>' + (row.price === '' || row.price === null || row.price === undefined ? '' : '<b><small>底价</small>' + esc(money(row.price)) + '</b>') + '</div>').join('') + '</div>' + (entry.note ? '<p class="note">' + esc(entry.note) + '</p>' : '') + '</article>').join(''); }
     function searchNow() { const q = els.query.value.trim(); renderSuggestions(q); if (!q) { els.results.innerHTML = '<div class="panel empty">输入关键词后显示底价。比如输入“陨石板”会出现砂岩、洞石、木纹和仿清水混凝土系列价格。</div>'; return; } renderResults(matchingEntries(q).slice(0,20)); }
-    els.query.addEventListener('input', searchNow); els.query.addEventListener('focus', () => renderSuggestions(els.query.value)); document.addEventListener('click', (event) => { if (!event.target.closest('.search-wrap')) els.suggestions.classList.remove('show'); });
+    els.query.addEventListener('input', searchNow); els.query.addEventListener('focus', () => renderSuggestions(els.query.value)); els.clearSearchBtn.addEventListener('click', () => { els.query.value = ''; els.suggestions.classList.remove('show'); searchNow(); els.query.focus(); }); document.addEventListener('click', (event) => { if (!event.target.closest('.search-wrap')) els.suggestions.classList.remove('show'); });
     function loadQuickWords() {
       try {
         const saved = JSON.parse(localStorage.getItem('quickPriceTags') || '[]');
