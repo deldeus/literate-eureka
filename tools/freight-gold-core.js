@@ -172,15 +172,21 @@
     const cityMatch = rows.find((row) => (row.cities || []).some((city) => city && text.includes(city)));
     if (cityMatch) return { type: "rate", row: cityMatch };
 
-    const provinceMatch = rows.find((row) => row.province && text.includes(row.province));
-    if (provinceMatch) return { type: "rate", row: provinceMatch };
+    const provinceMatches = rows.filter((row) => row.province && text.includes(row.province));
+    if (provinceMatches.length === 1) return { type: "rate", row: provinceMatches[0] };
+    if (provinceMatches.length > 1) {
+      return {
+        type: "ambiguous",
+        province: provinceMatches[0].province,
+        cities: provinceMatches.flatMap((row) => row.cities || [])
+      };
+    }
 
     return { type: "none" };
   }
 
   function kyeInterval(row, totalWeight) {
-    return (row.intervals || []).find(([low, high]) => totalWeight > low && totalWeight <= high)
-      || (row.intervals || [])[row.intervals.length - 1];
+    return (row.intervals || []).find(([low, high]) => totalWeight > low && totalWeight <= high);
   }
 
   function packageDimensionText(pkg) {
@@ -220,6 +226,13 @@
         totalText: "-",
         quoteText: `${address}\n\n未匹配到跨越费率，请手动查询。`,
         processText: "当前地址没有匹配到表格里的省市。"
+      };
+    }
+    if (match.type === "ambiguous") {
+      return {
+        totalText: "-",
+        quoteText: `${address}\n\n地址只识别到${match.province}，请补充城市后再查询。`,
+        processText: `当前省份包含多个城市费率，请补充城市。可识别城市：${match.cities.join("、")}`
       };
     }
 

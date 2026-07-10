@@ -1652,51 +1652,6 @@
       return lengthType === "short" ? 88 : 60;
     }
 
-    function allKyeRateRows() {
-      const data = window.KYE_RATE_DATA || {};
-      return [...(data.outside || []), ...(data.anhui || [])];
-    }
-
-    function isJiangZheHu(address) {
-      return /江苏|浙江|上海/.test(address || "");
-    }
-
-    function matchKyeRate(address) {
-      const text = String(address || "").replace(/\s+/g, "");
-      if (!text || text === "请粘贴地址") return { type: "empty" };
-      if (isJiangZheHu(text)) return { type: "self" };
-
-      const rows = allKyeRateRows();
-      const cityMatch = rows.find((row) => (row.cities || []).some((city) => city && text.includes(city)));
-      if (cityMatch) return { type: "rate", row: cityMatch };
-
-      const provinceMatch = rows.find((row) => row.province && text.includes(row.province));
-      if (provinceMatch) return { type: "rate", row: provinceMatch };
-
-      return { type: "none" };
-    }
-
-    function kyeInterval(row, totalWeight) {
-      return (row.intervals || []).find(([low, high]) => totalWeight > low && totalWeight <= high)
-        || (row.intervals || [])[row.intervals.length - 1];
-    }
-
-    function packageDimensionText(pkg) {
-      if (!pkg) return "";
-      return pkg.size || pkg.outer || "";
-    }
-
-    function hasOversizePackage(pkg) {
-      const dims = packageDimensionText(pkg).match(/\d+(?:\.\d+)?/g);
-      if (!dims) return false;
-      return dims.some((value) => Number.parseFloat(value) > 1.8);
-    }
-
-    function formatMoney(value) {
-      if (!Number.isFinite(value)) return "-";
-      return Number.isInteger(value) ? String(value) : value.toFixed(2).replace(/\.?0+$/, "");
-    }
-
     function setKyeResult(totalText, quoteText, processText) {
       els.kyeTotal.textContent = totalText;
       els.kyeQuote.textContent = quoteText;
