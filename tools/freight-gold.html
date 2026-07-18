@@ -1451,13 +1451,11 @@
     </div>
   </main>
 
-  <script src="kye-rates.js"></script>
-  <script src="freight-gold-core.js"></script>
+  <script src="kye-rates.js?v=20260713-2"></script>
+  <script src="freight-gold-core.js?v=20260713-2"></script>
   <script>
     const freightCore = window.GoldFreightCore;
     const specs = freightCore.specs;
-    const crates = freightCore.crates;
-    const pallets = freightCore.pallets;
 
     const state = {
       items: [
@@ -1483,11 +1481,6 @@
       kyeProcess: document.querySelector("#kyeProcess"),
       copyKyeBtn: document.querySelector("#copyKyeBtn")
     };
-
-    function specByKey(material, specKey) {
-      const currentSpecs = specs[material] || specs.hard;
-      return currentSpecs.find((item) => item.key === specKey) || currentSpecs[0];
-    }
 
     function renderItems() {
       state.items.forEach((item) => {
@@ -1579,77 +1572,9 @@
     function shipmentItems() {
       return state.items.map((item) => {
         const material = item.material || "hard";
-        const spec = specByKey(material, item.specKey);
         const quantity = Number.parseInt(String(item.quantity).trim(), 10);
-        return { ...item, material, spec, quantity };
+        return { ...item, material, quantity };
       });
-    }
-
-    function validShipmentItems() {
-      return shipmentItems().filter((item) => Number.isFinite(item.quantity) && item.quantity > 0);
-    }
-
-    function shipmentLengthType(items) {
-      if (items.some((item) => item.spec.lengthType === "long")) return "long";
-      if (items.some((item) => item.spec.lengthType === "short")) return "short";
-      return "small";
-    }
-
-    function shipmentSpecLabel(items) {
-      return items.map((item) => item.spec.label).join(" + ");
-    }
-
-    function boardWeightLine(items) {
-      return items.map((item) => `${item.quantity}*${item.spec.unitWeight}`).join("+");
-    }
-
-    function boardWeight(items) {
-      return items.reduce((sum, item) => sum + item.quantity * item.spec.unitWeight, 0);
-    }
-
-    function hardEquivalentQuantity(items) {
-      return items.reduce((sum, item) => sum + item.quantity * (item.material === "soft" ? 0.5 : 1), 0);
-    }
-
-    function formatWeight(value) {
-      return Number.isInteger(value) ? String(value) : value.toFixed(1).replace(/\.0$/, "");
-    }
-
-    function packageQuestionLine(pkg) {
-      if (!pkg) return "";
-      if (pkg.type === "pallet" && pkg.size) return `${pkg.label}：${pkg.size}`;
-      return pkg.output;
-    }
-
-    function choosePackage(items, lengthType) {
-      const quantity = items.reduce((sum, item) => sum + item.quantity, 0);
-      if (lengthType === "small") {
-        const palletCount = quantity > 100 ? Math.ceil(quantity / 100) : 1;
-        const weight = pallets.small.weight * palletCount;
-        return {
-          ...pallets.small,
-          weight,
-          type: "pallet",
-          output: palletCount > 1 ? `${pallets.small.label} x ${palletCount}` : pallets.small.label
-        };
-      }
-
-      const equivalentQuantity = hardEquivalentQuantity(items);
-      if (equivalentQuantity <= 10) {
-        return { ...pallets[lengthType], type: "pallet", output: pallets[lengthType].label };
-      }
-
-      const crate = crates[lengthType].find((item) => equivalentQuantity <= item.hardCap);
-      if (crate) {
-        return { ...crate, type: "crate", output: crate.outer };
-      }
-
-      return null;
-    }
-
-    function maxCapacity(lengthType) {
-      if (lengthType === "small") return 100;
-      return lengthType === "short" ? 88 : 60;
     }
 
     function setKyeResult(totalText, quoteText, processText) {
@@ -1677,8 +1602,8 @@
         return;
       }
 
-      const items = validShipmentItems();
-      if (!items.length) {
+      const shipment = freightCore.calculateShipment(allItems);
+      if (!shipment.ok && shipment.type === "empty") {
         els.weightLine.textContent = "-";
         els.packageLine.textContent = "-";
         els.dbLine.textContent = "-";
@@ -1689,43 +1614,35 @@
         return;
       }
 
-      const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
-      const lengthType = shipmentLengthType(items);
-      const pkg = choosePackage(items, lengthType);
-      const boardTotal = boardWeight(items);
-      const db = Math.ceil(totalQuantity * 1.5);
-
-      if (!pkg) {
-        const max = maxCapacity(lengthType);
-        const message = `当前合计 ${formatWeight(hardEquivalentQuantity(items))} 张硬质等效数量超过表格最大可装数量（${max}张），请拆分多箱后再提交。`;
+      if (!shipment.ok) {
+        const message = shipment.message || "请检查规格数量后再提交。";
         els.result.textContent = message;
         els.notice.textContent = message;
         els.notice.className = "notice error";
         els.weightLine.textContent = "-";
-        els.packageLine.textContent = "需拆分";
-        els.dbLine.textContent = `DB${db}元`;
-        setKyeResult("-", "当前规格数量需拆分后再查询跨越运费", "超过工具当前包装规则，无法自动核算跨越。");
+        els.packageLine.textContent = shipment.type === "overflow" ? "需拆分" : "需确认";
+        els.dbLine.textContent = shipment.dbLine || "-";
+        setKyeResult("-", message, "需要先完成自动核算。");
         return;
       }
 
-      const total = boardTotal + pkg.weight;
       const address = els.address.value.trim() || "请粘贴地址";
-      const detailLine = shipmentSpecLabel(items);
-      const weightLine = `${boardWeightLine(items)}+${pkg.weight}=${formatWeight(total)}KG`;
-      const packageLine = packageQuestionLine(pkg);
-      const dbLine = `DB${db}`;
-      const template = `${address}\n\n${weightLine}\n${packageLine}\n${dbLine}`;
+      const template = `${address}\n\n${shipment.weightLine}\n${shipment.packageLine}\n${shipment.dbLine}`;
 
-      els.weightLine.innerHTML = `${weightLine}<span class="shipment-lines">${detailLine}</span>`;
-      els.packageLine.textContent = packageLine;
-      els.dbLine.textContent = dbLine;
+      els.weightLine.innerHTML = `${shipment.weightLine}<span class="shipment-lines">${shipment.detailLine}</span>`;
+      els.packageLine.textContent = shipment.packageLine;
+      els.dbLine.textContent = shipment.dbLine;
       els.result.textContent = template;
-      updateKyeQuote({ address, totalWeight: total, pkg, weightLine, packageLine, dbLine });
+      updateKyeQuote({
+        address,
+        totalWeight: shipment.totalWeight,
+        pkg: shipment.pkg,
+        weightLine: shipment.weightLine,
+        packageLine: shipment.packageLine,
+        dbLine: shipment.dbLine
+      });
 
-      const packDescription = pkg.type === "pallet"
-        ? `合计${totalQuantity}张，硬软混装按硬质等效 ${formatWeight(hardEquivalentQuantity(items))} 张核算，在优先托盘范围内，使用${pkg.output}，包装重量 ${pkg.weight}KG。`
-        : `合计${totalQuantity}张，硬软混装按硬质等效 ${formatWeight(hardEquivalentQuantity(items))} 张核算，按最长规格匹配${pkg.name}，外径 ${pkg.outer}，木箱重量 ${pkg.weight}KG。`;
-      els.notice.textContent = packDescription;
+      els.notice.textContent = shipment.notice;
       els.notice.className = "notice";
     }
 

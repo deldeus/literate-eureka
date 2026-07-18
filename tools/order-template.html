@@ -2533,7 +2533,8 @@
 
   <datalist id="ningboProductList"></datalist>
 
-  <script src="product-data.js"></script>
+  <script src="product-data.js?v=20260715-1"></script>
+  <script src="ningbo-freight-core.js?v=20260713-2"></script>
   <script>
     const productData = window.JieGeProductData;
     const specs = productData.liujinSpecs;
@@ -3326,26 +3327,8 @@
 
     function findLiujinSeriesPrice(productName, specValue) {
       if (currentWarehouseGroup() !== "浙江仓" || currentCategory() !== "liujin") return null;
-      const keyword = normalizeLookupText(productName);
-      if (!keyword) return null;
-      let bestMatch = null;
-      liujinSeriesPriceGroups.forEach((group) => {
-        group.names.forEach((name) => {
-          const normalizedName = normalizeLookupText(name);
-          const at = keyword.lastIndexOf(normalizedName);
-          if (at < 0) return;
-          if (
-            !bestMatch ||
-            at > bestMatch.at ||
-            (at === bestMatch.at && normalizedName.length > bestMatch.keywordLength)
-          ) {
-            bestMatch = { group, at, keywordLength: normalizedName.length };
-          }
-        });
-      });
-      if (!bestMatch) return null;
       const key = normalizeLiujinPriceSpec(specValue);
-      return Object.prototype.hasOwnProperty.call(bestMatch.group.prices, key) ? bestMatch.group.prices[key] : "";
+      return productData.findLiujinSeriesPrice(productName, key);
     }
 
     function defaultSqmPriceForSpec(spec, productName) {
@@ -4290,47 +4273,25 @@
     function ningboFreightCalculation() {
       const rows = ningboFreightRows();
       if (!rows.length) return null;
-      const lines = [];
-      let productWeight = 0;
-      let packageWeight = 0;
-      const crateLines = [];
       const warnings = [];
-
-      rows.forEach((row) => {
+      const items = rows.map((row) => {
         const dims = specDimensionsFromText(row.specText);
         if (!dims.length || !dims.width) {
           warnings.push(`${row.productName}未识别规格`);
-          return;
+          return null;
         }
         const profile = ningboWeightProfile(row.productName, row.specText);
-        const area = dims.length / 1000 * dims.width / 1000;
-        const rawWeight = area * profile.kgPerSqm;
-        const sheetWeight = Math.ceil(rawWeight);
-        const rowProductWeight = sheetWeight * row.qty;
-        const crate = ningboCrateInfo(row.productName, row.specText, row.qty, {
-          area,
+        return {
+          name: row.productName,
+          spec: row.specText,
+          qty: row.qty,
           kgPerSqm: profile.kgPerSqm,
-          sheetWeight,
-          totalWeight: rowProductWeight,
-          length: dims.length,
-          width: dims.width
-        });
-        const crateHeight = Math.ceil(profile.thickness * row.qty + 200);
-        productWeight += rowProductWeight;
-        packageWeight += crate.weight;
-        lines.push(`${row.qty}*${sheetWeight}`);
-        const crateLabel = crate.type.includes("夹板") ? "夹板" : "木箱";
-        crateLines.push(`${crateLabel}：${dims.length + 100}*${dims.width + 100}*${crateHeight}mm`);
-      });
-
-      return {
-        productWeight,
-        packageWeight,
-        shippingWeight: productWeight + packageWeight,
-        expression: `${lines.join("+")}+${formatPlainWeight(packageWeight)}=${formatPlainWeight(productWeight + packageWeight)}KG`,
-        crateLines,
-        warnings
-      };
+          thickness: profile.thickness,
+          family: profile.family
+        };
+      }).filter(Boolean);
+      const result = window.NingboFreightCore.calculateShipment(items);
+      return result ? { ...result, warnings } : null;
     }
 
     function ningboFreightQuestionText() {

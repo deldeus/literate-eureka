@@ -1617,9 +1617,9 @@
     </section>
   </main>
 
-  <script src="product-data.js"></script>
-  <script src="kye-rates.js"></script>
-  <script src="freight-gold-core.js"></script>
+  <script src="product-data.js?v=20260715-1"></script>
+  <script src="kye-rates.js?v=20260713-2"></script>
+  <script src="freight-gold-core.js?v=20260713-2"></script>
   <script>
     const els = {
       multiMode: document.querySelector("#multiMode"),
@@ -2010,13 +2010,7 @@
     }
 
     function goldFreightSpecKey(spec, material) {
-      const text = String(spec || "").replace(/\s+/g, "").replace(/[×xX]/g, "*");
-      if (material === "soft") {
-        return /3000/.test(text) ? "soft-3000" : "soft-2440";
-      }
-      if (/600/.test(text)) return "hard-600";
-      if (/3050|3000/.test(text)) return "hard-3050";
-      return "hard-2440";
+      return window.GoldFreightCore.matchSpecKey(material, spec);
     }
 
     function currentGoldFreightItems() {
@@ -2176,7 +2170,6 @@
       if (els.multiMode.checked) renderMulti();
       else renderSingle();
       updateQuoteFreight();
-      autoSaveHistory();
     }
 
     function syncQuickSpec() {
@@ -2244,26 +2237,19 @@
     function readHistory() { try { return JSON.parse(localStorage.getItem(historyKey) || "[]"); } catch { return []; } }
     function writeHistory(items) { localStorage.setItem(historyKey, JSON.stringify(items.slice(0, 40))); }
 
-    let historyTimer = null;
-    let lastAutoSavedQuote = "";
-
-    function autoSaveHistory() {
-      clearTimeout(historyTimer);
-      historyTimer = setTimeout(() => {
-        const quoteText = els.quote.innerText.trim();
-        if (!quoteText || quoteText === lastAutoSavedQuote) return;
-        const firstLine = quoteText.split("\n").find(Boolean) || "报价记录";
-        const item = {
-          id: String(Date.now()),
-          title: firstLine.replace(/^【|】$/g, "") || "报价记录",
-          createdAt: new Date().toLocaleString("zh-CN", { hour12: false }),
-          quote: quoteText,
-          state: collectState(),
-        };
-        const existing = readHistory().filter((entry) => entry.quote !== quoteText);
-        writeHistory([item, ...existing]);
-        lastAutoSavedQuote = quoteText;
-      }, 900);
+    function saveHistorySnapshot() {
+      const quoteText = els.quote.innerText.trim();
+      if (!quoteText) return;
+      const firstLine = quoteText.split("\n").find(Boolean) || "报价记录";
+      const item = {
+        id: String(Date.now()),
+        title: firstLine.replace(/^【|】$/g, "") || "报价记录",
+        createdAt: new Date().toLocaleString("zh-CN", { hour12: false }),
+        quote: quoteText,
+        state: collectState(),
+      };
+      const existing = readHistory().filter((entry) => entry.quote !== quoteText);
+      writeHistory([item, ...existing]);
     }
 
     function escapeHtml(value) {
@@ -2311,7 +2297,6 @@
       els.multiFreightFee.value = 0;
       els.multiProducts.innerHTML = "";
       addProduct({ product: "", spec: "", quantity: "", originalPrice: "", unitPrice: "", pricingMode: "area", boxFee: 0, freightFee: 0 });
-      lastAutoSavedQuote = "";
       syncQuickSpec();
       render();
       els.copyState.textContent = "已重置";
@@ -2355,7 +2340,12 @@
       }
     });
     els.addProduct.addEventListener("click", () => addProduct());
-    els.copyBtn.addEventListener("click", async () => { await navigator.clipboard.writeText(els.quote.innerText); els.copyState.textContent = "已复制"; setTimeout(() => { els.copyState.textContent = ""; }, 1400); });
+    els.copyBtn.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(els.quote.innerText);
+      saveHistorySnapshot();
+      els.copyState.textContent = "已复制";
+      setTimeout(() => { els.copyState.textContent = ""; }, 1400);
+    });
     els.copyQuoteFreightBtn.addEventListener("click", async () => {
       await navigator.clipboard.writeText(els.quoteFreightBox.textContent);
       els.copyQuoteFreightBtn.textContent = "已复制";

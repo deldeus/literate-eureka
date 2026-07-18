@@ -387,6 +387,62 @@
       padding-top: 16px;
     }
 
+    .shipment-panel {
+      display: grid;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: #f7f7f8;
+    }
+
+    .shipment-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .shipment-head strong { font-size: 16px; }
+
+    .shipment-items {
+      display: grid;
+      gap: 8px;
+    }
+
+    .shipment-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 12px;
+      background: #fff;
+    }
+
+    .shipment-item-main {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .shipment-item-main strong,
+    .shipment-item-main span { overflow-wrap: anywhere; }
+
+    .shipment-item-main span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .shipment-delete {
+      min-height: 40px !important;
+      padding: 0 14px !important;
+      color: #1a1c1f !important;
+      background: #fff !important;
+    }
+
     .freight-output {
       min-height: 170px;
       border-radius: 8px;
@@ -444,6 +500,7 @@
       }
       .right { padding: 14px; }
       .option-row { grid-template-columns: 1fr 1fr; }
+      .shipment-head .copy { width: 100%; }
     }
 
     /* iPhone-style refinement aligned with the quote module. */
@@ -1062,6 +1119,19 @@
         </div>
       </div>
 
+      <section class="shipment-panel">
+        <div class="shipment-head">
+          <div>
+            <strong>本次询价产品</strong>
+            <div class="hint">填写当前产品数量后加入明细，可继续搜索并添加其它产品。</div>
+          </div>
+          <button type="button" class="copy" id="addShipmentItem">加入本次询价</button>
+        </div>
+        <div id="shipmentItems" class="shipment-items">
+          <div class="empty">还没有加入产品；未加入时仍按当前产品单独核算。</div>
+        </div>
+      </section>
+
       <section class="freight-panel">
         <div>
           <label for="address">收货地址</label>
@@ -1118,7 +1188,7 @@
           <div class="result-note">单张取整重量 * 数量</div>
         </div>
         <div class="crate">
-          <div class="label">木箱尺寸（长 * 宽 * 高，单位 mm）</div>
+          <div class="label">木箱尺寸（宽 * 长 * 高，单位 mm）</div>
           <div id="crateSize" class="crate-size">-</div>
           <div id="crateFormula" class="label"></div>
         </div>
@@ -1135,6 +1205,7 @@
     </section>
   </main>
 
+  <script src="ningbo-freight-core.js?v=20260713-2"></script>
   <script>
     const products = [
       {
@@ -2004,12 +2075,16 @@
       address: document.querySelector("#address"),
       freightOutput: document.querySelector("#freightOutput"),
       copyFreight: document.querySelector("#copyFreight"),
-      clearAddress: document.querySelector("#clearAddress")
+      clearAddress: document.querySelector("#clearAddress"),
+      addShipmentItem: document.querySelector("#addShipmentItem"),
+      shipmentItems: document.querySelector("#shipmentItems")
     };
 
     let selectedProduct = products.find(item => item.name.includes("脉络石")) || products[0];
     let selectedSize = selectedProduct.sizes[0];
     let productListCollapsed = false;
+    let shipmentItems = [];
+    let shipmentSequence = 0;
 
     function normalize(text) {
       return String(text || "").toLowerCase().replace(/\s+/g, "").replace(/[()（）]/g, "");
@@ -2119,15 +2194,77 @@
       return { type: "大木箱", weight: 65, rule: "其他产品统一使用大木箱" };
     }
 
+    function currentShipmentItem() {
+      const qty = Math.max(0, Math.floor(Number(els.qty.value) || 0));
+      if (!qty) return null;
+      return {
+        name: selectedProduct.name,
+        spec: selectedSize,
+        qty,
+        thickness: Number(els.crateThickness.value) || 0,
+        kgPerSqm: Number(els.kgPerSqm.value) || 0,
+        family: productFamily(selectedProduct.name),
+        finishType: selectedFinishType()
+      };
+    }
+
+    function shipmentItemsForCalculation() {
+      const draft = currentShipmentItem();
+      return draft ? [...shipmentItems, draft] : [...shipmentItems];
+    }
+
+    function renderShipmentItems() {
+      if (!shipmentItems.length) {
+        els.shipmentItems.innerHTML = '<div class="empty">还没有加入产品；未加入时仍按当前产品单独核算。</div>';
+        return;
+      }
+      els.shipmentItems.innerHTML = shipmentItems.map((item, index) => {
+        const single = window.NingboFreightCore.calculateShipment([item]);
+        const sheetWeight = single?.items[0]?.sheetWeight || 0;
+        return `
+          <div class="shipment-item">
+            <div class="shipment-item-main">
+              <strong>明细 ${index + 1} · ${item.name}</strong>
+              <span>${item.spec} · ${item.qty}张 · 单张${sheetWeight}KG · 厚度累计${formatPlainNumber(item.thickness * item.qty)}mm</span>
+            </div>
+            <button type="button" class="shipment-delete secondary" data-shipment-id="${item.id}">删除</button>
+          </div>
+        `;
+      }).join("");
+      els.shipmentItems.querySelectorAll("[data-shipment-id]").forEach((button) => {
+        button.addEventListener("click", () => {
+          shipmentItems = shipmentItems.filter((item) => item.id !== button.dataset.shipmentId);
+          renderShipmentItems();
+          calculate();
+        });
+      });
+    }
+
+    function addCurrentShipmentItem() {
+      const item = currentShipmentItem();
+      if (!item) {
+        els.qty.focus();
+        return;
+      }
+      shipmentSequence += 1;
+      shipmentItems.push({ ...item, id: `shipment-${shipmentSequence}` });
+      els.qty.value = "";
+      renderShipmentItems();
+      calculate();
+      els.search.value = "";
+      productListCollapsed = false;
+      renderProducts();
+      els.search.focus();
+    }
+
     function freightText(calculation) {
       const address = els.address.value.trim();
-      if (!calculation.qty) return "请选择产品、规格并填写数量和地址。";
-      const crateLabel = calculation.crate.type.includes("夹板") ? "夹板" : "木箱";
+      if (!calculation?.items?.length) return "请选择产品、规格并填写数量和地址。";
       return [
         address || "请填写收货地址",
         "",
-        `${formatPlainNumber(calculation.totalWeight)}+${formatPlainNumber(calculation.crate.weight)}=${formatPlainNumber(calculation.shippingWeight)}KG`,
-        `${crateLabel}：${calculation.crateLength}*${calculation.crateWidth}*${calculation.crateHeight}mm`
+        calculation.expression,
+        ...calculation.crateLines
       ].join("\n");
     }
 
@@ -2190,20 +2327,11 @@
       const area = length / 1000 * width / 1000;
       const rawWeight = area * kgPerSqm;
       const sheetWeight = Math.ceil(rawWeight);
-      const totalWeight = sheetWeight * qty;
-      const crateLength = length + 100;
-      const crateWidth = width + 100;
-      const crateHeight = Math.ceil(crateThickness * qty + 200);
       const showFinish = requiresFinishChoice(selectedProduct, selectedSize);
-      const crate = crateInfo(selectedProduct, selectedSize, qty, {
-        area,
-        kgPerSqm,
-        sheetWeight,
-        totalWeight,
-        length,
-        width
-      });
-      const shippingWeight = totalWeight + (qty > 0 ? crate.weight : 0);
+      const calculation = window.NingboFreightCore.calculateShipment(shipmentItemsForCalculation());
+      const totalWeight = calculation?.productWeight || 0;
+      const shippingWeight = calculation?.shippingWeight || 0;
+      const crate = calculation?.crate || null;
 
       els.currentName.textContent = selectedProduct.name;
       els.currentMeta.innerHTML = `编号 ${selectedProduct.no} · 表格厚度 ${selectedProduct.thickness}mm · 规格 ${selectedProduct.sizes.join("、")}`;
@@ -2215,44 +2343,37 @@
       els.totalWeight.classList.toggle("compact", totalWeight >= 10000);
       els.sizeMetric.textContent = selectedSize;
       els.finishPanel.classList.toggle("hidden", !showFinish);
-      els.crateType.textContent = qty > 0 ? crate.type : "-";
-      els.crateRule.textContent = qty > 0 ? crate.rule : "填写数量后自动判断";
-      els.crateWeight.textContent = qty > 0 ? `${crate.weight} KG` : "-";
-      els.shippingWeight.textContent = qty > 0 ? `${shippingWeight.toLocaleString("zh-CN")} KG` : "-";
-      els.crateSize.textContent = `${crateLength}*${crateWidth}*${crateHeight}`;
-      els.crateFormula.textContent = `${crateLength} = ${length}+100，${crateWidth} = ${width}+100，高 ${crateHeight} = ${qty}*${crateThickness}+100+100`;
-      els.detailFormula.innerHTML = `
-        <div><strong>${selectedProduct.name}</strong> / ${selectedSize} / ${qty}张</div>
-        <div>单张重量：<code>${length / 1000} * ${width / 1000} * ${kgPerSqm} = ${formatNumber(rawWeight)}KG</code>，向上取整为 <code>${sheetWeight}KG</code></div>
-        <div>总重量：<code>${sheetWeight} * ${qty} = ${totalWeight}KG</code></div>
-        <div>木箱类型：<code>${qty > 0 ? crate.type : "-"}</code>${crate.plywoodSheets ? `，夹板用量：<code>${formatNumber(crate.plywoodSheets, 1)}张 * 20KG = ${crate.weight}KG</code>` : `，包装重量：<code>${qty > 0 ? `${crate.weight}KG` : "-"}</code>`}${showFinish ? `，加工：<code>${selectedFinishType() === "color" ? "上色" : "打印"}</code>` : ""}</div>
-        <div>询价总重量：<code>${qty > 0 ? `${totalWeight} + ${crate.weight} = ${shippingWeight}KG` : "-"}</code></div>
-        <div>木箱：长宽各加 100mm，高度 = <code>${qty} * ${crateThickness} + 100 + 100 = ${crateHeight}mm</code></div>
-        ${selectedProduct.name.includes("脉络石") && selectedProduct.thickness !== "3-8" ? '<div class="warn">提示：Excel 中圆线石脉络石厚度为 3-9mm；当前木箱厚度按你的示例默认 8mm，可手动改为 9。</div>' : ""}
-      `;
-      els.freightOutput.textContent = freightText({
-        qty,
-        totalWeight,
-        shippingWeight,
-        crate,
-        crateLength,
-        crateWidth,
-        crateHeight,
-        showFinish
-      });
+      els.crateType.textContent = crate ? crate.type : "-";
+      els.crateRule.textContent = crate ? crate.rule : "填写数量后自动判断";
+      els.crateWeight.textContent = crate ? `${crate.weight} KG` : "-";
+      els.shippingWeight.textContent = calculation ? `${shippingWeight.toLocaleString("zh-CN")} KG` : "-";
+      els.crateSize.textContent = calculation ? `${calculation.crateWidth}*${calculation.crateLength}*${calculation.crateHeight}` : "-";
+      els.crateFormula.textContent = calculation
+        ? `长取最大 ${calculation.crateLength - 100}+100，宽取最大 ${calculation.crateWidth - 100}+100，高 ${formatPlainNumber(calculation.contentThickness)}+200`
+        : "填写数量后自动计算";
+      els.detailFormula.innerHTML = calculation ? `
+        ${calculation.items.map((item, index) => `
+          <div><strong>明细 ${index + 1}：${item.name}</strong> / ${item.spec} / ${item.qty}张</div>
+          <div>单张重量：<code>${item.length / 1000} * ${item.width / 1000} * ${item.kgPerSqm} = ${formatNumber(item.rawWeight)}KG</code>，向上取整为 <code>${item.sheetWeight}KG</code></div>
+        `).join("")}
+        <div>产品总重量：<code>${calculation.items.map((item) => `${item.qty}*${item.sheetWeight}`).join("+")}=${totalWeight}KG</code></div>
+        <div>合装规则：<code>${crate.rule}</code>，包装重量：<code>${crate.weight}KG</code></div>
+        <div>询价总重量：<code>${calculation.expression}</code></div>
+        <div>木箱：最长和最宽各加 100mm，高度累计 = <code>${formatPlainNumber(calculation.contentThickness)}+200=${calculation.crateHeight}mm</code></div>
+      ` : "请选择产品、规格并填写数量。";
+      els.freightOutput.textContent = freightText(calculation);
     }
 
     async function copySummary() {
-      const text = [
-        `${selectedProduct.name} ${selectedSize}`,
-        `数量：${els.qty.value}张`,
-        `单张取整重量：${els.sheetWeight.textContent}`,
-        `总重量：${els.totalWeight.textContent}`,
-        `木箱类型：${els.crateType.textContent}`,
-        `木箱重量：${els.crateWeight.textContent}`,
-        `含包装总重量：${els.shippingWeight.textContent}`,
-        `木箱尺寸：${els.crateSize.textContent}mm`
-      ].join("\n");
+      const calculation = window.NingboFreightCore.calculateShipment(shipmentItemsForCalculation());
+      const text = calculation ? [
+        ...calculation.items.map((item, index) => `明细${index + 1}：${item.name} ${item.spec} ${item.qty}张，单张${item.sheetWeight}KG`),
+        `产品总重量：${calculation.productWeight}KG`,
+        `木箱类型：${calculation.crate.type}`,
+        `木箱重量：${calculation.packageWeight}KG`,
+        `含包装总重量：${calculation.shippingWeight}KG`,
+        `木箱尺寸：${calculation.crateWidth}*${calculation.crateLength}*${calculation.crateHeight}mm`
+      ].join("\n") : "请先填写产品数量";
       await copyText(text, els.copySummary, "复制计算结果");
     }
 
@@ -2295,6 +2416,7 @@
     els.kgPerSqm.addEventListener("input", calculate);
     els.finishTypes.forEach(input => input.addEventListener("change", calculate));
     els.address.addEventListener("input", calculate);
+    els.addShipmentItem.addEventListener("click", addCurrentShipmentItem);
     els.copySummary.addEventListener("click", copySummary);
     els.copyFreight.addEventListener("click", () => copyText(els.freightOutput.textContent, els.copyFreight, "复制运费询价模板"));
     els.clearAddress.addEventListener("click", () => {
@@ -2304,6 +2426,8 @@
     });
     els.resetBtn.addEventListener("click", () => {
       els.qty.value = "";
+      shipmentItems = [];
+      renderShipmentItems();
       calculate();
     });
 
@@ -2329,6 +2453,7 @@
       if (kgPerSqm) els.kgPerSqm.value = kgPerSqm;
       renderProducts();
       renderSizes();
+      renderShipmentItems();
       calculate();
     }
 

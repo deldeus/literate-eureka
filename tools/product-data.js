@@ -8,7 +8,7 @@
   ];
 
   const liujinSeriesPriceGroups = [
-    { names: ["珠光釉", "鎏金", "大漠", "仿锈", "金丝绒", "琼花", "星闪砂"], prices: { "hard-2440": 70, "hard-3050": 70, "soft-2440": 80, "soft-3000": 80 } },
+    { names: ["珠光釉", "鎏金", "大漠沙丘", "大漠", "仿锈", "金丝绒", "琼花", "星闪砂"], prices: { "hard-2440": 70, "hard-3050": 70, "soft-2440": 80, "soft-3000": 80 } },
     { names: ["珍珠绒", "云绸"], prices: { "hard-2440": 75, "hard-3050": 75, "soft-2440": 85, "soft-3000": 85 } },
     { names: ["铜铁锈", "古铜", "绫罗", "熔岩", "锈语", "铜话"], prices: { "hard-2440": 80, "hard-3050": 80, "soft-2440": 90, "soft-3000": 90 } },
     { names: ["凤尾", "绢丝", "德克德勒"], prices: { "hard-2440": 85, "hard-3050": 85, "soft-2440": 95, "soft-3000": 95 } },
@@ -143,12 +143,32 @@
     return liujinSeriesPriceGroups.some((group) => group.names.some((name) => text.includes(name.toLowerCase())));
   }
 
+  function findLiujinSeriesPrice(productName, specKey) {
+    const text = String(productName || "").replace(/\s+/g, "").toLowerCase();
+    if (!text) return null;
+    let bestMatch = null;
+    liujinSeriesPriceGroups.forEach((group) => {
+      group.names.forEach((name) => {
+        const keyword = String(name || "").replace(/\s+/g, "").toLowerCase();
+        if (!keyword || !text.includes(keyword)) return;
+        if (!bestMatch || keyword.length > bestMatch.keywordLength) {
+          bestMatch = { group, keywordLength: keyword.length };
+        }
+      });
+    });
+    if (!bestMatch) return null;
+    return Object.prototype.hasOwnProperty.call(bestMatch.group.prices, specKey)
+      ? bestMatch.group.prices[specKey]
+      : "";
+  }
+
   window.JieGeProductData = {
     liujinSpecs,
     liujinSeriesPriceGroups,
     sandstoneSpecs,
     ningboProductCatalog,
     groupedNingboCatalog,
-    isLiujinProductName
+    isLiujinProductName,
+    findLiujinSeriesPrice
   };
 })();

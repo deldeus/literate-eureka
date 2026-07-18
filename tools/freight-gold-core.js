@@ -32,9 +32,34 @@
     small: { label: "小托盘", weight: 16 }
   };
 
+  function specDimensions(value) {
+    const matches = String(value || "")
+      .replace(/[×xX]/g, "*")
+      .match(/\d+(?:\.\d+)?/g);
+    if (!matches || matches.length < 2) return null;
+    const first = Number(matches[0]);
+    const second = Number(matches[1]);
+    if (!Number.isFinite(first) || !Number.isFinite(second)) return null;
+    return [Math.min(first, second), Math.max(first, second)];
+  }
+
+  function matchSpecKey(material, specText) {
+    const group = specs[material] || [];
+    const direct = group.find((item) => item.key === specText);
+    if (direct) return direct.key;
+
+    const target = specDimensions(specText);
+    if (!target) return null;
+    const matched = group.find((item) => {
+      const dimensions = specDimensions(item.label);
+      return dimensions && dimensions[0] === target[0] && dimensions[1] === target[1];
+    });
+    return matched ? matched.key : null;
+  }
+
   function specByKey(material, specKey) {
-    const group = specs[material] || specs.hard;
-    return group.find((item) => item.key === specKey) || group[0];
+    const group = specs[material] || [];
+    return group.find((item) => item.key === specKey) || null;
   }
 
   function normalizeItem(item) {
@@ -114,6 +139,14 @@
 
     if (!items.length) {
       return { ok: false, type: "empty", message: "请填写至少一组规格数量" };
+    }
+
+    if (items.some((item) => !item.spec)) {
+      return {
+        ok: false,
+        type: "unsupported-spec",
+        message: "存在不支持的鎏金板规格，请手动确认后再计算运费"
+      };
     }
 
     const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -273,6 +306,7 @@
     specs,
     crates,
     pallets,
+    matchSpecKey,
     specByKey,
     normalizeItem,
     calculateShipment,

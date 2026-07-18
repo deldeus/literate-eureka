@@ -374,6 +374,7 @@
       --shadow: 0 18px 44px rgba(0, 0, 0, 0.06) !important;
       --system-gray: #f7f7f8 !important;
       --system-gray-2: #ececf1 !important;
+      --tool-control-height: 44px;
     }
     html,
     body {
@@ -747,6 +748,7 @@
       color: #1a1c1f !important;
     }
     header h1,
+    .app > aside > h1,
     .topbar h1,
     main > h1 {
       font-size: clamp(30px, 3.5vw, 42px) !important;
@@ -762,10 +764,18 @@
     }
     @media (max-width: 760px) {
       header h1,
+      .app > aside > h1,
       .topbar h1,
       main > h1 {
         font-size: 26px !important;
       }
+    }
+    .app > aside input,
+    .app > aside select,
+    .app > aside .wall-actions button,
+    .app > aside .segmented button {
+      min-height: var(--tool-control-height) !important;
+      height: var(--tool-control-height) !important;
     }
     header input,
     header select {
