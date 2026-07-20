@@ -1205,6 +1205,7 @@
     </section>
   </main>
 
+  <script src="product-data.js?v=20260720-1"></script>
   <script src="ningbo-freight-core.js?v=20260713-2"></script>
   <script>
     const products = [
@@ -2047,6 +2048,81 @@
       }
 ];
 
+    // 开单模板使用的是新版商品名称，重量表仍保留部分旧名称。
+    // 这里显式复用已确认的重量参数，并始终采用开单模板中的最新规格。
+    const weightProductAliases = {
+      "水泥浇筑板": "水泥板",
+      "水波纹板": "大波纹",
+      "木浇筑板": "木纹板",
+      "新洞石（密孔）": "新洞石",
+      "新版洞石": "新款洞石",
+      "3D洞石": { default: "洞石", sizeSources: { "1200*600": "小洞石" } },
+      "3D新版洞石": "新款洞石",
+      "粗纹线石": "粗线石",
+      "炭烧木": "碳化木",
+      "大竹纹（凸模）": "凸竹纹",
+      "大竹纹（凹模）": "凹竹纹",
+      "波浪": "波浪石",
+      "环型石": "环形石",
+      "星云石": "星月石",
+      "星云石B款": "星月石",
+      "阡陌石（方线石）": "方线石 阡陌石",
+      "脉络石": "圆线石 脉络石",
+      "锯木板": "锯木纹",
+      "50马赛克小板1": "50马赛克",
+      "22马赛克小板2": "22马赛克",
+      "黑山岩、劈开岩": "黑山岩",
+      "黑山岩小板": "黑山岩",
+      "叠纹石（山岳石）": "叠纹",
+      "古木纹细": "古木细纹",
+      "古木纹粗": "古木粗纹",
+      "大布纹石": "布纹石",
+      "麻编（小）": "麻编",
+      "麻编（大）": "麻编",
+      "竹编/人字编": "人字编",
+      "积木纹": "积木",
+      "木立方（山竹板）": "山竹",
+      "15线石（金属色）": "15线石",
+      "35线石（金属色）": "35线石",
+      "23线石（金属色）": "23线石",
+      "71线石（金属色）": "71线石",
+      "摩洛石（金属色）": "摩洛石",
+      "莱姆石3D": "莱姆石",
+      "粗夯土3D": "夯土B（粗夯土）",
+      "20内圆": "20圆柱",
+      "100内圆": "100圆柱",
+      "腾编": "缩编",
+      "拼接文化石": "文化石拼接",
+      "条形文化石": "条石拼接"
+    };
+
+    const ningboCatalog = window.JieGeProductData?.groupedNingboCatalog?.() || [];
+    ningboCatalog.forEach((catalogProduct) => {
+      if (products.some((product) => product.name === catalogProduct.name)) return;
+      const alias = weightProductAliases[catalogProduct.name];
+      if (!alias) return;
+      const sourceName = typeof alias === "string" ? alias : alias.default;
+      const candidates = products.filter((product) => product.name === sourceName);
+      const source = candidates.find((product) =>
+        product.sizes.some((size) => catalogProduct.specs.includes(size))
+      ) || candidates[0];
+      if (!source) return;
+      const sizeProfiles = Object.fromEntries(catalogProduct.specs.map((spec) => {
+        const specSourceName = typeof alias === "string" ? alias : (alias.sizeSources?.[spec] || alias.default);
+        const specCandidates = products.filter((product) => product.name === specSourceName);
+        const specSource = specCandidates.find((product) => product.sizes.includes(spec)) || specCandidates[0] || source;
+        return [spec, { kgPerSqm: specSource.kgPerSqm, thickness: specSource.thickness }];
+      }));
+      products.push({
+        ...source,
+        no: `同步-${source.no}`,
+        name: catalogProduct.name,
+        sizes: [...catalogProduct.specs],
+        sourceName,
+        sizeProfiles
+      });
+    });
+
     const els = {
       search: document.querySelector("#search"),
       productList: document.querySelector("#productList"),
@@ -2109,8 +2185,18 @@
       return Math.max(...nums.map(Number));
     }
 
-    function defaultCrateThickness(product) {
-      return product.crateThickness ?? maxThickness(product.thickness);
+    function sizeProfile(product, size) {
+      return product.sizeProfiles?.[size] || { kgPerSqm: product.kgPerSqm, thickness: product.thickness };
+    }
+
+    function defaultCrateThickness(product, size) {
+      return product.crateThickness ?? maxThickness(sizeProfile(product, size).thickness);
+    }
+
+    function applySelectedSizeDefaults() {
+      const profile = sizeProfile(selectedProduct, selectedSize);
+      els.crateThickness.value = defaultCrateThickness(selectedProduct, selectedSize);
+      els.kgPerSqm.value = profile.kgPerSqm;
     }
 
     function parseSize(size) {
@@ -2301,6 +2387,7 @@
         button.textContent = size;
         button.addEventListener("click", () => {
           selectedSize = size;
+          applySelectedSizeDefaults();
           renderSizes();
           calculate();
         });
@@ -2312,8 +2399,7 @@
       selectedProduct = product;
       selectedSize = product.sizes[0];
       productListCollapsed = true;
-      els.crateThickness.value = defaultCrateThickness(product);
-      els.kgPerSqm.value = product.kgPerSqm;
+      applySelectedSizeDefaults();
       renderProducts();
       renderSizes();
       calculate();
@@ -2334,7 +2420,8 @@
       const crate = calculation?.crate || null;
 
       els.currentName.textContent = selectedProduct.name;
-      els.currentMeta.innerHTML = `编号 ${selectedProduct.no} · 表格厚度 ${selectedProduct.thickness}mm · 规格 ${selectedProduct.sizes.join("、")}`;
+      const selectedProfile = sizeProfile(selectedProduct, selectedSize);
+      els.currentMeta.innerHTML = `编号 ${selectedProduct.no} · 表格厚度 ${selectedProfile.thickness}mm · 规格 ${selectedProduct.sizes.join("、")}`;
       els.rawWeight.textContent = `${formatNumber(rawWeight)} KG`;
       els.rawFormula.textContent = `${formatNumber(length / 1000, 3)} * ${formatNumber(width / 1000, 3)} * ${kgPerSqm}`;
       els.sheetWeight.textContent = `${sheetWeight.toLocaleString("zh-CN")} KG`;
@@ -2447,7 +2534,10 @@
       }
       els.search.value = query;
       selectProduct(selectedProduct);
-      if (selectedProduct.sizes.includes(sizeQuery)) selectedSize = sizeQuery;
+      if (selectedProduct.sizes.includes(sizeQuery)) {
+        selectedSize = sizeQuery;
+        applySelectedSizeDefaults();
+      }
       if (qty) els.qty.value = qty;
       if (crateThickness) els.crateThickness.value = crateThickness;
       if (kgPerSqm) els.kgPerSqm.value = kgPerSqm;

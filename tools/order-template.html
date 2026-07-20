@@ -2533,7 +2533,7 @@
 
   <datalist id="ningboProductList"></datalist>
 
-  <script src="product-data.js?v=20260715-1"></script>
+  <script src="product-data.js?v=20260720-1"></script>
   <script src="ningbo-freight-core.js?v=20260713-2"></script>
   <script>
     const productData = window.JieGeProductData;
@@ -2595,12 +2595,15 @@
 
     const ningboWeightProfiles = [
       { keys: ["脉络石", "圆线石"], kgPerSqm: 10, thickness: 8, family: "" },
-      { keys: ["洞石", "3d洞石", "3d新版洞石"], kgPerSqm: 6.5, smallKgPerSqm: 5, thickness: 4, smallThickness: 3, family: "洞石" },
+      { keys: ["3d新版洞石", "新版洞石"], kgPerSqm: 7, thickness: 4.5, family: "洞石" },
+      { keys: ["3d洞石", "洞石"], kgPerSqm: 6.5, smallKgPerSqm: 5, thickness: 4, smallThickness: 3, family: "洞石" },
       { keys: ["花岗岩"], kgPerSqm: 7, thickness: 5, family: "花岗岩" },
       { keys: ["星月石"], kgPerSqm: 10, smallKgPerSqm: 8, thickness: 8, family: "星月石" },
       { keys: ["黑山岩", "劈开岩"], kgPerSqm: 10, smallKgPerSqm: 8, thickness: 8, family: "黑山岩" },
       { keys: ["莱姆石", "平板", "水泥浇筑板", "木浇筑板", "木纹板"], kgPerSqm: 6.5, thickness: 5, family: "" },
-      { keys: ["波纹", "粗线石", "线石", "波浪石", "脊线石", "粗布纹"], kgPerSqm: 7.5, thickness: 7, family: "" },
+      { keys: ["波浪石", "波浪"], kgPerSqm: 7, thickness: 6, family: "" },
+      { keys: ["粗夯土3d"], kgPerSqm: 6.5, thickness: 4, family: "" },
+      { keys: ["波纹", "粗线石", "线石", "脊线石", "粗布纹"], kgPerSqm: 7.5, thickness: 7, family: "" },
       { keys: ["竹纹", "阡陌石", "方线石"], kgPerSqm: 9, thickness: 8, family: "" },
       { keys: ["马赛克", "条石拼接"], kgPerSqm: 7, thickness: 6, family: "" },
       { keys: ["斧开石", "叠纹", "沉积岩", "页岩", "山岩石"], kgPerSqm: 11, thickness: 12, family: "" }
@@ -3734,7 +3737,7 @@
     }
 
     function normalizedNingboWeightText(value) {
-      return normalizeLookupText(value).replace(/新版/g, "").replace(/新款/g, "");
+      return normalizeLookupText(value);
     }
 
     function ningboWeightProfile(productName, specText) {

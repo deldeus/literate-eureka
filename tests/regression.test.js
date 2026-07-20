@@ -175,6 +175,37 @@ test("宁波重量提供多产品明细操作", () => {
   assert.match(html, /id="shipmentItems"/);
 });
 
+test("宁波重量同步开单模板的星云石产品", () => {
+  const html = read("tools/ningbo-weight.html");
+  assert.match(html, /<script src="product-data\.js\?v=20260720-1"><\/script>/);
+  assert.match(html, /"星云石": "星月石"/);
+  assert.match(html, /"星云石B款": "星月石"/);
+  assert.match(html, /JieGeProductData\?\.groupedNingboCatalog/);
+});
+
+test("宁波新增产品复用已确认重量并同步最新规格", () => {
+  const html = read("tools/ningbo-weight.html");
+  assert.match(html, /"波浪": "波浪石"/);
+  assert.match(html, /"50马赛克小板1": "50马赛克"/);
+  assert.match(html, /"22马赛克小板2": "22马赛克"/);
+  assert.match(html, /"3D洞石": \{ default: "洞石", sizeSources: \{ "1200\*600": "小洞石" \} \}/);
+  assert.match(html, /"3D新版洞石": "新款洞石"/);
+  assert.match(html, /"粗夯土3D": "夯土B（粗夯土）"/);
+
+  const productData = loadProductData();
+  const grouped = productData.groupedNingboCatalog();
+  assert.deepEqual(Array.from(grouped.find((item) => item.name === "50马赛克小板1").specs), ["1190*590"]);
+  assert.deepEqual(Array.from(grouped.find((item) => item.name === "22马赛克小板2").specs), ["1190*590"]);
+  assert.deepEqual(Array.from(grouped.find((item) => item.name === "粗夯土3D").specs), ["3000*1200", "2900*1160", "2800*1030", "2680*930"]);
+});
+
+test("开单模板使用新版洞石、波浪石和粗夯土的独立重量", () => {
+  const html = read("tools/order-template.html");
+  assert.match(html, /keys: \["3d新版洞石", "新版洞石"\], kgPerSqm: 7, thickness: 4\.5/);
+  assert.match(html, /keys: \["波浪石", "波浪"\], kgPerSqm: 7, thickness: 6/);
+  assert.match(html, /keys: \["粗夯土3d"\], kgPerSqm: 6\.5, thickness: 4/);
+});
+
 test("快速查价同名产品同时保留宁波和 MLL 结果", () => {
   const html = read("tools/quick-price.html");
   assert.match(html, /sameNameNingboAndMeililai/);
@@ -189,7 +220,7 @@ test("大漠沙丘名称中的珠光白按大漠系列计价", () => {
 
 test("三个业务页面共同读取产品数据", () => {
   for (const file of ["tools/order-template.html", "tools/quick-price.html", "tools/quote-generator.html"]) {
-    assert.match(read(file), /<script src="product-data\.js\?v=20260715-1"><\/script>/, file);
+    assert.match(read(file), /<script src="product-data\.js\?v=20260720-1"><\/script>/, file);
   }
 });
 
