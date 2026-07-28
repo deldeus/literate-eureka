@@ -849,15 +849,15 @@
       const bands = { thin:'10-12mm最低售价', medium:'20-25mm最低售价', combo:'10-25mm最低售价', thick:'30mm最低售价' };
       const notes = {
         "松诺": {
-          default:'单件面积：1.5㎡以下，20种规格内，执行600*1200mm的价格；装饰孔+7元/㎡，装饰孔费用统一开成加工费用。其它超大规格另行核算。',
+          default:'单件面积：1.5㎡以下、20种规格内，执行600*1200mm的价格；打孔+7元/㎡；倒边+10元/㎡；超过20种规格另加10元/㎡。其它超大规格另行核算。',
           texture:'硅胶模+20元/㎡。'
         },
         "168": {
-          default:'装饰孔：+5元/㎡；预埋(含预埋件)：+7元/㎡；倒边：+5元/米；100㎡以下，30种规格另加10元/㎡。'
+          default:'打孔+5元/㎡；倒边+5元/㎡；干挂孔1元/个；干挂件8元/个；30种规格以上另加10元/㎡；清水板、透光板订单不足5㎡，包装费+200元。'
         }
       };
       const entries = [];
-      Object.entries(concretePriceTable).forEach(([warehouse, products]) => { Object.entries(products).forEach(([type, sizes]) => { const info = labels[type]; const rows = []; Object.entries(sizes).forEach(([sizeKey, bandPrices]) => { Object.entries(bandPrices).forEach(([band, price]) => rows.push({ label:info.sizes[sizeKey] + ' · ' + bands[band], price })); }); const note = notes[warehouse][type === 'texture' ? 'texture' : 'default'] || notes[warehouse].default; entries.push({ type:'concrete', title:warehouse + info.title, aliases:[warehouse, warehouse + '清水', info.title, ...info.aliases], warehouse, category:'混凝土', note, rows }); }); });
+      Object.entries(concretePriceTable).forEach(([warehouse, products]) => { Object.entries(products).forEach(([type, sizes]) => { const info = labels[type]; const rows = []; Object.entries(sizes).forEach(([sizeKey, bandPrices]) => { Object.entries(bandPrices).forEach(([band, price]) => rows.push({ label:info.sizes[sizeKey] + ' · ' + bands[band], price })); }); const note = [notes[warehouse].default, type === 'texture' ? notes[warehouse].texture : ''].filter(Boolean).join(' '); entries.push({ type:'concrete', title:warehouse + info.title, aliases:[warehouse, warehouse + '清水', info.title, ...info.aliases], warehouse, category:'混凝土', note, rows }); }); });
       return entries;
     }
     function concreteTableEntries() {
@@ -865,8 +865,8 @@
       const sizes = { small:'600*1200', large:'1200*2400', short:'1200*600 / 2400*600', long:'3000*600' };
       const bands = { thin:'10-12mm', medium:'20-25mm', combo:'10-25mm', thick:'30mm' };
       const notes = {
-        '松诺':'单件面积：1.5㎡以下，20种规格内，执行600*1200mm的价格；装饰孔+7元/㎡，装饰孔费用统一开成加工费用。其它超大规格另行核算。木纹板 / 竹纹板：硅胶模+20元/㎡。',
-        '168':'装饰孔：+5元/㎡；预埋(含预埋件)：+7元/㎡；倒边：+5元/米；100㎡以下，30种规格另加10元/㎡。'
+        '松诺':'单件面积：1.5㎡以下、20种规格内，执行600*1200mm的价格；打孔+7元/㎡；倒边+10元/㎡；超过20种规格另加10元/㎡。其它超大规格另行核算。木纹板 / 竹纹板：硅胶模+20元/㎡。',
+        '168':'打孔+5元/㎡；倒边+5元/㎡；干挂孔1元/个；干挂件8元/个；30种规格以上另加10元/㎡；清水板、透光板订单不足5㎡，包装费+200元。'
       };
       return ['松诺', '168'].map((warehouse) => {
         const rows = [];

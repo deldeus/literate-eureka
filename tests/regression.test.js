@@ -218,6 +218,27 @@ test("大漠沙丘名称中的珠光白按大漠系列计价", () => {
   assert.equal(productData.findLiujinSeriesPrice("珠光白", "hard-3050"), 155);
 });
 
+test("混凝土168附加费使用最新计价规则", () => {
+  const html = read("tools/order-template.html");
+  assert.match(html, /return currentWarehouse\(\) === "168" \? 5 : 10/);
+  assert.match(html, /倒边平方数/);
+  assert.match(html, /干挂孔 1元\/个/);
+  assert.match(html, /干挂件 8元\/个/);
+  assert.match(html, /30种规格以上 \+10元\/㎡/);
+  assert.match(html, /area < 5/);
+  assert.match(html, /\/清水\|透光\/\.test\(item\.productName\)/);
+  assert.match(html, /name: "不足5平方包装费", amount: 200/);
+  assert.doesNotMatch(html, /倒边米数/);
+});
+
+test("快速查价同步松诺与168附加费用说明", () => {
+  const html = read("tools/quick-price.html");
+  assert.match(html, /打孔\+7元\/㎡；倒边\+10元\/㎡；超过20种规格另加10元\/㎡/);
+  assert.match(html, /打孔\+5元\/㎡；倒边\+5元\/㎡；干挂孔1元\/个；干挂件8元\/个/);
+  assert.match(html, /清水板、透光板订单不足5㎡，包装费\+200元/);
+  assert.doesNotMatch(html, /倒边：\+5元\/米/);
+});
+
 test("三个业务页面共同读取产品数据", () => {
   for (const file of ["tools/order-template.html", "tools/quick-price.html", "tools/quote-generator.html"]) {
     assert.match(read(file), /<script src="product-data\.js\?v=20260720-1"><\/script>/, file);

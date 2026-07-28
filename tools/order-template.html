@@ -525,6 +525,10 @@
       align-items: end;
     }
 
+    .concrete-168-hanging-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
     .concrete-hole-card {
       grid-column: 1 / -1;
       display: grid;
@@ -2297,42 +2301,58 @@
               </div>
               <div id="concreteAdditionalProducts" class="wide form-grid"></div>
               <div class="product-card product-tone-2 concrete-hole-card">
-                <label class="checkline"><input id="songnuoHoleFeeEnabled" type="checkbox">开孔费</label>
+                <label class="checkline"><input id="songnuoHoleFeeEnabled" type="checkbox">打孔费</label>
                 <div>
-                  <label class="field-label" for="songnuoHoleArea">开孔平方数</label>
+                    <label class="field-label" for="songnuoHoleArea">打孔平方数</label>
                   <input id="songnuoHoleArea" type="number" min="0" step="0.01" inputmode="decimal" placeholder="不填则取上方平方数">
                 </div>
                 <div>
-                  <label class="field-label" for="songnuoHoleUnitPrice">开孔单价 元/平</label>
+                  <label class="field-label" for="songnuoHoleUnitPrice">打孔单价 元/平</label>
                   <input id="songnuoHoleUnitPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="松诺 7，168 5">
                 </div>
-                <p class="hint">勾选后按平方四舍五入生成开孔费，并自动扣入 KD。</p>
+                <p class="hint">勾选后按平方四舍五入生成打孔费，并自动扣入 KD。</p>
               </div>
               <div class="concrete-extra-options">
                 <div class="concrete-extra-grid">
                   <label class="checkline" id="songnuoSiliconeWrap"><input id="songnuoSiliconeMold" type="checkbox">硅胶膜 +20元/㎡</label>
-                  <label class="checkline" id="songnuoOver20Wrap"><input id="songnuoOver20SpecEnabled" type="checkbox">20以上规格</label>
+                  <label class="checkline" id="songnuoOver20Wrap"><input id="songnuoOver20SpecEnabled" type="checkbox">超过20种规格 +10元/㎡</label>
                   <div id="songnuoOver20PriceWrap">
-                    <label class="field-label" for="songnuoOver20SpecPrice">20以上规格加价 元/平</label>
-                    <input id="songnuoOver20SpecPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="例如 10">
+                    <label class="field-label" for="songnuoOver20SpecPrice">多尺寸加价 元/平</label>
+                    <input id="songnuoOver20SpecPrice" type="number" min="0" step="0.01" inputmode="decimal" value="10" placeholder="默认 10">
                   </div>
-                  <label class="checkline" id="concrete168SmallBatchWrap"><input id="concrete168SmallBatch" type="checkbox">100平以下30个以上规格 +10元/㎡</label>
+                  <label class="checkline" id="concrete168SmallBatchWrap"><input id="concrete168SmallBatch" type="checkbox">30种规格以上 +10元/㎡</label>
                 </div>
                 <p class="hint">附加费用按总平方数计算，会写入明细并自动扣入 KD。</p>
+                <p class="hint hidden" id="concrete168PackagingHint">168 清水板、透光板订单总面积不足 5㎡时，自动加包装费 200 元。</p>
               </div>
               <div class="concrete-extra-options">
                 <div class="concrete-extra-grid">
                   <label class="checkline"><input id="concreteEdgeFeeEnabled" type="checkbox">倒边费</label>
                   <div>
-                    <label class="field-label" for="concreteEdgeMeters">倒边米数</label>
-                    <input id="concreteEdgeMeters" type="number" min="0" step="0.01" inputmode="decimal" placeholder="例如 36">
+                    <label class="field-label" for="concreteEdgeArea">倒边平方数</label>
+                    <input id="concreteEdgeArea" type="number" min="0" step="0.01" inputmode="decimal" placeholder="不填则取产品总平方数">
                   </div>
                   <div>
-                    <label class="field-label" for="concreteEdgeUnitPrice">倒边单价 元/米</label>
-                    <input id="concreteEdgeUnitPrice" type="number" min="0" step="0.01" inputmode="decimal" value="10" placeholder="默认 10">
+                    <label class="field-label" for="concreteEdgeUnitPrice">倒边单价 元/平</label>
+                    <input id="concreteEdgeUnitPrice" type="number" min="0" step="0.01" inputmode="decimal" value="10" placeholder="松诺 10，168 5">
                   </div>
                 </div>
-                <p class="hint">勾选后按米数计算，例如 36 米 * 10 = 360 元。</p>
+                <p class="hint">松诺按 10 元/㎡，168 按 5 元/㎡；平方数留空时取全部产品总平方数。</p>
+              </div>
+              <div class="concrete-extra-options hidden" id="concrete168HangingWrap">
+                <div class="concrete-extra-grid concrete-168-hanging-grid">
+                  <label class="checkline"><input id="concrete168HangingHoleEnabled" type="checkbox">干挂孔 1元/个</label>
+                  <div>
+                    <label class="field-label" for="concrete168HangingHoleQty">干挂孔数量</label>
+                    <input id="concrete168HangingHoleQty" type="number" min="0" step="1" inputmode="numeric" placeholder="填写个数">
+                  </div>
+                  <label class="checkline"><input id="concrete168HangingPartEnabled" type="checkbox">干挂件 8元/个</label>
+                  <div>
+                    <label class="field-label" for="concrete168HangingPartQty">干挂件数量</label>
+                    <input id="concrete168HangingPartQty" type="number" min="0" step="1" inputmode="numeric" placeholder="填写个数">
+                  </div>
+                </div>
+                <p class="hint">仅 168 仓使用；勾选后按填写数量计费，并自动扣入 KD。</p>
               </div>
               <div class="concrete-extra-options">
                 <div class="wide concrete-fee-list" id="concretePromoRows">
@@ -2353,7 +2373,7 @@
               </div>
               <div class="wide">
                 <label class="field-label" for="songnuoDetail">混凝土完整明细兜底</label>
-                <textarea id="songnuoDetail" placeholder="多个产品、开孔费等复杂情况，可在这里填写完整货物明细"></textarea>
+                <textarea id="songnuoDetail" placeholder="多个产品、打孔费等复杂情况，可在这里填写完整货物明细"></textarea>
               </div>
             </div>
 
@@ -2719,9 +2739,15 @@
       songnuoOver20SpecPrice: document.querySelector("#songnuoOver20SpecPrice"),
       concrete168SmallBatchWrap: document.querySelector("#concrete168SmallBatchWrap"),
       concrete168SmallBatch: document.querySelector("#concrete168SmallBatch"),
+      concrete168PackagingHint: document.querySelector("#concrete168PackagingHint"),
       concreteEdgeFeeEnabled: document.querySelector("#concreteEdgeFeeEnabled"),
-      concreteEdgeMeters: document.querySelector("#concreteEdgeMeters"),
+      concreteEdgeArea: document.querySelector("#concreteEdgeArea"),
       concreteEdgeUnitPrice: document.querySelector("#concreteEdgeUnitPrice"),
+      concrete168HangingWrap: document.querySelector("#concrete168HangingWrap"),
+      concrete168HangingHoleEnabled: document.querySelector("#concrete168HangingHoleEnabled"),
+      concrete168HangingHoleQty: document.querySelector("#concrete168HangingHoleQty"),
+      concrete168HangingPartEnabled: document.querySelector("#concrete168HangingPartEnabled"),
+      concrete168HangingPartQty: document.querySelector("#concrete168HangingPartQty"),
       concretePromoRows: document.querySelector("#concretePromoRows"),
       addConcretePromoBtn: document.querySelector("#addConcretePromoBtn"),
       songnuoDetail: document.querySelector("#songnuoDetail"),
@@ -2840,6 +2866,17 @@
       if (!els.songnuoHoleUnitPrice) return;
       if (force || els.songnuoHoleUnitPrice.value.trim() === "") {
         els.songnuoHoleUnitPrice.value = defaultSongnuoHoleUnitPrice();
+      }
+    }
+
+    function defaultConcreteEdgeUnitPrice() {
+      return currentWarehouse() === "168" ? 5 : 10;
+    }
+
+    function syncConcreteEdgeUnitPrice(force = false) {
+      if (!els.concreteEdgeUnitPrice) return;
+      if (force || els.concreteEdgeUnitPrice.value.trim() === "") {
+        els.concreteEdgeUnitPrice.value = defaultConcreteEdgeUnitPrice();
       }
     }
 
@@ -3047,32 +3084,49 @@
       });
     }
 
-    function concreteExtraFees(area, productType) {
+    function concreteExtraFees(area, products = []) {
       const warehouse = currentWarehouse();
       const fees = [];
       if (warehouse === "松诺" && els.songnuoSiliconeMold.checked) {
         fees.push({ name: "硅胶膜费", unitPrice: 20, amount: area * 20 });
       }
       if (warehouse === "松诺" && els.songnuoOver20SpecEnabled.checked) {
-        const unitPrice = numberValue(els.songnuoOver20SpecPrice);
-        if (unitPrice > 0) fees.push({ name: "20以上规格", unitPrice, amount: area * unitPrice });
+        const unitPrice = numberValue(els.songnuoOver20SpecPrice) || 10;
+        fees.push({ name: "超过20种规格", unitPrice, amount: area * unitPrice });
       }
       if (warehouse === "168" && els.concrete168SmallBatch.checked) {
-        fees.push({ name: "100平以下30个以上规格", unitPrice: 10, amount: area * 10 });
+        fees.push({ name: "30种规格以上", unitPrice: 10, amount: area * 10 });
       }
       if (els.concreteEdgeFeeEnabled.checked) {
-        const meters = numberValue(els.concreteEdgeMeters);
-        const unitPrice = numberValue(els.concreteEdgeUnitPrice) || 10;
-        if (meters > 0) {
-          fees.push({ name: "倒边费", qty: meters, unit: "米", unitPrice, amount: meters * unitPrice });
+        syncConcreteEdgeUnitPrice(false);
+        const edgeArea = els.concreteEdgeArea.value.trim() === "" ? area : numberValue(els.concreteEdgeArea);
+        const unitPrice = numberValue(els.concreteEdgeUnitPrice) || defaultConcreteEdgeUnitPrice();
+        if (edgeArea > 0) {
+          fees.push({ name: "倒边费", qty: edgeArea, unit: "平", unitPrice, amount: edgeArea * unitPrice });
         }
+      }
+      if (warehouse === "168" && els.concrete168HangingHoleEnabled.checked) {
+        const qty = numberValue(els.concrete168HangingHoleQty);
+        if (qty > 0) fees.push({ name: "干挂孔", qty, unit: "个", unitPrice: 1, amount: qty });
+      }
+      if (warehouse === "168" && els.concrete168HangingPartEnabled.checked) {
+        const qty = numberValue(els.concrete168HangingPartQty);
+        if (qty > 0) fees.push({ name: "干挂件", qty, unit: "个", unitPrice: 8, amount: qty * 8 });
+      }
+      const needsSmallOrderPackaging = warehouse === "168"
+        && area > 0
+        && area < 5
+        && products.some((item) => /清水|透光/.test(item.productName));
+      if (needsSmallOrderPackaging) {
+        fees.push({ type: "fixed", name: "不足5平方包装费", amount: 200 });
       }
       concretePromoFees().forEach((item) => fees.push(item));
       return {
         amount: fees.reduce((sum, item) => sum + item.amount, 0),
         lines: fees.map((item) => {
           if (item.type === "promo") return `${item.name}：${money(item.amount)}`;
-          if (item.unit === "米") return `${item.name}：${money(item.qty)}米：${money(item.amount)}元`;
+          if (item.type === "fixed") return `${item.name}：${money(item.amount)}元`;
+          if (item.qty) return `${item.name}：${money(item.qty)}${item.unit}*${money(item.unitPrice)}=${money(item.amount)}元`;
           return `${item.name}${money(area)}平：${money(item.amount)}（${money(item.unitPrice)}元/平）`;
         })
       };
@@ -3136,10 +3190,13 @@
 
     function syncConcreteExtraOptions() {
       const isSongnuo = currentWarehouse() === "松诺";
+      const is168 = currentWarehouse() === "168";
       els.songnuoSiliconeWrap.classList.toggle("hidden", !isSongnuo);
       els.songnuoOver20Wrap.classList.toggle("hidden", !isSongnuo);
       els.songnuoOver20PriceWrap.classList.toggle("hidden", !(isSongnuo && els.songnuoOver20SpecEnabled.checked));
-      els.concrete168SmallBatchWrap.classList.toggle("hidden", currentWarehouse() !== "168");
+      els.concrete168SmallBatchWrap.classList.toggle("hidden", !is168);
+      els.concrete168PackagingHint.classList.toggle("hidden", !is168);
+      els.concrete168HangingWrap.classList.toggle("hidden", !is168);
     }
 
     function isCustomWarehouse() {
@@ -4518,7 +4575,7 @@
       const roundedArea = Math.max(0, Math.round(rawArea));
       const unitPrice = numberValue(els.songnuoHoleUnitPrice) || defaultSongnuoHoleUnitPrice();
       const amount = roundedArea * unitPrice;
-      const lines = roundedArea && unitPrice ? [`开孔费${money(roundedArea)}平：${money(amount)}（${money(unitPrice)}元/平）`] : [];
+      const lines = roundedArea && unitPrice ? [`打孔费${money(roundedArea)}平：${money(amount)}（${money(unitPrice)}元/平）`] : [];
       return { amount, lines };
     }
 
@@ -4533,7 +4590,7 @@
       const materialAmount = materialOverride === null ? autoMaterialAmount : materialOverride;
       const hasInput = Boolean(row.productName.value.trim() || row.specText.value.trim() || row.area.value.trim() || row.sqmPrice.value.trim() || row.materialAmount.value.trim());
       const detail = `${productName}${specText}*${money(area)}平*${money(sqmPrice)}=${money(materialAmount)}（${money(sqmPrice)}/平）`;
-      return { detail, materialAmount, area, hasInput };
+      return { productName, detail, materialAmount, area, hasInput };
     }
 
     function buildSongnuo() {
@@ -4546,7 +4603,7 @@
       const materialAmount = autoMaterialAmount;
       const autoDetail = products.length ? products.map((item) => item.detail).join("，") : "请填写混凝土产品";
       const holeFee = songnuoHoleFee(totalArea);
-      const extraFees = concreteExtraFees(totalArea);
+      const extraFees = concreteExtraFees(totalArea, products);
 
       return {
         detail: manualDetail || autoDetail,
@@ -4800,12 +4857,16 @@
       els.songnuoHoleArea.value = "";
       els.songnuoSiliconeMold.checked = false;
       els.songnuoOver20SpecEnabled.checked = false;
-      els.songnuoOver20SpecPrice.value = "";
+      els.songnuoOver20SpecPrice.value = 10;
       els.concrete168SmallBatch.checked = false;
       els.concreteThicknessCustom.value = "";
       els.concreteEdgeFeeEnabled.checked = false;
-      els.concreteEdgeMeters.value = "";
+      els.concreteEdgeArea.value = "";
       els.concreteEdgeUnitPrice.value = 10;
+      els.concrete168HangingHoleEnabled.checked = false;
+      els.concrete168HangingHoleQty.value = "";
+      els.concrete168HangingPartEnabled.checked = false;
+      els.concrete168HangingPartQty.value = "";
       els.concretePromoRows.querySelectorAll(".concrete-fee-row").forEach((row, index) => {
         if (index > 0) row.remove();
       });
@@ -4900,11 +4961,15 @@
       els.songnuoHoleUnitPrice.value = "";
       els.songnuoSiliconeMold.checked = false;
       els.songnuoOver20SpecEnabled.checked = false;
-      els.songnuoOver20SpecPrice.value = "";
+      els.songnuoOver20SpecPrice.value = 10;
       els.concrete168SmallBatch.checked = false;
       els.concreteEdgeFeeEnabled.checked = false;
-      els.concreteEdgeMeters.value = "";
+      els.concreteEdgeArea.value = "";
       els.concreteEdgeUnitPrice.value = 10;
+      els.concrete168HangingHoleEnabled.checked = false;
+      els.concrete168HangingHoleQty.value = "";
+      els.concrete168HangingPartEnabled.checked = false;
+      els.concrete168HangingPartQty.value = "";
       els.concretePromoRows.querySelectorAll(".concrete-fee-row").forEach((row, index) => {
         if (index > 0) row.remove();
       });
@@ -4941,6 +5006,7 @@
     bindConcretePromoRows();
     syncCementAccessoryFields();
     syncSongnuoHoleUnitPrice(true);
+    syncConcreteEdgeUnitPrice(true);
     concreteRows().forEach((row) => {
       bindConcreteProductRow(row);
       syncConcreteSpecText(false, row);
@@ -4958,6 +5024,7 @@
         }
         renderLogistics();
         syncSongnuoHoleUnitPrice(true);
+        syncConcreteEdgeUnitPrice(true);
         if (isConcreteWarehouse()) syncConcreteSpecText();
         syncNingboRows(false);
         calculate();
@@ -4970,6 +5037,7 @@
       input.addEventListener("change", () => {
         renderLogistics();
         syncSongnuoHoleUnitPrice(true);
+        syncConcreteEdgeUnitPrice(true);
         calculate();
       });
     });
@@ -4977,6 +5045,8 @@
       input.addEventListener("change", () => {
         renderLogistics();
         syncSongnuoHoleUnitPrice(true);
+        syncConcreteEdgeUnitPrice(true);
+        syncConcreteExtraOptions();
         syncConcretePrice();
         calculate();
       });
