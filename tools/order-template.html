@@ -2554,6 +2554,7 @@
   <datalist id="ningboProductList"></datalist>
 
   <script src="product-data.js?v=20260720-1"></script>
+  <script src="freight-gold-core.js?v=20260803-1"></script>
   <script src="ningbo-freight-core.js?v=20260713-2"></script>
   <script>
     const productData = window.JieGeProductData;
@@ -3950,7 +3951,7 @@
         lengthType: hasLong ? "long" : "short"
       };
       const pkg = warehouse === "浙江仓" && totalQty > 0 ? (allSmall ? chooseSmallPalletPackage(totalQty) : choosePackage(totalQty, packageSpec)) : null;
-      const db = warehouse === "浙江仓" ? Math.ceil(totalQty * 1.5) : 0;
+      const db = warehouse === "浙江仓" ? window.GoldFreightCore.calculateDb(products) : 0;
       const weightLine = liujinWeightLine(products, pkg);
       const packageLine = pkg ? pkg.output : "";
       const detail = products.map((item) => item.detail).join("\n");

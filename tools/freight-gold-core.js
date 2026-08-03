@@ -62,6 +62,34 @@
     return group.find((item) => item.key === specKey) || null;
   }
 
+  function dbRateForSpec(specValue) {
+    const source = specValue && typeof specValue === "object"
+      ? (specValue.label || specValue.value || specValue.key || "")
+      : specValue;
+    const dimensions = specDimensions(source);
+    if (!dimensions) return 1.5;
+
+    const [shortSide, longSide] = dimensions;
+    if (shortSide <= 600 && longSide <= 1200) return 0.5;
+    if (shortSide <= 600) return 0.75;
+    return 1.5;
+  }
+
+  function calculateDb(rawItems) {
+    const amount = (rawItems || []).reduce((sum, item) => {
+      const quantity = Number.parseInt(String(item.quantity ?? item.qty ?? "").trim(), 10);
+      if (!Number.isFinite(quantity) || quantity <= 0) return sum;
+
+      const material = item.material === "soft" ? "soft" : "hard";
+      const spec = item.spec && item.spec.label
+        ? item.spec
+        : specByKey(material, item.specKey) || item.specText || item.spec;
+      return sum + quantity * dbRateForSpec(spec);
+    }, 0);
+
+    return Math.min(100, amount);
+  }
+
   function normalizeItem(item) {
     const material = item.material === "soft" ? "soft" : "hard";
     const spec = item.spec && item.spec.key ? item.spec : specByKey(material, item.specKey);
@@ -152,12 +180,13 @@
     const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
     const lengthType = shipmentLengthType(items);
     const pkg = choosePackage(items, lengthType);
-    const db = Math.ceil(totalQuantity * 1.5);
+    const db = calculateDb(items);
+    const dbLine = `DB${formatMoney(db)}`;
 
     if (!pkg) {
       const max = maxCapacity(lengthType);
       const message = `当前合计 ${formatWeight(hardEquivalentQuantity(items))} 张硬质等效数量超过表格最大可装数量（${max}张），请拆分多箱后再提交。`;
-      return { ok: false, type: "overflow", message, dbLine: `DB${db}` };
+      return { ok: false, type: "overflow", message, dbLine };
     }
 
     const boardTotal = boardWeight(items);
@@ -165,7 +194,6 @@
     const detailLine = shipmentSpecLabel(items);
     const weightLine = `${boardWeightLine(items)}+${pkg.weight}=${formatWeight(totalWeight)}KG`;
     const packageLine = packageQuestionLine(pkg);
-    const dbLine = `DB${db}`;
     const notice = pkg.type === "pallet"
       ? `合计${totalQuantity}张，硬软混装按硬质等效 ${formatWeight(hardEquivalentQuantity(items))} 张核算，在优先托盘范围内，使用${pkg.output}，包装重量 ${pkg.weight}KG。`
       : `合计${totalQuantity}张，硬软混装按硬质等效 ${formatWeight(hardEquivalentQuantity(items))} 张核算，按最长规格匹配${pkg.name}，外径 ${pkg.outer}，木箱重量 ${pkg.weight}KG。`;
@@ -308,6 +336,8 @@
     pallets,
     matchSpecKey,
     specByKey,
+    dbRateForSpec,
+    calculateDb,
     normalizeItem,
     calculateShipment,
     formatWeight,

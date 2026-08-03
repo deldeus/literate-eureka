@@ -100,6 +100,28 @@ test("鎏金运费页面只保留公共包装核算逻辑", () => {
   assert.doesNotMatch(html, /function shipmentLengthType\(/);
 });
 
+test("浙江仓 DB 按小中大板规格分别计价并封顶", () => {
+  const core = loadCore(sampleRates);
+  assert.equal(core.calculateDb([{ material: "hard", specKey: "hard-600", quantity: 12 }]), 6);
+  assert.equal(core.calculateDb([{ spec: { label: "600*2440mm" }, quantity: 12 }]), 9);
+  assert.equal(core.calculateDb([{ material: "hard", specKey: "hard-2440", quantity: 12 }]), 18);
+  assert.equal(core.calculateDb([
+    { material: "hard", specKey: "hard-600", quantity: 12 },
+    { spec: { label: "600*2440mm" }, quantity: 4 },
+    { material: "hard", specKey: "hard-2440", quantity: 2 }
+  ]), 12);
+  assert.equal(core.calculateDb([{ material: "hard", specKey: "hard-2440", quantity: 100 }]), 100);
+});
+
+test("浙江仓开单、鎏金运费和文字报价共用 DB 核心", () => {
+  const order = read("tools/order-template.html");
+  assert.match(order, /GoldFreightCore\.calculateDb\(products\)/);
+  assert.doesNotMatch(order, /totalQty \* 1\.5/);
+  for (const file of ["tools/order-template.html", "tools/freight-gold.html", "tools/quote-generator.html"]) {
+    assert.match(read(file), /<script src="freight-gold-core\.js\?v=20260803-1"><\/script>/, file);
+  }
+});
+
 test("文字报价不把空产品识别成鎏金板", () => {
   const html = read("tools/quote-generator.html");
   assert.match(html, /if \(!productText\.trim\(\)\) return false;/);
@@ -246,8 +268,8 @@ test("三个业务页面共同读取产品数据", () => {
 });
 
 test("公共业务逻辑带版本标记避免浏览器继续使用旧缓存", () => {
-  for (const file of ["tools/freight-gold.html", "tools/quote-generator.html"]) {
-    assert.match(read(file), /<script src="freight-gold-core\.js\?v=20260713-2"><\/script>/, file);
+  for (const file of ["tools/order-template.html", "tools/freight-gold.html", "tools/quote-generator.html"]) {
+    assert.match(read(file), /<script src="freight-gold-core\.js\?v=20260803-1"><\/script>/, file);
   }
   for (const file of ["tools/freight-gold.html", "tools/quote-generator.html"]) {
     assert.match(read(file), /<script src="kye-rates\.js\?v=20260713-2"><\/script>/, file);
