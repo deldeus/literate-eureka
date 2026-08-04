@@ -52,10 +52,13 @@
     .sub-price { display:inline-flex; align-items:center; gap:5px; border:1px solid rgba(31,122,82,.18); border-radius:999px; background:#fff; padding:4px 8px; color:#5d6962; font-size:12px; font-weight:800; }
     .sub-price strong { color:#7a4c00; font-size:11px; font-weight:950; }
     .sub-price b { color:#0c5436; font-size:18px; line-height:1; }
+    .price-values { display:flex; align-items:center; justify-content:flex-end; gap:18px; }
+    .price-values > b { min-width:72px; }
+    .price-values > b.minimum-price { color:#b42318 !important; }
     .price-row b { color:#0c5436; font-size:22px; white-space:nowrap; text-align:right; }
     .price-row b small { display:block; margin-bottom:2px; color:#7a4c00; font-size:11px; font-weight:950; line-height:1; }
     .note { margin:0; padding:0 14px 14px; color:#6a470f; font-size:13px; line-height:1.6; }
-    @media (max-width:760px) { main{width:min(100% - 18px,1180px); padding-top:16px;} .topbar{display:block;} .pill{display:inline-block; margin-top:10px;} .search-panel{padding:14px;} input{font-size:20px; min-height:54px;} .price-grid{grid-template-columns:1fr;} .card-head{display:grid;} .badge{justify-self:start;} }
+    @media (max-width:760px) { main{width:min(100% - 18px,1180px); padding-top:16px;} .topbar{display:block;} .pill{display:inline-block; margin-top:10px;} .search-panel{padding:14px;} input{font-size:20px; min-height:54px;} .price-grid{grid-template-columns:1fr;} .card-head{display:grid;} .badge{justify-self:start;} .price-values{gap:12px;} .price-values > b{min-width:64px;} }
 
     /* iPhone-style refinement aligned with the quote module. */
     :root { --bg:#f5f6f8; --panel:#fff; --ink:#1f2937; --muted:#687385; --line:#d9dee7; --accent:#146c94; --soft:#e9f4f8; --gold:#a8842e; --shadow:0 18px 44px rgba(20,36,55,.08); }
@@ -551,17 +554,18 @@
 </head>
 <body>
   <main>
-    <div class="topbar"><div><h1>快速查价</h1><p class="subtitle">输入产品关键词，快速查看鎏金板、宁波柔岩板、水泥板、松诺仓和 168 仓各规格底价。</p></div><div class="pill">按关键词查底价</div></div>
+    <div class="topbar"><div><h1>快速查价</h1><p class="subtitle">输入产品关键词，快速查看各规格价格；鎏金板同时显示底价与最低售价。</p></div><div class="pill">按关键词查价格</div></div>
     <section class="panel search-panel"><label for="query">产品关键词</label><div class="search-wrap"><input id="query" autocomplete="off" placeholder="例如 雪岩 / 拉丝 / 仿金属 / 星月石"><button id="clearSearchBtn" class="search-clear" type="button">清空</button><div id="suggestions" class="suggestions"></div></div><div class="quick-tags" id="quickTags"></div></section>
-    <section id="results" class="results"><div class="panel empty">输入关键词后显示底价。比如输入“仿”会出现“仿金属”，点击后显示硬质、软质各规格价格。</div></section>
+    <section id="results" class="results"><div class="panel empty">输入关键词后显示价格。比如输入“仿”会出现“仿金属”，点击后显示硬质、软质各规格的底价与最低售价。</div></section>
   </main>
-  <script src="product-data.js?v=20260720-1"></script>
+  <script src="product-data.js?v=20260804-1"></script>
   <script>
     const productData = window.JieGeProductData;
     const specs = productData.liujinSpecs;
     const liujinSeriesPriceGroups = productData.liujinSeriesPriceGroups;
     const sandstoneSpecs = productData.sandstoneSpecs;
     const ningboProductCatalog = productData.ningboProductCatalog;
+    const concrete168ExtraFeeNote = `打孔+5元/㎡；倒边+5元/㎡；干挂孔1元/个；干挂件8元/个；30种规格以上另加10元/㎡；${productData.concrete168PackagingNote}`;
     const concretePriceTable = {
       "松诺": {
         flat: {
@@ -798,19 +802,32 @@
       const main = note ? clean.slice(0, -note.length) : clean;
       return `${main}mm${note}`;
     }
+    const liujinMinimumPriceGroups = [
+      { 'hard-2440':85, 'hard-3050':85, 'soft-2440':95, 'soft-3000':95 },
+      { 'hard-2440':90, 'hard-3050':90, 'soft-2440':100, 'soft-3000':100 },
+      { 'hard-2440':95, 'hard-3050':95, 'soft-2440':110, 'soft-3000':110 },
+      { 'hard-2440':100, 'hard-3050':100, 'soft-2440':115, 'soft-3000':115 },
+      { 'hard-2440':115, 'hard-3050':115, 'soft-2440':125, 'soft-3000':125 },
+      { 'hard-2440':125, 'hard-3050':125, 'soft-2440':140, 'soft-3000':140 },
+      { 'hard-2440':220, 'hard-3050':220, 'soft-2440':235, 'soft-3000':235 },
+      { 'hard-2440':140 }
+    ];
+    function liujinMinimumPrice(groupIndex, key) {
+      return liujinMinimumPriceGroups[groupIndex]?.[key];
+    }
     function liujinEntries() {
       const specNames = { 'hard-2440':'硬质 1220*2440*6mm', 'hard-3050':'硬质 1220*3050*6mm', 'hard-600':'硬质 1200*600*6mm（按硬质短板底价）', 'soft-2440':'软质 1200*2440*2~3mm', 'soft-3000':'软质 1200*3000*2~3mm' };
       const order = ['hard-2440','hard-3050','soft-2440','soft-3000'];
-      return liujinSeriesPriceGroups.map((group) => ({ type:'liujin', title:group.names[0], aliases:group.names, warehouse:'浙江仓', category:'鎏金板', note:'款式：' + group.names.join('、') + '。销售不得低于规定最低成交价；特殊项目需审批。', rows:order.map((key) => ({ label:'款式 ' + group.names.join(' / ') + ' · 规格 ' + specNames[key], price:group.prices[key] })).filter((row) => row.price) }));
+      return liujinSeriesPriceGroups.map((group, groupIndex) => ({ type:'liujin', title:group.names[0], aliases:group.names, warehouse:'浙江仓', category:'鎏金板', unit:'底价与最低售价 / 元每平', note:'款式：' + group.names.join('、') + '。销售不得低于规定最低成交价；特殊项目需审批。', rows:order.map((key) => ({ label:'款式 ' + group.names.join(' / ') + ' · 规格 ' + specNames[key], price:group.prices[key], minimumPrice:liujinMinimumPrice(groupIndex, key) })).filter((row) => row.price) }));
     }
     function liujinTableEntries() {
       const rows = [];
-      liujinSeriesPriceGroups.forEach((group) => {
+      liujinSeriesPriceGroups.forEach((group, groupIndex) => {
         const styles = group.names.join(' / ');
         const hardPrice = group.prices['hard-2440'] || group.prices['hard-3050'];
         const softPrice = group.prices['soft-2440'] || group.prices['soft-3000'];
-        if (hardPrice) rows.push({ label:styles, tag:'硬质', tagClass:'hard', subLabel:'1220*2440 / 3050mm', price:hardPrice });
-        if (softPrice) rows.push({ label:styles, tag:'软质', tagClass:'soft', subLabel:'1200*2440 / 3000mm', price:softPrice });
+        if (hardPrice) rows.push({ label:styles, tag:'硬质', tagClass:'hard', subLabel:'1220*2440 / 3050mm', price:hardPrice, minimumPrice:liujinMinimumPrice(groupIndex, 'hard-2440') });
+        if (softPrice) rows.push({ label:styles, tag:'软质', tagClass:'soft', subLabel:'1200*2440 / 3000mm', price:softPrice, minimumPrice:liujinMinimumPrice(groupIndex, 'soft-2440') });
       });
       return [{
         type:'liujin-table',
@@ -818,7 +835,7 @@
         aliases:['鎏金板', '鎏金板价格表', '鎏金价格表', '鎏金完整价格表'],
         warehouse:'浙江仓',
         category:'鎏金板',
-        unit:'销售底价 / 元每平',
+        unit:'底价与最低售价 / 元每平',
         note:'硬质同组 1220*2440mm 和 1220*3050mm 同价；软质同组 1200*2440mm 和 1200*3000mm 同价。',
         rows
       }];
@@ -853,7 +870,7 @@
           texture:'硅胶模+20元/㎡。'
         },
         "168": {
-          default:'打孔+5元/㎡；倒边+5元/㎡；干挂孔1元/个；干挂件8元/个；30种规格以上另加10元/㎡；清水板、透光板订单不足5㎡，包装费+200元。'
+          default:concrete168ExtraFeeNote
         }
       };
       const entries = [];
@@ -866,7 +883,7 @@
       const bands = { thin:'10-12mm', medium:'20-25mm', combo:'10-25mm', thick:'30mm' };
       const notes = {
         '松诺':'单件面积：1.5㎡以下、20种规格内，执行600*1200mm的价格；打孔+7元/㎡；倒边+10元/㎡；超过20种规格另加10元/㎡。其它超大规格另行核算。木纹板 / 竹纹板：硅胶模+20元/㎡。',
-        '168':'打孔+5元/㎡；倒边+5元/㎡；干挂孔1元/个；干挂件8元/个；30种规格以上另加10元/㎡；清水板、透光板订单不足5㎡，包装费+200元。'
+        '168':concrete168ExtraFeeNote
       };
       return ['松诺', '168'].map((warehouse) => {
         const rows = [];
@@ -1071,8 +1088,13 @@
       return focused.sort((a,b) => b.score - a.score || (a.entry.sortOrder || 100) - (b.entry.sortOrder || 100) || a.entry.title.localeCompare(b.entry.title, 'zh-Hans-CN')).map((item) => item.entry);
     }
     function renderSuggestions(query) { const matches = matchingEntries(query).slice(0,12); els.suggestions.classList.toggle('show', Boolean(query.trim()) && matches.length > 0); els.suggestions.innerHTML = matches.map((entry,index) => '<button class="suggestion" type="button" data-index="' + index + '"><strong>' + esc(entry.title) + '</strong><span>' + esc(entry.warehouse) + ' · ' + esc(entry.category) + (entry.aliases.length ? ' · ' + esc(entry.aliases.join(' / ')) : '') + '</span></button>').join(''); els.suggestions.querySelectorAll('.suggestion').forEach((button) => { button.addEventListener('click', () => { const entry = matches[Number(button.dataset.index)]; els.query.value = entry.aliases[0] || entry.title; els.suggestions.classList.remove('show'); renderResults([entry]); }); }); }
-    function renderResults(entries) { if (!entries.length) { els.results.innerHTML = '<div class="panel empty">没有匹配到价格。换一个关键词试试，例如“陨石板”“夯土板”“透光板”“坐凳”。</div>'; return; } els.results.innerHTML = entries.map((entry) => '<article class="card"><div class="card-head"><div class="card-title"><strong>' + esc(entry.title) + '</strong><span class="meta">' + esc(entry.warehouse) + ' · ' + esc(entry.category) + (entry.aliases.length ? ' · 关键词：' + esc(entry.aliases.join('、')) : '') + '</span></div><span class="badge">' + esc(entry.unit || '底价 / 元每平') + '</span></div><div class="price-grid' + (entry.layout === 'single' ? ' single' : '') + '">' + entry.rows.map((row) => '<div class="price-row"><span><strong class="row-main">' + esc(row.label) + '</strong>' + (row.subLabel ? '<small class="row-sub">' + (row.tag ? '<mark class="row-tag ' + esc(row.tagClass || '') + '">' + esc(row.tag) + '</mark>' : '') + esc(row.subLabel) + '</small>' : '') + (row.priceItems ? '<span class="sub-price-list">' + row.priceItems.map((item) => '<span class="sub-price">' + esc(item.label) + '<strong>底价</strong><b>' + esc(money(item.price)) + '</b></span>').join('') + '</span>' : '') + '</span>' + (row.price === '' || row.price === null || row.price === undefined ? '' : '<b><small>底价</small>' + esc(money(row.price)) + '</b>') + '</div>').join('') + '</div>' + (entry.note ? '<p class="note">' + esc(entry.note) + '</p>' : '') + '</article>').join(''); }
-    function searchNow() { const q = els.query.value.trim(); renderSuggestions(q); if (!q) { els.results.innerHTML = '<div class="panel empty">输入关键词后显示底价。比如输入“陨石板”会出现砂岩、洞石、木纹和仿清水混凝土系列价格。</div>'; return; } renderResults(matchingEntries(q).slice(0,20)); }
+    function renderRowPrices(row) {
+      if (row.price === '' || row.price === null || row.price === undefined) return '';
+      const minimumPrice = row.minimumPrice === '' || row.minimumPrice === null || row.minimumPrice === undefined ? '' : '<b class="minimum-price"><small>最低售价</small>' + esc(money(row.minimumPrice)) + '</b>';
+      return '<span class="price-values"><b><small>底价</small>' + esc(money(row.price)) + '</b>' + minimumPrice + '</span>';
+    }
+    function renderResults(entries) { if (!entries.length) { els.results.innerHTML = '<div class="panel empty">没有匹配到价格。换一个关键词试试，例如“陨石板”“夯土板”“透光板”“坐凳”。</div>'; return; } els.results.innerHTML = entries.map((entry) => '<article class="card"><div class="card-head"><div class="card-title"><strong>' + esc(entry.title) + '</strong><span class="meta">' + esc(entry.warehouse) + ' · ' + esc(entry.category) + (entry.aliases.length ? ' · 关键词：' + esc(entry.aliases.join('、')) : '') + '</span></div><span class="badge">' + esc(entry.unit || '底价 / 元每平') + '</span></div><div class="price-grid' + (entry.layout === 'single' ? ' single' : '') + '">' + entry.rows.map((row) => '<div class="price-row"><span><strong class="row-main">' + esc(row.label) + '</strong>' + (row.subLabel ? '<small class="row-sub">' + (row.tag ? '<mark class="row-tag ' + esc(row.tagClass || '') + '">' + esc(row.tag) + '</mark>' : '') + esc(row.subLabel) + '</small>' : '') + (row.priceItems ? '<span class="sub-price-list">' + row.priceItems.map((item) => '<span class="sub-price">' + esc(item.label) + '<strong>底价</strong><b>' + esc(money(item.price)) + '</b></span>').join('') + '</span>' : '') + '</span>' + renderRowPrices(row) + '</div>').join('') + '</div>' + (entry.note ? '<p class="note">' + esc(entry.note) + '</p>' : '') + '</article>').join(''); }
+    function searchNow() { const q = els.query.value.trim(); renderSuggestions(q); if (!q) { els.results.innerHTML = '<div class="panel empty">输入关键词后显示价格。鎏金板同时显示底价与最低售价，其他产品保持原有价格展示。</div>'; return; } renderResults(matchingEntries(q).slice(0,20)); }
     els.query.addEventListener('input', searchNow); els.query.addEventListener('focus', () => renderSuggestions(els.query.value)); els.clearSearchBtn.addEventListener('click', () => { els.query.value = ''; els.suggestions.classList.remove('show'); searchNow(); els.query.focus(); }); document.addEventListener('click', (event) => { if (!event.target.closest('.search-wrap')) els.suggestions.classList.remove('show'); });
     function loadQuickWords() {
       try {

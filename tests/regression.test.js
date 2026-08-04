@@ -199,7 +199,7 @@ test("宁波重量提供多产品明细操作", () => {
 
 test("宁波重量同步开单模板的星云石产品", () => {
   const html = read("tools/ningbo-weight.html");
-  assert.match(html, /<script src="product-data\.js\?v=20260720-1"><\/script>/);
+  assert.match(html, /<script src="product-data\.js\?v=20260804-1"><\/script>/);
   assert.match(html, /"星云石": "星月石"/);
   assert.match(html, /"星云石B款": "星月石"/);
   assert.match(html, /JieGeProductData\?\.groupedNingboCatalog/);
@@ -240,30 +240,58 @@ test("大漠沙丘名称中的珠光白按大漠系列计价", () => {
   assert.equal(productData.findLiujinSeriesPrice("珠光白", "hard-3050"), 155);
 });
 
+test("快速查价为全部鎏金系列显示最低售价且不修改共享底价", () => {
+  const html = read("tools/quick-price.html");
+  const productData = loadProductData();
+  assert.match(html, /const liujinMinimumPriceGroups = \[/);
+  assert.match(html, /'hard-2440':85, 'hard-3050':85, 'soft-2440':95, 'soft-3000':95/);
+  assert.match(html, /'hard-2440':115, 'hard-3050':115, 'soft-2440':125, 'soft-3000':125/);
+  assert.match(html, /'hard-2440':125, 'hard-3050':125, 'soft-2440':140, 'soft-3000':140/);
+  assert.match(html, /'hard-2440':220, 'hard-3050':220, 'soft-2440':235, 'soft-3000':235/);
+  assert.match(html, /\{ 'hard-2440':140 \}/);
+  assert.match(html, /<small>最低售价<\/small>/);
+  assert.equal(productData.findLiujinSeriesPrice("大漠沙丘", "hard-3050"), 70);
+  assert.equal(productData.findLiujinSeriesPrice("珠光", "soft-3000"), 165);
+});
+
 test("混凝土168附加费使用最新计价规则", () => {
   const html = read("tools/order-template.html");
+  const productData = loadProductData();
   assert.match(html, /return currentWarehouse\(\) === "168" \? 5 : 10/);
   assert.match(html, /倒边平方数/);
   assert.match(html, /干挂孔 1元\/个/);
   assert.match(html, /干挂件 8元\/个/);
   assert.match(html, /30种规格以上 \+10元\/㎡/);
-  assert.match(html, /area < 5/);
-  assert.match(html, /\/清水\|透光\/\.test\(item\.productName\)/);
-  assert.match(html, /name: "不足5平方包装费", amount: 200/);
+  assert.match(html, /productData\.concrete168PackagingFee\(products, area\)/);
+  assert.equal(productData.concrete168PackagingFee([{ productName: "168清水板", specText: "1200*600mm" }], 4.9), 100);
+  assert.equal(productData.concrete168PackagingFee([{ productName: "168清水板", specText: "1200*2400mm" }], 4.9), 150);
+  assert.equal(productData.concrete168PackagingFee([{ productName: "168清水板", specText: "1500*1000mm" }], 4.9), 150);
+  assert.equal(productData.concrete168PackagingFee([{ productName: "平板", productType: "flat", specText: "1200*600mm" }], 4.9), 100);
+  assert.equal(productData.concrete168PackagingFee([{ productName: "虫洞", productType: "cave", specText: "1200*2400mm" }], 4.9), 150);
+  assert.equal(productData.concrete168PackagingFee([{ productName: "168清水板", specText: "1200*600mm" }], 5), 0);
+  assert.equal(productData.concrete168PackagingFee([{ productName: "168透光板", specText: "1200*600mm" }], 4.9), 100);
+  assert.equal(productData.concrete168PackagingFee([{ productName: "168透光板", specText: "1200*2400mm" }], 4.9), 150);
+  assert.equal(productData.concrete168PackagingFee([
+    { productName: "168清水板", specText: "1200*600mm" },
+    { productName: "168清水板", specText: "1200*2400mm" }
+  ], 4.9), 150);
   assert.doesNotMatch(html, /倒边米数/);
 });
 
 test("快速查价同步松诺与168附加费用说明", () => {
   const html = read("tools/quick-price.html");
+  const productData = loadProductData();
   assert.match(html, /打孔\+7元\/㎡；倒边\+10元\/㎡；超过20种规格另加10元\/㎡/);
   assert.match(html, /打孔\+5元\/㎡；倒边\+5元\/㎡；干挂孔1元\/个；干挂件8元\/个/);
-  assert.match(html, /清水板、透光板订单不足5㎡，包装费\+200元/);
+  assert.match(html, /productData\.concrete168PackagingNote/);
+  assert.match(productData.concrete168PackagingNote, /小板（1200\*600mm）包装费100元/);
+  assert.match(productData.concrete168PackagingNote, /大板（1200\*2400mm或单件面积1\.5㎡以上）包装费150元/);
   assert.doesNotMatch(html, /倒边：\+5元\/米/);
 });
 
 test("三个业务页面共同读取产品数据", () => {
   for (const file of ["tools/order-template.html", "tools/quick-price.html", "tools/quote-generator.html"]) {
-    assert.match(read(file), /<script src="product-data\.js\?v=20260720-1"><\/script>/, file);
+    assert.match(read(file), /<script src="product-data\.js\?v=20260804-1"><\/script>/, file);
   }
 });
 

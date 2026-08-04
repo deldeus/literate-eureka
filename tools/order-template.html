@@ -2323,7 +2323,7 @@
                   <label class="checkline" id="concrete168SmallBatchWrap"><input id="concrete168SmallBatch" type="checkbox">30种规格以上 +10元/㎡</label>
                 </div>
                 <p class="hint">附加费用按总平方数计算，会写入明细并自动扣入 KD。</p>
-                <p class="hint hidden" id="concrete168PackagingHint">168 清水板、透光板订单总面积不足 5㎡时，自动加包装费 200 元。</p>
+                <p class="hint hidden" id="concrete168PackagingHint"></p>
               </div>
               <div class="concrete-extra-options">
                 <div class="concrete-extra-grid">
@@ -2553,7 +2553,7 @@
 
   <datalist id="ningboProductList"></datalist>
 
-  <script src="product-data.js?v=20260720-1"></script>
+  <script src="product-data.js?v=20260804-1"></script>
   <script src="freight-gold-core.js?v=20260803-1"></script>
   <script src="ningbo-freight-core.js?v=20260713-2"></script>
   <script>
@@ -2801,6 +2801,8 @@
       fillNingboBtn: document.querySelector("#fillNingboBtn"),
       fillSongnuoBtn: document.querySelector("#fillSongnuoBtn")
     };
+
+    els.concrete168PackagingHint.textContent = productData.concrete168PackagingNote;
 
     let manualResultMode = false;
     let renderingResult = false;
@@ -3114,12 +3116,11 @@
         const qty = numberValue(els.concrete168HangingPartQty);
         if (qty > 0) fees.push({ name: "干挂件", qty, unit: "个", unitPrice: 8, amount: qty * 8 });
       }
-      const needsSmallOrderPackaging = warehouse === "168"
-        && area > 0
-        && area < 5
-        && products.some((item) => /清水|透光/.test(item.productName));
-      if (needsSmallOrderPackaging) {
-        fees.push({ type: "fixed", name: "不足5平方包装费", amount: 200 });
+      const packagingFee = warehouse === "168"
+        ? productData.concrete168PackagingFee(products, area)
+        : 0;
+      if (packagingFee > 0) {
+        fees.push({ type: "fixed", name: "不足5平方包装费", amount: packagingFee });
       }
       concretePromoFees().forEach((item) => fees.push(item));
       return {
@@ -4583,6 +4584,7 @@
     function readConcreteProduct(row) {
       syncConcretePrice(row);
       const productName = row.productName.value.trim() || "请填写混凝土款式";
+      const productType = concreteProductType(productName);
       const specText = row.specText.value.trim() || "请填写规格";
       const area = numberValue(row.area);
       const sqmPrice = numberValue(row.sqmPrice);
@@ -4591,7 +4593,7 @@
       const materialAmount = materialOverride === null ? autoMaterialAmount : materialOverride;
       const hasInput = Boolean(row.productName.value.trim() || row.specText.value.trim() || row.area.value.trim() || row.sqmPrice.value.trim() || row.materialAmount.value.trim());
       const detail = `${productName}${specText}*${money(area)}平*${money(sqmPrice)}=${money(materialAmount)}（${money(sqmPrice)}/平）`;
-      return { productName, detail, materialAmount, area, hasInput };
+      return { productName, productType, specText, detail, materialAmount, area, hasInput };
     }
 
     function buildSongnuo() {

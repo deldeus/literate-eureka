@@ -162,6 +162,32 @@
       : "";
   }
 
+  const concrete168PackagingNote = "168清水板、透光板订单总面积不足5㎡时：小板（1200*600mm）包装费100元；大板（1200*2400mm或单件面积1.5㎡以上）包装费150元。";
+
+  function specAreaSquareMeters(value) {
+    const values = String(value || "").replace(/[×xX]/g, "*").match(/\d+(?:\.\d+)?/g) || [];
+    if (values.length < 2) return 0;
+    return (Number(values[0]) * Number(values[1])) / 1000000;
+  }
+
+  function concrete168PackagingFee(products, totalArea) {
+    const area = Number(totalArea) || 0;
+    if (!(area > 0 && area < 5)) return 0;
+
+    const items = Array.isArray(products) ? products : [];
+    const packagedItems = items.filter((item) => {
+      const name = String(item?.productName || "");
+      return /清水|透光/.test(name) || item?.productType === "flat" || item?.productType === "cave";
+    });
+    let amount = 0;
+
+    if (packagedItems.length) {
+      const hasLargeBoard = packagedItems.some((item) => specAreaSquareMeters(item.specText || item.spec || "") >= 1.5);
+      amount = Math.max(amount, hasLargeBoard ? 150 : 100);
+    }
+    return amount;
+  }
+
   window.JieGeProductData = {
     liujinSpecs,
     liujinSeriesPriceGroups,
@@ -169,6 +195,9 @@
     ningboProductCatalog,
     groupedNingboCatalog,
     isLiujinProductName,
-    findLiujinSeriesPrice
+    findLiujinSeriesPrice,
+    concrete168PackagingNote,
+    specAreaSquareMeters,
+    concrete168PackagingFee
   };
 })();
