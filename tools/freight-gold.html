@@ -388,26 +388,26 @@
       color: #6f2019;
     }
 
-    .kye-section {
+    .shunxin-section {
       margin-top: 18px;
       border: 1px solid var(--line);
       border-radius: 18px;
       background: #fff;
       overflow: hidden;
-      box-shadow: 0 14px 34px rgba(88, 28, 135, 0.08);
+      box-shadow: 0 12px 30px rgba(17, 24, 39, 0.08);
     }
 
-    .kye-head {
+    .shunxin-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 14px;
       padding: 16px 18px;
       border-bottom: 1px solid var(--line);
-      background: linear-gradient(90deg, rgba(91, 33, 182, 0.09), rgba(255,255,255,0));
+      background: #f7f7f7;
     }
 
-    .kye-title {
+    .shunxin-title {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -416,35 +416,29 @@
       color: #1f2937;
     }
 
-    .kye-logo {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 72px;
-      height: 38px;
-      border-radius: 999px;
-      background: #6b21a8;
-      color: #fff;
-      font-size: 18px;
-      font-weight: 950;
-      letter-spacing: 0;
+    .shunxin-logo {
+      width: 92px;
+      height: 48px;
+      border-radius: 6px;
+      object-fit: contain;
+      background: #000;
       flex: 0 0 auto;
     }
 
-    .kye-subtitle {
+    .shunxin-subtitle {
       color: var(--muted);
       font-size: 13px;
       font-weight: 700;
     }
 
-    .kye-total {
-      color: #6b21a8;
+    .shunxin-total {
+      color: #111827;
       font-size: 24px;
       font-weight: 950;
       white-space: nowrap;
     }
 
-    .kye-body {
+    .shunxin-body {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 220px;
       gap: 14px;
@@ -452,7 +446,7 @@
       align-items: stretch;
     }
 
-    .kye-box {
+    .shunxin-box {
       min-height: 170px;
       border-radius: 14px;
       background: #18181b;
@@ -465,11 +459,11 @@
       overflow-wrap: anywhere;
     }
 
-    .kye-process {
+    .shunxin-process {
       border-radius: 14px;
-      background: #faf5ff;
-      border: 1px solid #e9d5ff;
-      color: #4c1d95;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #7c2d12;
       padding: 14px;
       font-size: 13px;
       line-height: 1.6;
@@ -477,12 +471,12 @@
       overflow-wrap: anywhere;
     }
 
-    .kye-actions {
+    .shunxin-actions {
       padding: 0 18px 18px;
     }
 
-    .kye-actions button {
-      background: #6b21a8;
+    .shunxin-actions button {
+      background: #111827;
       min-width: 190px;
     }
 
@@ -517,12 +511,12 @@
         grid-template-columns: 1fr;
       }
 
-      .kye-head,
-      .kye-body {
+      .shunxin-head,
+      .shunxin-body {
         grid-template-columns: 1fr;
       }
 
-      .kye-head {
+      .shunxin-head {
         align-items: flex-start;
         flex-direction: column;
       }
@@ -1427,23 +1421,23 @@
           </div>
           <div id="notice" class="notice"></div>
 
-          <div class="kye-section" id="kyeSection">
-            <div class="kye-head">
-              <div class="kye-title">
-                <span class="kye-logo">KYE</span>
+          <div class="shunxin-section" id="shunxinSection">
+            <div class="shunxin-head">
+              <div class="shunxin-title">
+                <img class="shunxin-logo" src="assets/shunxin-jieda-logo.png" alt="顺心捷达">
                 <div>
-                  <div>跨越速运自动查询</div>
-                  <div class="kye-subtitle">仅用于鎏金板，根据地址、重量和包装自动估算。</div>
+                  <div>顺心捷达自动报价</div>
+                  <div class="shunxin-subtitle">仅用于鎏金板，根据地址、重量、包装和官方报价表自动估算。</div>
                 </div>
               </div>
-              <div class="kye-total" id="kyeTotal">-</div>
+              <div class="shunxin-total" id="shunxinTotal">-</div>
             </div>
-            <div class="kye-body">
-              <div class="kye-box" id="kyeQuote">请填写地址和规格数量</div>
-              <div class="kye-process" id="kyeProcess">自动显示计算过程</div>
+            <div class="shunxin-body">
+              <div class="shunxin-box" id="shunxinQuote">请填写地址和规格数量</div>
+              <div class="shunxin-process" id="shunxinProcess">自动显示计算过程</div>
             </div>
-            <div class="kye-actions">
-              <button type="button" id="copyKyeBtn">复制跨越运费</button>
+            <div class="shunxin-actions">
+              <button type="button" id="copyShunxinBtn">复制顺心捷达报价</button>
             </div>
           </div>
         </div>
@@ -1451,8 +1445,8 @@
     </div>
   </main>
 
-  <script src="kye-rates.js?v=20260713-2"></script>
-  <script src="freight-gold-core.js?v=20260803-1"></script>
+  <script src="shunxin-rates.js?v=20260808-1"></script>
+  <script src="freight-gold-core.js?v=20260808-1"></script>
   <script>
     const freightCore = window.GoldFreightCore;
     const specs = freightCore.specs;
@@ -1476,10 +1470,10 @@
       copyBtn: document.querySelector("#copyBtn"),
       clearBtn: document.querySelector("#clearBtn"),
       resetFreightBtn: document.querySelector("#resetFreightBtn"),
-      kyeTotal: document.querySelector("#kyeTotal"),
-      kyeQuote: document.querySelector("#kyeQuote"),
-      kyeProcess: document.querySelector("#kyeProcess"),
-      copyKyeBtn: document.querySelector("#copyKyeBtn")
+      shunxinTotal: document.querySelector("#shunxinTotal"),
+      shunxinQuote: document.querySelector("#shunxinQuote"),
+      shunxinProcess: document.querySelector("#shunxinProcess"),
+      copyShunxinBtn: document.querySelector("#copyShunxinBtn")
     };
 
     function renderItems() {
@@ -1577,15 +1571,15 @@
       });
     }
 
-    function setKyeResult(totalText, quoteText, processText) {
-      els.kyeTotal.textContent = totalText;
-      els.kyeQuote.textContent = quoteText;
-      els.kyeProcess.textContent = processText;
+    function setShunxinResult(totalText, quoteText, processText) {
+      els.shunxinTotal.textContent = totalText;
+      els.shunxinQuote.textContent = quoteText;
+      els.shunxinProcess.textContent = processText;
     }
 
-    function updateKyeQuote({ address, totalWeight, pkg, weightLine, packageLine, dbLine }) {
-      const result = freightCore.buildKyeQuote({ address, totalWeight, pkg, weightLine, packageLine, dbLine });
-      setKyeResult(result.totalText, result.quoteText, result.processText);
+    function updateShunxinQuote({ address, totalWeight, pkg, weightLine, packageLine, dbLine, db }) {
+      const result = freightCore.buildShunxinQuote({ address, totalWeight, pkg, weightLine, packageLine, dbLine, db });
+      setShunxinResult(result.totalText, result.quoteText, result.processText);
     }
 
     function calculate() {
@@ -1596,7 +1590,7 @@
         els.packageLine.textContent = "-";
         els.dbLine.textContent = "-";
         els.result.textContent = `${els.address.value.trim() || "请粘贴地址"}\n\n请输入大于 0 的数量`;
-        setKyeResult("-", "请输入大于 0 的数量", "需要先完成自动核算。");
+        setShunxinResult("-", "请输入大于 0 的数量", "需要先完成自动核算。");
         els.notice.textContent = "每一组规格的数量都需要填写大于 0 的整数。";
         els.notice.className = "notice error";
         return;
@@ -1608,7 +1602,7 @@
         els.packageLine.textContent = "-";
         els.dbLine.textContent = "-";
         els.result.textContent = `${els.address.value.trim() || "请粘贴地址"}\n\n请填写至少一组规格数量`;
-        setKyeResult("-", "请填写至少一组规格数量", "需要先完成自动核算。");
+        setShunxinResult("-", "请填写至少一组规格数量", "需要先完成自动核算。");
         els.notice.textContent = "可以新增多组规格；同一票发货会按总张数、最长规格统一核算包装。";
         els.notice.className = "notice";
         return;
@@ -1622,7 +1616,7 @@
         els.weightLine.textContent = "-";
         els.packageLine.textContent = shipment.type === "overflow" ? "需拆分" : "需确认";
         els.dbLine.textContent = shipment.dbLine || "-";
-        setKyeResult("-", message, "需要先完成自动核算。");
+        setShunxinResult("-", message, "需要先完成自动核算。");
         return;
       }
 
@@ -1633,13 +1627,14 @@
       els.packageLine.textContent = shipment.packageLine;
       els.dbLine.textContent = shipment.dbLine;
       els.result.textContent = template;
-      updateKyeQuote({
+      updateShunxinQuote({
         address,
         totalWeight: shipment.totalWeight,
         pkg: shipment.pkg,
         weightLine: shipment.weightLine,
         packageLine: shipment.packageLine,
-        dbLine: shipment.dbLine
+        dbLine: shipment.dbLine,
+        db: shipment.db
       });
 
       els.notice.textContent = shipment.notice;
@@ -1683,20 +1678,20 @@
       }
     });
 
-    els.copyKyeBtn.addEventListener("click", async () => {
+    els.copyShunxinBtn.addEventListener("click", async () => {
       try {
-        await navigator.clipboard.writeText(els.kyeQuote.textContent);
-        els.copyKyeBtn.textContent = "已复制";
+        await navigator.clipboard.writeText(els.shunxinQuote.textContent);
+        els.copyShunxinBtn.textContent = "已复制";
         window.setTimeout(() => {
-          els.copyKyeBtn.textContent = "复制跨越运费";
+          els.copyShunxinBtn.textContent = "复制顺心捷达报价";
         }, 1200);
       } catch (error) {
         const range = document.createRange();
-        range.selectNodeContents(els.kyeQuote);
+        range.selectNodeContents(els.shunxinQuote);
         const selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
-        els.copyKyeBtn.textContent = "已选中，可手动复制";
+        els.copyShunxinBtn.textContent = "已选中，可手动复制";
       }
     });
 

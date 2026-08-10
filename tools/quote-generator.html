@@ -259,6 +259,97 @@
       flex: 1 1 240px;
     }
 
+    .shunxin-section {
+      overflow: hidden;
+      border: 1px solid #d9dee7;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .shunxin-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px;
+      border-bottom: 1px solid #d9dee7;
+      background: #f7f8fa;
+    }
+
+    .shunxin-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .shunxin-logo {
+      width: 116px;
+      height: 54px;
+      flex: 0 0 auto;
+      border-radius: 6px;
+      object-fit: contain;
+      background: #050505;
+    }
+
+    .shunxin-subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.45;
+    }
+
+    .shunxin-total {
+      flex: 0 0 auto;
+      color: #15181c;
+      font-size: 26px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .shunxin-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(240px, 0.75fr);
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .shunxin-box,
+    .shunxin-process {
+      min-height: 190px;
+      border-radius: 8px;
+      padding: 18px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.65;
+    }
+
+    .shunxin-box {
+      background: #171a1d;
+      color: #fff;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 15px;
+    }
+
+    .shunxin-process {
+      border: 1px solid #d9dee7;
+      background: #f7f8fa;
+      color: #485161;
+      font-size: 14px;
+    }
+
+    .shunxin-actions {
+      display: flex;
+      padding: 0 16px 16px;
+    }
+
+    .shunxin-actions button {
+      min-width: 240px;
+    }
+
     #singleProductFields {
       display: grid;
       grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -666,6 +757,36 @@
 
       .quote-freight-summary {
         grid-template-columns: 1fr;
+      }
+
+      .shunxin-head {
+        align-items: flex-start;
+      }
+
+      .shunxin-title {
+        align-items: flex-start;
+      }
+
+      .shunxin-logo {
+        width: 92px;
+        height: 44px;
+      }
+
+      .shunxin-total {
+        font-size: 20px;
+      }
+
+      .shunxin-body {
+        grid-template-columns: 1fr;
+      }
+
+      .shunxin-box,
+      .shunxin-process {
+        min-height: 150px;
+      }
+
+      .shunxin-actions button {
+        width: 100%;
       }
 
       .grid-2,
@@ -1603,6 +1724,26 @@
           <div id="quoteFreightNotice" class="calc-line">会跟随上方鎏金板报价自动更新。</div>
         </div>
       </section>
+
+      <section class="shunxin-section hidden" id="quoteShunxinSection" aria-label="顺心捷达自动报价">
+        <div class="shunxin-head">
+          <div class="shunxin-title">
+            <img class="shunxin-logo" src="assets/shunxin-jieda-logo.png" alt="顺心捷达">
+            <div>
+              <div>顺心捷达自动报价</div>
+              <div class="shunxin-subtitle">仅用于鎏金板，根据上方规格、数量、地址和官方报价表自动估算。</div>
+            </div>
+          </div>
+          <div class="shunxin-total" id="quoteShunxinTotal">-</div>
+        </div>
+        <div class="shunxin-body">
+          <div class="shunxin-box" id="quoteShunxinQuote">请填写鎏金板产品、规格、数量和地址</div>
+          <div class="shunxin-process" id="quoteShunxinProcess">自动显示计算过程</div>
+        </div>
+        <div class="shunxin-actions">
+          <button type="button" id="copyQuoteShunxinBtn">复制顺心捷达报价</button>
+        </div>
+      </section>
     </div>
 
     <section id="historyView" class="history-view">
@@ -1618,8 +1759,8 @@
   </main>
 
   <script src="product-data.js?v=20260804-1"></script>
-  <script src="kye-rates.js?v=20260713-2"></script>
-  <script src="freight-gold-core.js?v=20260803-1"></script>
+  <script src="shunxin-rates.js?v=20260808-1"></script>
+  <script src="freight-gold-core.js?v=20260808-1"></script>
   <script>
     const els = {
       multiMode: document.querySelector("#multiMode"),
@@ -1672,6 +1813,11 @@
       quoteFreightNotice: document.querySelector("#quoteFreightNotice"),
       copyQuoteFreightBtn: document.querySelector("#copyQuoteFreightBtn"),
       clearQuoteFreightBtn: document.querySelector("#clearQuoteFreightBtn"),
+      quoteShunxinSection: document.querySelector("#quoteShunxinSection"),
+      quoteShunxinTotal: document.querySelector("#quoteShunxinTotal"),
+      quoteShunxinQuote: document.querySelector("#quoteShunxinQuote"),
+      quoteShunxinProcess: document.querySelector("#quoteShunxinProcess"),
+      copyQuoteShunxinBtn: document.querySelector("#copyQuoteShunxinBtn"),
       historyView: document.querySelector("#historyView"),
       historyList: document.querySelector("#historyList"),
       backToQuote: document.querySelector("#backToQuote"),
@@ -2035,12 +2181,20 @@
         .filter((item) => Number.isFinite(item.quantity) && item.quantity > 0);
     }
 
+    function setQuoteShunxinResult(result = {}) {
+      els.quoteShunxinTotal.textContent = result.totalText || "-";
+      els.quoteShunxinQuote.textContent = result.quoteText || "请填写鎏金板产品、规格、数量和地址";
+      els.quoteShunxinProcess.textContent = result.processText || "自动显示计算过程";
+    }
+
     function setQuoteFreightEmpty(message, notice = "会跟随上方鎏金板报价自动更新。") {
       els.quoteFreightWeight.textContent = "-";
       els.quoteFreightPackage.textContent = "-";
       els.quoteFreightDb.textContent = "-";
       els.quoteFreightBox.textContent = message;
       els.quoteFreightNotice.textContent = notice;
+      els.quoteShunxinSection.classList.add("hidden");
+      setQuoteShunxinResult();
     }
 
     function updateQuoteFreight() {
@@ -2063,6 +2217,16 @@
       els.quoteFreightDb.textContent = shipment.dbLine;
       els.quoteFreightBox.textContent = template;
       els.quoteFreightNotice.textContent = shipment.notice;
+      els.quoteShunxinSection.classList.remove("hidden");
+      setQuoteShunxinResult(window.GoldFreightCore.buildShunxinQuote({
+        address: els.quoteFreightAddress.value.trim(),
+        totalWeight: shipment.totalWeight,
+        pkg: shipment.pkg,
+        weightLine: shipment.weightLine,
+        packageLine: shipment.packageLine,
+        dbLine: shipment.dbLine,
+        db: shipment.db
+      }));
     }
 
     function updateModeUi() {
@@ -2350,6 +2514,11 @@
       await navigator.clipboard.writeText(els.quoteFreightBox.textContent);
       els.copyQuoteFreightBtn.textContent = "已复制";
       setTimeout(() => { els.copyQuoteFreightBtn.textContent = "复制运费提问"; }, 1200);
+    });
+    els.copyQuoteShunxinBtn.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(els.quoteShunxinQuote.textContent);
+      els.copyQuoteShunxinBtn.textContent = "已复制";
+      setTimeout(() => { els.copyQuoteShunxinBtn.textContent = "复制顺心捷达报价"; }, 1200);
     });
     els.clearQuoteFreightBtn.addEventListener("click", () => {
       els.quoteFreightAddress.value = "";

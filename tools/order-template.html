@@ -882,6 +882,98 @@
       border-color: rgba(47, 143, 91, 0.42);
     }
 
+    .shunxin-section {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 10px 26px rgba(17, 24, 39, 0.07);
+    }
+
+    .shunxin-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #f7f7f7;
+    }
+
+    .shunxin-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      font-weight: 900;
+      color: #1f2937;
+    }
+
+    .shunxin-logo {
+      width: 92px;
+      height: 48px;
+      border-radius: 6px;
+      object-fit: contain;
+      background: #000;
+      flex: 0 0 auto;
+    }
+
+    .shunxin-subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .shunxin-total {
+      color: #111827;
+      font-size: 24px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .shunxin-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 14px;
+      padding: 16px;
+      align-items: stretch;
+    }
+
+    .shunxin-box {
+      min-height: 170px;
+      border-radius: 8px;
+      background: #18181b;
+      color: #fafafa;
+      padding: 16px;
+      white-space: pre-wrap;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .shunxin-process {
+      border-radius: 8px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #14532d;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .shunxin-actions { padding: 0 16px 16px; }
+
+    .shunxin-actions button {
+      min-width: 190px;
+      border-color: #111827;
+      background: #111827;
+      color: #fff;
+    }
+
     .actions {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -924,6 +1016,11 @@
     }
 
     .hidden { display: none !important; }
+
+    @media (max-width: 760px) {
+      .shunxin-head { align-items: flex-start; flex-direction: column; }
+      .shunxin-body { grid-template-columns: 1fr; }
+    }
 
     @media (max-width: 1180px) {
       .freight-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -2546,6 +2643,25 @@
               <button type="button" id="copyFreightQuestionBtn" class="secondary">复制运费提问</button>
             </div>
           </div>
+          <div class="shunxin-section hidden" id="orderShunxinSection">
+            <div class="shunxin-head">
+              <div class="shunxin-title">
+                <img class="shunxin-logo" src="assets/shunxin-jieda-logo.png" alt="顺心捷达">
+                <div>
+                  <div>顺心捷达自动报价</div>
+                  <div class="shunxin-subtitle">仅用于浙江仓鎏金板，根据地址、重量、包装和官方报价表自动估算。</div>
+                </div>
+              </div>
+              <div class="shunxin-total" id="orderShunxinTotal">-</div>
+            </div>
+            <div class="shunxin-body">
+              <div class="shunxin-box" id="orderShunxinQuote">请填写鎏金板产品、规格、数量和地址</div>
+              <div class="shunxin-process" id="orderShunxinProcess">自动显示计算过程</div>
+            </div>
+            <div class="shunxin-actions">
+              <button type="button" id="copyOrderShunxinBtn">复制顺心捷达报价</button>
+            </div>
+          </div>
         </div>
       </section>
     </div>
@@ -2554,7 +2670,8 @@
   <datalist id="ningboProductList"></datalist>
 
   <script src="product-data.js?v=20260804-1"></script>
-  <script src="freight-gold-core.js?v=20260803-1"></script>
+  <script src="shunxin-rates.js?v=20260808-1"></script>
+  <script src="freight-gold-core.js?v=20260808-1"></script>
   <script src="ningbo-freight-core.js?v=20260713-2"></script>
   <script>
     const productData = window.JieGeProductData;
@@ -2582,7 +2699,7 @@
     ];
 
     const logisticsByWarehouse = {
-      "浙江仓": ["默认", "姜冉", "西武", "跨越", "货拉拉", "自提"],
+      "浙江仓": ["默认", "姜冉", "西武", "顺心捷达", "货拉拉", "自提"],
       "宁波仓": ["默认", "安能", "明邦", "货拉拉", "自提"],
       "松诺": ["默认", "货拉拉", "自提", "工厂自提"],
       "168": ["默认", "货拉拉", "自提", "工厂自提"],
@@ -2794,6 +2911,11 @@
       freightQuestionTitle: document.querySelector("#freightQuestionTitle"),
       freightQuestion: document.querySelector("#freightQuestion"),
       copyFreightQuestionBtn: document.querySelector("#copyFreightQuestionBtn"),
+      orderShunxinSection: document.querySelector("#orderShunxinSection"),
+      orderShunxinTotal: document.querySelector("#orderShunxinTotal"),
+      orderShunxinQuote: document.querySelector("#orderShunxinQuote"),
+      orderShunxinProcess: document.querySelector("#orderShunxinProcess"),
+      copyOrderShunxinBtn: document.querySelector("#copyOrderShunxinBtn"),
       copyBtn: document.querySelector("#copyBtn"),
       resumeAutoBtn: document.querySelector("#resumeAutoBtn"),
       resetNextBtn: document.querySelector("#resetNextBtn"),
@@ -3737,6 +3859,30 @@
       return packageLine;
     }
 
+    function setOrderShunxinResult(result = {}) {
+      els.orderShunxinTotal.textContent = result.totalText || "-";
+      els.orderShunxinQuote.textContent = result.quoteText || "请填写鎏金板产品、规格、数量和地址";
+      els.orderShunxinProcess.textContent = result.processText || "自动显示计算过程";
+    }
+
+    function updateOrderShunxin(built, address, warehouse, isLiujin) {
+      const show = warehouse === "浙江仓" && isLiujin;
+      els.orderShunxinSection.classList.toggle("hidden", !show);
+      if (!show) return;
+
+      const shipment = built.freightShipment;
+      const result = window.GoldFreightCore.buildShunxinQuote({
+        address: address || "",
+        totalWeight: shipment ? shipment.totalWeight : 0,
+        pkg: shipment ? shipment.pkg : null,
+        weightLine: shipment ? shipment.weightLine : "",
+        packageLine: shipment ? shipment.packageLine : "",
+        dbLine: shipment ? shipment.dbLine : "",
+        db: shipment ? shipment.db : 0
+      });
+      setOrderShunxinResult(result);
+    }
+
     function freightText() {
       const logistics = currentLogistics();
       const pay = currentFreightPay();
@@ -3956,8 +4102,16 @@
       const weightLine = liujinWeightLine(products, pkg);
       const packageLine = pkg ? pkg.output : "";
       const detail = products.map((item) => item.detail).join("\n");
+      const freightShipment = warehouse === "浙江仓" && totalQty > 0 && pkg ? {
+        totalWeight: boardWeight + pkg.weight,
+        pkg,
+        weightLine,
+        packageLine: freightPackageQuestionLine(packageLine),
+        dbLine: db > 0 ? `DB${money(db)}` : "",
+        db
+      } : null;
 
-      return { detail, materialAmount, extraAmount: coating.amount, extraLines: coating.lines, db, weightLine, packageLine, packageOk: usesManualSpec(warehouse) || Boolean(pkg), qty: totalQty };
+      return { detail, materialAmount, extraAmount: coating.amount, extraLines: coating.lines, db, weightLine, packageLine, freightShipment, packageOk: usesManualSpec(warehouse) || Boolean(pkg), qty: totalQty };
     }
 
     function buildOther() {
@@ -4725,6 +4879,7 @@
       els.freightQuestion.textContent = isNingboWarehouseActive() ? ningboFreightQuestion : zhejiangFreightQuestion;
       els.freightQuestionTitle.textContent = isNingboWarehouseActive() ? "宁波运费询价模板" : "运费快速提问";
       els.copyFreightQuestionBtn.textContent = isNingboWarehouseActive() ? "复制宁波运费询价" : "复制运费提问";
+      updateOrderShunxin(built, rawAddress, warehouse, isLiujin);
       if (!manualResultMode) {
         renderingResult = true;
         els.result.textContent = lines.join("\n");
@@ -4764,7 +4919,7 @@
       els.receiverAddress.value = "";
       parseReceiver();
       renderLogistics();
-      document.querySelector("input[name='logistics'][value='跨越']").checked = true;
+      document.querySelector("input[name='logistics'][value='顺心捷达']").checked = true;
       document.querySelector("input[name='freightPay'][value='到付']").checked = true;
       document.querySelector("input[name='category'][value='liujin']").checked = true;
       renderSpecOptions();
@@ -5168,6 +5323,21 @@
         selection.removeAllRanges();
         selection.addRange(range);
         els.copyFreightQuestionBtn.textContent = "已选中，可手动复制";
+      }
+    });
+
+    els.copyOrderShunxinBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(els.orderShunxinQuote.textContent);
+        els.copyOrderShunxinBtn.textContent = "已复制";
+        window.setTimeout(() => { els.copyOrderShunxinBtn.textContent = "复制顺心捷达报价"; }, 1200);
+      } catch (error) {
+        const range = document.createRange();
+        range.selectNodeContents(els.orderShunxinQuote);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        els.copyOrderShunxinBtn.textContent = "已选中，可手动复制";
       }
     });
 
