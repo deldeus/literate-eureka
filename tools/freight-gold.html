@@ -439,33 +439,56 @@
     }
 
     .shunxin-options {
-      display: flex;
-      align-items: end;
-      flex-wrap: wrap;
-      gap: 12px 18px;
-      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: minmax(260px, 1.45fr) minmax(250px, 1.2fr) minmax(150px, 0.72fr) minmax(150px, 0.72fr);
+      align-items: stretch;
+      gap: 14px;
+      padding: 16px 18px;
       border-bottom: 1px solid var(--line);
       background: #fcfcfc;
     }
 
-    .shunxin-option-field {
+    .shunxin-option-cell {
       display: grid;
-      gap: 6px;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 800;
+      grid-template-rows: 18px 52px;
+      align-content: end;
+      gap: 8px;
+      min-width: 0;
     }
 
-    .shunxin-option-field input[type="number"] {
-      width: 180px;
-      min-height: 42px;
+    .shunxin-option-label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 850;
+      line-height: 1.35;
+      display: flex;
+      align-items: center;
+      height: 18px;
+      margin: 0;
+    }
+
+    .shunxin-option-cell input[type="number"] {
+      width: 100%;
+      min-width: 0;
+      height: 52px;
+      min-height: 52px;
+      box-sizing: border-box;
+      margin: 0;
     }
 
     .shunxin-upstairs-toggle {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 8px;
-      min-height: 42px;
+      min-width: 0;
+      height: 52px;
+      min-height: 52px;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0 14px;
+      border: 1px solid #cfd6e2;
+      border-radius: 14px;
+      background: #fff;
       color: #1f2937;
       font-weight: 850;
       cursor: pointer;
@@ -481,11 +504,15 @@
     }
 
     .shunxin-fee-badge {
-      min-height: 42px;
-      display: inline-flex;
+      min-width: 0;
+      height: 52px;
+      min-height: 52px;
+      box-sizing: border-box;
+      margin: 0;
+      display: flex;
       align-items: center;
-      padding: 0 12px;
-      border-radius: 10px;
+      padding: 0 14px;
+      border-radius: 14px;
       background: #fff7ed;
       color: #9a3412;
       font-size: 13px;
@@ -574,6 +601,10 @@
         align-items: flex-start;
         flex-direction: column;
       }
+
+      .shunxin-options {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 560px) {
@@ -589,6 +620,10 @@
       .segmented,
       .spec-grid,
       .row {
+        grid-template-columns: 1fr;
+      }
+
+      .shunxin-options {
         grid-template-columns: 1fr;
       }
     }
@@ -1487,16 +1522,25 @@
               <div class="shunxin-total" id="shunxinTotal">-</div>
             </div>
             <div class="shunxin-options">
-              <label class="shunxin-option-field" for="shunxinDeclaredValue">
-                货值总金额（元，可不填）
+              <div class="shunxin-option-cell">
+                <label class="shunxin-option-label" for="shunxinDeclaredValue">货值总金额（元，可不填）</label>
                 <input id="shunxinDeclaredValue" type="number" min="0" step="0.01" inputmode="decimal" placeholder="不填按2000元以内，保费5元">
-              </label>
-              <label class="shunxin-upstairs-toggle">
-                <input id="shunxinIncludeUpstairs" type="checkbox">
-                <span>需要上门（默认不上门）</span>
-              </label>
-              <span class="shunxin-fee-badge" id="shunxinInsuranceFee">保费：5元</span>
-              <span class="shunxin-fee-badge" id="shunxinUpstairsFee">上门费：待计算</span>
+              </div>
+              <div class="shunxin-option-cell">
+                <span class="shunxin-option-label">上门服务</span>
+                <label class="shunxin-upstairs-toggle">
+                  <input id="shunxinIncludeUpstairs" type="checkbox">
+                  <span>需要上门（默认不上门）</span>
+                </label>
+              </div>
+              <div class="shunxin-option-cell">
+                <span class="shunxin-option-label">保价费用</span>
+                <span class="shunxin-fee-badge" id="shunxinInsuranceFee">保费：5元</span>
+              </div>
+              <div class="shunxin-option-cell">
+                <span class="shunxin-option-label">上门费用</span>
+                <span class="shunxin-fee-badge" id="shunxinUpstairsFee">上门费：待计算</span>
+              </div>
             </div>
             <div class="shunxin-body">
               <div class="shunxin-box" id="shunxinQuote">请填写地址和规格数量</div>

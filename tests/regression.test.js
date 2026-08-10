@@ -191,6 +191,17 @@ test("文字报价和开单模板始终保留顺心捷达报价窗口", () => {
   assert.doesNotMatch(order, /isLiujin && logistics === "顺心捷达"/);
 });
 
+test("顺心捷达三个入口的费用控件使用统一对齐栅格", () => {
+  ["tools/freight-gold.html", "tools/order-template.html", "tools/quote-generator.html"].forEach((file) => {
+    const html = read(file);
+    assert.match(html, /\.shunxin-options\s*\{[\s\S]{0,260}display:\s*grid;/);
+    assert.match(html, /class="shunxin-option-cell"/);
+    assert.match(html, />上门服务</);
+    assert.match(html, />保价费用</);
+    assert.match(html, />上门费用</);
+  });
+});
+
 test("浙江仓自提和货拉拉仅隐藏开单正文中的重量包装与 DB", () => {
   const html = read("tools/order-template.html");
   assert.match(html, /function hidesZhejiangOrderShippingSummary\(warehouse, logistics\) \{\s*return warehouse === "浙江仓" && \(logistics === "货拉拉" \|\| logistics === "自提"\);\s*\}/);

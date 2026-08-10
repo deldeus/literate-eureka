@@ -933,20 +933,47 @@
     }
 
     .shunxin-options {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px 16px;
-      padding: 12px 16px;
+      display: grid;
+      grid-template-columns: minmax(260px, 1.45fr) minmax(250px, 1.2fr) minmax(150px, 0.72fr) minmax(150px, 0.72fr);
+      align-items: stretch;
+      gap: 14px;
+      padding: 16px;
       border-bottom: 1px solid var(--line);
       background: #fcfcfc;
     }
 
+    .shunxin-option-cell {
+      display: grid;
+      grid-template-rows: 18px 52px;
+      align-content: end;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .shunxin-option-label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 850;
+      line-height: 1.35;
+      display: flex;
+      align-items: center;
+      height: 18px;
+      margin: 0;
+    }
+
     .shunxin-upstairs-toggle {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 8px;
-      min-height: 40px;
+      min-width: 0;
+      height: 52px;
+      min-height: 52px;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
       color: #1f2937;
       font-weight: 850;
       cursor: pointer;
@@ -962,10 +989,14 @@
     }
 
     .shunxin-fee-badge {
-      min-height: 40px;
-      display: inline-flex;
+      min-width: 0;
+      height: 52px;
+      min-height: 52px;
+      box-sizing: border-box;
+      margin: 0;
+      display: flex;
       align-items: center;
-      padding: 0 12px;
+      padding: 0 14px;
       border-radius: 8px;
       background: #f0fdf4;
       color: #166534;
@@ -1061,6 +1092,11 @@
     @media (max-width: 760px) {
       .shunxin-head { align-items: flex-start; flex-direction: column; }
       .shunxin-body { grid-template-columns: 1fr; }
+      .shunxin-options { grid-template-columns: 1fr; }
+    }
+
+    @media (min-width: 761px) and (max-width: 1100px) {
+      .shunxin-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 1180px) {
@@ -2696,13 +2732,25 @@
               <div class="shunxin-total" id="orderShunxinTotal">-</div>
             </div>
             <div class="shunxin-options">
-              <span class="shunxin-fee-badge">保价金额自动读取开单合计</span>
-              <span class="shunxin-fee-badge" id="orderShunxinInsuranceFee">保费：待计算</span>
-              <label class="shunxin-upstairs-toggle">
-                <input id="orderShunxinIncludeUpstairs" type="checkbox">
-                <span>需要上门（默认不上门）</span>
-              </label>
-              <span class="shunxin-fee-badge" id="orderShunxinUpstairsFee">上门费：待计算</span>
+              <div class="shunxin-option-cell">
+                <span class="shunxin-option-label">货值来源</span>
+                <span class="shunxin-fee-badge">保价金额自动读取开单合计</span>
+              </div>
+              <div class="shunxin-option-cell">
+                <span class="shunxin-option-label">上门服务</span>
+                <label class="shunxin-upstairs-toggle">
+                  <input id="orderShunxinIncludeUpstairs" type="checkbox">
+                  <span>需要上门（默认不上门）</span>
+                </label>
+              </div>
+              <div class="shunxin-option-cell">
+                <span class="shunxin-option-label">保价费用</span>
+                <span class="shunxin-fee-badge" id="orderShunxinInsuranceFee">保费：待计算</span>
+              </div>
+              <div class="shunxin-option-cell">
+                <span class="shunxin-option-label">上门费用</span>
+                <span class="shunxin-fee-badge" id="orderShunxinUpstairsFee">上门费：待计算</span>
+              </div>
             </div>
             <div class="shunxin-body">
               <div class="shunxin-box" id="orderShunxinQuote">请填写鎏金板产品、规格、数量和地址</div>
