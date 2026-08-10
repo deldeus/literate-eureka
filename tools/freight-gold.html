@@ -438,6 +438,60 @@
       white-space: nowrap;
     }
 
+    .shunxin-options {
+      display: flex;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #fcfcfc;
+    }
+
+    .shunxin-option-field {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .shunxin-option-field input[type="number"] {
+      width: 180px;
+      min-height: 42px;
+    }
+
+    .shunxin-upstairs-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      color: #1f2937;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .shunxin-upstairs-toggle input {
+      width: 18px;
+      height: 18px;
+      min-height: auto;
+      margin: 0;
+      padding: 0;
+      accent-color: #2563eb;
+    }
+
+    .shunxin-fee-badge {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 12px;
+      border-radius: 10px;
+      background: #fff7ed;
+      color: #9a3412;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
     .shunxin-body {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 220px;
@@ -1432,6 +1486,18 @@
               </div>
               <div class="shunxin-total" id="shunxinTotal">-</div>
             </div>
+            <div class="shunxin-options">
+              <label class="shunxin-option-field" for="shunxinDeclaredValue">
+                货值总金额（元，可不填）
+                <input id="shunxinDeclaredValue" type="number" min="0" step="0.01" inputmode="decimal" placeholder="不填按2000元以内，保费5元">
+              </label>
+              <label class="shunxin-upstairs-toggle">
+                <input id="shunxinIncludeUpstairs" type="checkbox">
+                <span>需要上门（默认不上门）</span>
+              </label>
+              <span class="shunxin-fee-badge" id="shunxinInsuranceFee">保费：5元</span>
+              <span class="shunxin-fee-badge" id="shunxinUpstairsFee">上门费：待计算</span>
+            </div>
             <div class="shunxin-body">
               <div class="shunxin-box" id="shunxinQuote">请填写地址和规格数量</div>
               <div class="shunxin-process" id="shunxinProcess">自动显示计算过程</div>
@@ -1446,7 +1512,7 @@
   </main>
 
   <script src="shunxin-rates.js?v=20260808-1"></script>
-  <script src="freight-gold-core.js?v=20260808-1"></script>
+  <script src="freight-gold-core.js?v=20260810-2"></script>
   <script>
     const freightCore = window.GoldFreightCore;
     const specs = freightCore.specs;
@@ -1470,6 +1536,10 @@
       copyBtn: document.querySelector("#copyBtn"),
       clearBtn: document.querySelector("#clearBtn"),
       resetFreightBtn: document.querySelector("#resetFreightBtn"),
+      shunxinDeclaredValue: document.querySelector("#shunxinDeclaredValue"),
+      shunxinIncludeUpstairs: document.querySelector("#shunxinIncludeUpstairs"),
+      shunxinInsuranceFee: document.querySelector("#shunxinInsuranceFee"),
+      shunxinUpstairsFee: document.querySelector("#shunxinUpstairsFee"),
       shunxinTotal: document.querySelector("#shunxinTotal"),
       shunxinQuote: document.querySelector("#shunxinQuote"),
       shunxinProcess: document.querySelector("#shunxinProcess"),
@@ -1571,15 +1641,33 @@
       });
     }
 
-    function setShunxinResult(totalText, quoteText, processText) {
-      els.shunxinTotal.textContent = totalText;
-      els.shunxinQuote.textContent = quoteText;
-      els.shunxinProcess.textContent = processText;
+    function shunxinFeeLabel(label, value, suffix = "") {
+      if (!Number.isFinite(value)) return `${label}：待计算`;
+      const amount = Math.round((value + Number.EPSILON) * 100) / 100;
+      return `${label}：${amount}元${suffix}`;
+    }
+
+    function setShunxinResult(result = {}) {
+      els.shunxinTotal.textContent = result.totalText || "-";
+      els.shunxinQuote.textContent = result.quoteText || "请填写地址和规格数量";
+      els.shunxinProcess.textContent = result.processText || "自动显示计算过程";
+      els.shunxinInsuranceFee.textContent = shunxinFeeLabel("保费", result.insuranceFee);
+      els.shunxinUpstairsFee.textContent = shunxinFeeLabel("上门费", result.upstairsFee, els.shunxinIncludeUpstairs.checked ? "（已计入）" : "（未计入）");
     }
 
     function updateShunxinQuote({ address, totalWeight, pkg, weightLine, packageLine, dbLine, db }) {
-      const result = freightCore.buildShunxinQuote({ address, totalWeight, pkg, weightLine, packageLine, dbLine, db });
-      setShunxinResult(result.totalText, result.quoteText, result.processText);
+      const result = freightCore.buildShunxinQuote({
+        address,
+        totalWeight,
+        pkg,
+        weightLine,
+        packageLine,
+        dbLine,
+        db,
+        declaredValue: els.shunxinDeclaredValue.value,
+        includeUpstairsFee: els.shunxinIncludeUpstairs.checked
+      });
+      setShunxinResult(result);
     }
 
     function calculate() {
@@ -1590,7 +1678,7 @@
         els.packageLine.textContent = "-";
         els.dbLine.textContent = "-";
         els.result.textContent = `${els.address.value.trim() || "请粘贴地址"}\n\n请输入大于 0 的数量`;
-        setShunxinResult("-", "请输入大于 0 的数量", "需要先完成自动核算。");
+        setShunxinResult({ quoteText: "请输入大于 0 的数量", processText: "需要先完成自动核算。" });
         els.notice.textContent = "每一组规格的数量都需要填写大于 0 的整数。";
         els.notice.className = "notice error";
         return;
@@ -1602,7 +1690,7 @@
         els.packageLine.textContent = "-";
         els.dbLine.textContent = "-";
         els.result.textContent = `${els.address.value.trim() || "请粘贴地址"}\n\n请填写至少一组规格数量`;
-        setShunxinResult("-", "请填写至少一组规格数量", "需要先完成自动核算。");
+        setShunxinResult({ quoteText: "请填写至少一组规格数量", processText: "需要先完成自动核算。" });
         els.notice.textContent = "可以新增多组规格；同一票发货会按总张数、最长规格统一核算包装。";
         els.notice.className = "notice";
         return;
@@ -1616,7 +1704,7 @@
         els.weightLine.textContent = "-";
         els.packageLine.textContent = shipment.type === "overflow" ? "需拆分" : "需确认";
         els.dbLine.textContent = shipment.dbLine || "-";
-        setShunxinResult("-", message, "需要先完成自动核算。");
+        setShunxinResult({ quoteText: message, processText: "需要先完成自动核算。" });
         return;
       }
 
@@ -1642,6 +1730,8 @@
     }
 
     els.address.addEventListener("input", calculate);
+    els.shunxinDeclaredValue.addEventListener("input", calculate);
+    els.shunxinIncludeUpstairs.addEventListener("change", calculate);
     els.addItemBtn.addEventListener("click", addItem);
 
     els.clearBtn.addEventListener("click", () => {
@@ -1652,6 +1742,8 @@
 
     els.resetFreightBtn.addEventListener("click", () => {
       els.address.value = "";
+      els.shunxinDeclaredValue.value = "";
+      els.shunxinIncludeUpstairs.checked = false;
       state.items = [
         { id: 1, material: "hard", specKey: "hard-2440", quantity: "" }
       ];

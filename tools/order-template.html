@@ -932,6 +932,47 @@
       white-space: nowrap;
     }
 
+    .shunxin-options {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fcfcfc;
+    }
+
+    .shunxin-upstairs-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      color: #1f2937;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .shunxin-upstairs-toggle input {
+      width: 18px;
+      height: 18px;
+      min-height: auto;
+      margin: 0;
+      padding: 0;
+      accent-color: var(--accent);
+    }
+
+    .shunxin-fee-badge {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 12px;
+      border-radius: 8px;
+      background: #f0fdf4;
+      color: #166534;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
     .shunxin-body {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 220px;
@@ -2654,6 +2695,15 @@
               </div>
               <div class="shunxin-total" id="orderShunxinTotal">-</div>
             </div>
+            <div class="shunxin-options">
+              <span class="shunxin-fee-badge">保价金额自动读取开单合计</span>
+              <span class="shunxin-fee-badge" id="orderShunxinInsuranceFee">保费：待计算</span>
+              <label class="shunxin-upstairs-toggle">
+                <input id="orderShunxinIncludeUpstairs" type="checkbox">
+                <span>需要上门（默认不上门）</span>
+              </label>
+              <span class="shunxin-fee-badge" id="orderShunxinUpstairsFee">上门费：待计算</span>
+            </div>
             <div class="shunxin-body">
               <div class="shunxin-box" id="orderShunxinQuote">请填写鎏金板产品、规格、数量和地址</div>
               <div class="shunxin-process" id="orderShunxinProcess">自动显示计算过程</div>
@@ -2671,7 +2721,7 @@
 
   <script src="product-data.js?v=20260804-1"></script>
   <script src="shunxin-rates.js?v=20260808-1"></script>
-  <script src="freight-gold-core.js?v=20260808-1"></script>
+  <script src="freight-gold-core.js?v=20260810-2"></script>
   <script src="ningbo-freight-core.js?v=20260713-2"></script>
   <script>
     const productData = window.JieGeProductData;
@@ -2699,7 +2749,7 @@
     ];
 
     const logisticsByWarehouse = {
-      "浙江仓": ["默认", "姜冉", "西武", "顺心捷达", "货拉拉", "自提"],
+      "浙江仓": ["默认", "姜冉", "西武", "安能", "顺心捷达", "跨越", "货拉拉", "自提"],
       "宁波仓": ["默认", "安能", "明邦", "货拉拉", "自提"],
       "松诺": ["默认", "货拉拉", "自提", "工厂自提"],
       "168": ["默认", "货拉拉", "自提", "工厂自提"],
@@ -2912,6 +2962,9 @@
       freightQuestion: document.querySelector("#freightQuestion"),
       copyFreightQuestionBtn: document.querySelector("#copyFreightQuestionBtn"),
       orderShunxinSection: document.querySelector("#orderShunxinSection"),
+      orderShunxinIncludeUpstairs: document.querySelector("#orderShunxinIncludeUpstairs"),
+      orderShunxinInsuranceFee: document.querySelector("#orderShunxinInsuranceFee"),
+      orderShunxinUpstairsFee: document.querySelector("#orderShunxinUpstairsFee"),
       orderShunxinTotal: document.querySelector("#orderShunxinTotal"),
       orderShunxinQuote: document.querySelector("#orderShunxinQuote"),
       orderShunxinProcess: document.querySelector("#orderShunxinProcess"),
@@ -3357,7 +3410,11 @@
     }
 
     function separatesDbLine(warehouse, logistics) {
-      return warehouse === "浙江仓" && (logistics === "默认" || logistics === "姜冉" || logistics === "西武");
+      return warehouse === "浙江仓" && logistics !== "跨越";
+    }
+
+    function hidesZhejiangOrderShippingSummary(warehouse, logistics) {
+      return warehouse === "浙江仓" && (logistics === "货拉拉" || logistics === "自提");
     }
 
     function orderPrefix() {
@@ -3863,9 +3920,13 @@
       els.orderShunxinTotal.textContent = result.totalText || "-";
       els.orderShunxinQuote.textContent = result.quoteText || "请填写鎏金板产品、规格、数量和地址";
       els.orderShunxinProcess.textContent = result.processText || "自动显示计算过程";
+      els.orderShunxinInsuranceFee.textContent = Number.isFinite(result.insuranceFee) ? `保费：${money(result.insuranceFee)}元` : "保费：待计算";
+      els.orderShunxinUpstairsFee.textContent = Number.isFinite(result.upstairsFee)
+        ? `上门费：${money(result.upstairsFee)}元${els.orderShunxinIncludeUpstairs.checked ? "（已计入）" : "（未计入）"}`
+        : "上门费：待计算";
     }
 
-    function updateOrderShunxin(built, address, warehouse, isLiujin) {
+    function updateOrderShunxin(built, address, warehouse, isLiujin, logistics, total) {
       const show = warehouse === "浙江仓" && isLiujin;
       els.orderShunxinSection.classList.toggle("hidden", !show);
       if (!show) return;
@@ -3878,7 +3939,9 @@
         weightLine: shipment ? shipment.weightLine : "",
         packageLine: shipment ? shipment.packageLine : "",
         dbLine: shipment ? shipment.dbLine : "",
-        db: shipment ? shipment.db : 0
+        db: shipment ? shipment.db : 0,
+        declaredValue: total,
+        includeUpstairsFee: els.orderShunxinIncludeUpstairs.checked
       });
       setOrderShunxinResult(result);
     }
@@ -4827,6 +4890,7 @@
       const freightAmount = currentFreightPay() === "代付" && els.freightAmount.value.trim() ? numberValue(els.freightAmount) : 0;
       const logistics = currentLogistics();
       const dbAsSeparateLine = separatesDbLine(warehouse, logistics);
+      const hideOrderShippingSummary = hidesZhejiangOrderShippingSummary(warehouse, logistics);
       const dbDeduction = warehouse === "浙江仓" && !dbAsSeparateLine ? built.db : 0;
       const extraAmount = built.extraAmount || 0;
       const kd = total - dbDeduction - built.materialAmount - extraAmount - processingFee - crateFee - freightAmount - taxAmount - paymentDeduction;
@@ -4836,7 +4900,7 @@
       const greenCount = currentGreenCount();
       const xCode = currentXCode();
 
-      const dbPart = warehouse === "浙江仓" && !dbAsSeparateLine ? `，DB：${money(built.db)}` : "";
+      const dbPart = warehouse === "浙江仓" && !dbAsSeparateLine && !hideOrderShippingSummary ? `，DB：${money(built.db)}` : "";
       const dbLine = dbAsSeparateLine && built.db > 0 ? `DB${money(built.db)}` : "";
       const taxPart = taxAmount > 0 ? `，税金：${money(taxAmount)}` : "";
       const paymentDeductionPart = paymentDeduction > 0 ? `，扣点：${money(paymentDeduction)}` : "";
@@ -4844,6 +4908,7 @@
       const processingPart = !isCustom && processingFee > 0 ? `，加工费：${money(processingFee)}` : "";
       const kdPart = isCustom ? "" : `，KD：${money(kd)}`;
       const weightPart = (isCustom || hidesWeightPackage(warehouse)) ? "" : [built.weightLine, built.packageLine, dbLine].filter(Boolean).join("\n");
+      const orderWeightPart = hideOrderShippingSummary ? "" : weightPart;
       const remark = selectedRemarks();
       const freightLine = freightText();
       const deliveryPart = (freightLine === "工厂自提" || freightLine === "运费：工厂自提")
@@ -4856,7 +4921,7 @@
       const lines = [
         `${orderNo()}-${warehouse}：绿活-张苗苗${greenCount}：${receiverPart}，${deliveryPart}，货物明细：${built.detail}${cratePart}${processingPart}${extraPart}${taxPart}${paymentDeductionPart}${dbPart}${kdPart}，合计：${money(total)}，付款方式：${els.payment.value.trim() || "未填写"}，备注：${remark || "无"}`
       ];
-      if (weightPart) lines.push(weightPart);
+      if (orderWeightPart) lines.push(orderWeightPart);
       lines.push("");
 
       els.todayPill.textContent = `今日单号：${orderNo()}`;
@@ -4879,7 +4944,7 @@
       els.freightQuestion.textContent = isNingboWarehouseActive() ? ningboFreightQuestion : zhejiangFreightQuestion;
       els.freightQuestionTitle.textContent = isNingboWarehouseActive() ? "宁波运费询价模板" : "运费快速提问";
       els.copyFreightQuestionBtn.textContent = isNingboWarehouseActive() ? "复制宁波运费询价" : "复制运费提问";
-      updateOrderShunxin(built, rawAddress, warehouse, isLiujin);
+      updateOrderShunxin(built, rawAddress, warehouse, isLiujin, logistics, total);
       if (!manualResultMode) {
         renderingResult = true;
         els.result.textContent = lines.join("\n");
@@ -4902,7 +4967,7 @@
         els.formNotice.textContent = `KD 已扣除附加工艺 ${money(extraAmount)}、代付运费 ${money(freightAmount)}、税金 ${money(taxAmount)} 和扣点 ${money(paymentDeduction)}。到付运费不会从 KD 中扣除。`;
         els.formNotice.className = "notice";
       } else {
-        els.formNotice.textContent = "KD 会扣除材料费、木箱费、附加工艺、税金、扣点；浙江仓默认/姜冉/西武的 DB 单独放下方且不扣 KD，其它浙江仓物流 DB 写在明细里并扣 KD。";
+        els.formNotice.textContent = "KD 会扣除材料费、木箱费、附加工艺、税金、扣点；浙江仓只有跨越不代收 DB，需写进开单明细并扣 KD，其它物流的 DB 单独放在运费明细下方且不扣 KD。";
         els.formNotice.className = "notice";
       }
     }
@@ -5142,6 +5207,7 @@
       els.taxAmount.disabled = false;
       els.taxAmount.value = "";
       els.totalAmount.value = "";
+      els.orderShunxinIncludeUpstairs.checked = false;
       clearPaymentChoice();
       els.remarkCustom.value = "";
       resetDefaultRemarks();

@@ -310,6 +310,48 @@
       white-space: nowrap;
     }
 
+    .shunxin-options {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #d9dee7;
+      background: #fcfcfc;
+    }
+
+    .shunxin-upstairs-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      color: #1f2937;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .shunxin-upstairs-toggle input {
+      width: 18px;
+      height: 18px;
+      min-height: auto;
+      margin: 0;
+      padding: 0;
+      accent-color: #2563eb;
+    }
+
+    .shunxin-fee-badge {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 12px;
+      border-radius: 8px;
+      background: #f7f8fa;
+      border: 1px solid #d9dee7;
+      color: #374151;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
     .shunxin-body {
       display: grid;
       grid-template-columns: minmax(0, 1.55fr) minmax(240px, 0.75fr);
@@ -1725,7 +1767,7 @@
         </div>
       </section>
 
-      <section class="shunxin-section hidden" id="quoteShunxinSection" aria-label="顺心捷达自动报价">
+      <section class="shunxin-section" id="quoteShunxinSection" aria-label="顺心捷达自动报价">
         <div class="shunxin-head">
           <div class="shunxin-title">
             <img class="shunxin-logo" src="assets/shunxin-jieda-logo.png" alt="顺心捷达">
@@ -1735,6 +1777,15 @@
             </div>
           </div>
           <div class="shunxin-total" id="quoteShunxinTotal">-</div>
+        </div>
+        <div class="shunxin-options">
+          <span class="shunxin-fee-badge">保价金额自动读取报价总计</span>
+          <span class="shunxin-fee-badge" id="quoteShunxinInsuranceFee">保费：待计算</span>
+          <label class="shunxin-upstairs-toggle">
+            <input id="quoteShunxinIncludeUpstairs" type="checkbox">
+            <span>需要上门（默认不上门）</span>
+          </label>
+          <span class="shunxin-fee-badge" id="quoteShunxinUpstairsFee">上门费：待计算</span>
         </div>
         <div class="shunxin-body">
           <div class="shunxin-box" id="quoteShunxinQuote">请填写鎏金板产品、规格、数量和地址</div>
@@ -1760,7 +1811,7 @@
 
   <script src="product-data.js?v=20260804-1"></script>
   <script src="shunxin-rates.js?v=20260808-1"></script>
-  <script src="freight-gold-core.js?v=20260808-1"></script>
+  <script src="freight-gold-core.js?v=20260810-2"></script>
   <script>
     const els = {
       multiMode: document.querySelector("#multiMode"),
@@ -1814,6 +1865,9 @@
       copyQuoteFreightBtn: document.querySelector("#copyQuoteFreightBtn"),
       clearQuoteFreightBtn: document.querySelector("#clearQuoteFreightBtn"),
       quoteShunxinSection: document.querySelector("#quoteShunxinSection"),
+      quoteShunxinIncludeUpstairs: document.querySelector("#quoteShunxinIncludeUpstairs"),
+      quoteShunxinInsuranceFee: document.querySelector("#quoteShunxinInsuranceFee"),
+      quoteShunxinUpstairsFee: document.querySelector("#quoteShunxinUpstairsFee"),
       quoteShunxinTotal: document.querySelector("#quoteShunxinTotal"),
       quoteShunxinQuote: document.querySelector("#quoteShunxinQuote"),
       quoteShunxinProcess: document.querySelector("#quoteShunxinProcess"),
@@ -1827,6 +1881,7 @@
     const productData = window.JieGeProductData;
     const liujinSpecOptions = productData.liujinSpecs.filter((item) => item.value !== "hard-600").map((item) => item.label);
     const ningboProductCatalog = productData.groupedNingboCatalog();
+    let currentQuoteTotal = 0;
 
     function money(value) {
       const num = Number(value);
@@ -2185,6 +2240,10 @@
       els.quoteShunxinTotal.textContent = result.totalText || "-";
       els.quoteShunxinQuote.textContent = result.quoteText || "请填写鎏金板产品、规格、数量和地址";
       els.quoteShunxinProcess.textContent = result.processText || "自动显示计算过程";
+      els.quoteShunxinInsuranceFee.textContent = Number.isFinite(result.insuranceFee) ? `保费：${money(result.insuranceFee)}元` : "保费：待计算";
+      els.quoteShunxinUpstairsFee.textContent = Number.isFinite(result.upstairsFee)
+        ? `上门费：${money(result.upstairsFee)}元${els.quoteShunxinIncludeUpstairs.checked ? "（已计入）" : "（未计入）"}`
+        : "上门费：待计算";
     }
 
     function setQuoteFreightEmpty(message, notice = "会跟随上方鎏金板报价自动更新。") {
@@ -2193,7 +2252,6 @@
       els.quoteFreightDb.textContent = "-";
       els.quoteFreightBox.textContent = message;
       els.quoteFreightNotice.textContent = notice;
-      els.quoteShunxinSection.classList.add("hidden");
       setQuoteShunxinResult();
     }
 
@@ -2217,7 +2275,6 @@
       els.quoteFreightDb.textContent = shipment.dbLine;
       els.quoteFreightBox.textContent = template;
       els.quoteFreightNotice.textContent = shipment.notice;
-      els.quoteShunxinSection.classList.remove("hidden");
       setQuoteShunxinResult(window.GoldFreightCore.buildShunxinQuote({
         address: els.quoteFreightAddress.value.trim(),
         totalWeight: shipment.totalWeight,
@@ -2225,7 +2282,9 @@
         weightLine: shipment.weightLine,
         packageLine: shipment.packageLine,
         dbLine: shipment.dbLine,
-        db: shipment.db
+        db: shipment.db,
+        declaredValue: currentQuoteTotal,
+        includeUpstairsFee: els.quoteShunxinIncludeUpstairs.checked
       }));
     }
 
@@ -2272,6 +2331,7 @@
       const baseTotal = materialFee + boxFee + freightFee;
       const extraFees = readExtraFees(baseTotal, includeTax);
       const total = baseTotal + extraFees.processingFee + extraFees.accessoryFee + extraFees.taxFee;
+      currentQuoteTotal = total;
       const item = { quantity, originalPrice, unitPrice, pricingMode, materialFee, widthText: specSize ? meterText(specSize.width) : "?", heightText: specSize ? meterText(specSize.height) : "?" };
       const lines = [`产品：${product || ""}`, `数量：${quantity || ""}张`, `规格：${formatSpecForQuote(spec)}`];
       const priceLine = priceInfoLine(item);
@@ -2299,6 +2359,7 @@
       const baseTotal = materialTotal + boxTotal + freightTotal;
       const extraFees = readExtraFees(baseTotal, includeTax);
       const total = baseTotal + extraFees.processingFee + extraFees.accessoryFee + extraFees.taxFee;
+      currentQuoteTotal = total;
       const lines = [sameWarehouse ? "【以下是同一个仓库发货】" : "【以下是不同仓库发货】", ""];
       products.forEach((item, index) => {
         const number = index + 1;
@@ -2361,6 +2422,7 @@
         customTax: els.customTax.value,
         noteExtra: els.noteExtra.value,
         quoteFreightAddress: els.quoteFreightAddress.value,
+        quoteShunxinIncludeUpstairs: els.quoteShunxinIncludeUpstairs.checked,
         fees: { processingFee: els.processingFee.value, accessoryFee: els.accessoryFee.value, manualTaxFee: els.manualTaxFee.value },
         single: { product: els.product.value, spec: els.spec.value, quantity: els.quantity.value, originalPrice: els.originalPrice.value, unitPrice: els.unitPrice.value, pricingMode: els.pricingMode(), boxFee: els.boxFee.value, freightFee: els.freightFee.value },
         multi: { boxFee: els.multiBoxFee.value, freightFee: els.multiFreightFee.value, products: getProductCards().map((card) => ({ product: card.querySelector(".multi-product").value, spec: card.querySelector(".multi-spec").value, quantity: card.querySelector(".multi-quantity").value, originalPrice: card.querySelector(".multi-original-price").value, unitPrice: card.querySelector(".multi-unit-price").value, pricingMode: card.querySelector('input[type="radio"]:checked')?.value || "area", boxFee: card.querySelector(".multi-box-fee").value, freightFee: card.querySelector(".multi-freight-fee").value })) },
@@ -2374,6 +2436,7 @@
       els.customTax.value = state.customTax ?? 10;
       els.noteExtra.value = state.noteExtra || "";
       els.quoteFreightAddress.value = state.quoteFreightAddress || "";
+      els.quoteShunxinIncludeUpstairs.checked = !!state.quoteShunxinIncludeUpstairs;
       els.processingFee.value = state.fees?.processingFee ?? 0;
       els.accessoryFee.value = state.fees?.accessoryFee ?? 0;
       els.manualTaxFee.value = state.fees?.manualTaxFee ?? 0;
@@ -2457,6 +2520,7 @@
       els.customTax.value = 10;
       els.noteExtra.value = "";
       els.quoteFreightAddress.value = "";
+      els.quoteShunxinIncludeUpstairs.checked = false;
       els.multiBoxFee.value = 0;
       els.multiFreightFee.value = 0;
       els.multiProducts.innerHTML = "";

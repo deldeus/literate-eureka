@@ -87,7 +87,7 @@
       return sum + quantity * dbRateForSpec(spec);
     }, 0);
 
-    return Math.min(100, amount);
+    return Math.min(100, Math.round(amount + Number.EPSILON));
   }
 
   function normalizeItem(item) {
@@ -264,7 +264,33 @@
     };
   }
 
-  function buildShunxinQuote({ address, totalWeight, pkg, weightLine, packageLine, dbLine, db }) {
+  function roundMoney(value) {
+    return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+  }
+
+  function shunxinInsuranceFee(declaredValue) {
+    const value = Number(declaredValue);
+    if (!Number.isFinite(value) || value <= 2000) return 5;
+    return roundMoney(value * 0.003);
+  }
+
+  function shunxinUpstairsFee(chargeWeight) {
+    const weight = Number(chargeWeight);
+    if (!Number.isFinite(weight) || weight <= 40) return 0;
+    return roundMoney(25 + weight * 0.1);
+  }
+
+  function buildShunxinQuote({
+    address,
+    totalWeight,
+    pkg,
+    weightLine,
+    packageLine,
+    dbLine,
+    db,
+    declaredValue,
+    includeUpstairsFee = false
+  }) {
     if (!Number.isFinite(totalWeight) || totalWeight <= 0 || !pkg) {
       return { totalText: "-", quoteText: "请填写地址和规格数量", processText: "自动显示计算过程" };
     }
@@ -317,12 +343,27 @@
     }
 
     const freightFee = Math.ceil(chargeWeight * rate);
-    const insuranceFee = 5;
+    const declaredAmount = Number(declaredValue);
+    const insuranceFee = shunxinInsuranceFee(declaredValue);
+    const upstairsFee = shunxinUpstairsFee(chargeWeight);
     const parsedDb = Number.isFinite(Number(db))
       ? Number(db)
       : Number((String(dbLine || "").match(/\d+(?:\.\d+)?/) || [0])[0]);
-    const totalFee = freightFee + insuranceFee + parsedDb;
-    const quoteText = `${address}\n\n${weightLine}\n${packageLine}\n${dbLine}\n\n顺心捷达预估：${formatMoney(totalFee)}元`;
+    const includedUpstairsFee = includeUpstairsFee ? upstairsFee : 0;
+    const totalFee = roundMoney(freightFee + insuranceFee + parsedDb + includedUpstairsFee);
+    const feeSummary = [
+      `运费${formatMoney(freightFee)}元`,
+      `保费${formatMoney(insuranceFee)}元`,
+      `DB${formatMoney(parsedDb)}元`,
+      includeUpstairsFee ? `上门费${formatMoney(upstairsFee)}元` : ""
+    ].filter(Boolean).join("、");
+    const quoteText = `${address}\n\n${weightLine}\n${packageLine}\n${dbLine}\n\n顺心捷达预估：${formatMoney(totalFee)}元（${feeSummary}）`;
+    const insuranceText = Number.isFinite(declaredAmount) && declaredAmount > 2000
+      ? `保费：${formatMoney(insuranceFee)}元（${formatMoney(declaredAmount)}*0.003）`
+      : `保费：${formatMoney(insuranceFee)}元（2000元以内默认保费5元）`;
+    const upstairsText = upstairsFee === 0
+      ? "上门费：0元（40KG以内免费）"
+      : `上门费：${formatMoney(upstairsFee)}元（${includeUpstairsFee ? "已计入合计" : "未勾选，不计入合计"}）`;
     const processText = [
       `匹配：${row.region}，时效约${row.eta}${row.note ? `；${row.note}` : ""}`,
       `包装：${formatMoney(length)}*${formatMoney(width)}*${formatMoney(height)}米`,
@@ -330,12 +371,23 @@
       `体积重量：${formatMoney(length)}*${formatMoney(width)}*${formatMoney(height)}*200=${formatWeight(volumeWeight)}KG`,
       `计费重量：MAX(${formatWeight(totalWeight)}, ${formatWeight(volumeWeight)})=${formatWeight(chargeWeight)}KG`,
       `运费：${formatWeight(chargeWeight)}KG*${formatMoney(rate)}元/KG=${freightFee}元（${tierMatch.tier.label}）`,
-      `保费：${insuranceFee}元`,
+      insuranceText,
+      upstairsText,
       `DB：${formatMoney(parsedDb)}元`,
-      `合计：${freightFee}+${insuranceFee}+${formatMoney(parsedDb)}=${formatMoney(totalFee)}元`
+      `合计：${freightFee}+${formatMoney(insuranceFee)}+${formatMoney(parsedDb)}${includeUpstairsFee ? `+${formatMoney(upstairsFee)}` : ""}=${formatMoney(totalFee)}元`
     ].join("\n");
 
-    return { totalText: `${formatMoney(totalFee)}元`, quoteText, processText };
+    return {
+      totalText: `${formatMoney(totalFee)}元`,
+      quoteText,
+      processText,
+      freightFee,
+      insuranceFee,
+      upstairsFee,
+      includedUpstairsFee,
+      totalFee,
+      chargeWeight
+    };
   }
 
   window.GoldFreightCore = {
@@ -350,6 +402,8 @@
     calculateShipment,
     formatWeight,
     packageQuestionLine,
+    shunxinInsuranceFee,
+    shunxinUpstairsFee,
     buildShunxinQuote
   };
 })();
