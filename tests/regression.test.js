@@ -202,6 +202,13 @@ test("顺心捷达三个入口的费用控件使用统一对齐栅格", () => {
   });
 });
 
+test("开单模板付款方式包含T农行并可写入付款结果", () => {
+  const html = read("tools/order-template.html");
+  assert.match(html, /name="paymentMethod" value="T农行"><span>T农行<\/span>/);
+  assert.match(html, /const method = selectedPaymentMethod\(\);[\s\S]{0,180}els\.payment\.value = method && channel \? `\$\{method\}-\$\{channel\}` : \(method \|\| channel\);/);
+  assert.match(html, /付款方式：\$\{els\.payment\.value\.trim\(\) \|\| "未填写"\}/);
+});
+
 test("浙江仓自提和货拉拉仅隐藏开单正文中的重量包装与 DB", () => {
   const html = read("tools/order-template.html");
   assert.match(html, /function hidesZhejiangOrderShippingSummary\(warehouse, logistics\) \{\s*return warehouse === "浙江仓" && \(logistics === "货拉拉" \|\| logistics === "自提"\);\s*\}/);
@@ -417,7 +424,7 @@ test("整板切割与上墙排版使用统一标题和控件高度", () => {
 
 test("主页版本号和所有工具入口完整", () => {
   const index = read("index.html");
-  assert.match(index, /v2026\.08\.10/);
+  assert.match(index, /v2026\.08\.11\.1/);
   const routeMatch = index.match(/const toolPaths = (\{[^;]+\});/);
   assert.ok(routeMatch, "未找到工具入口表");
   const routes = JSON.parse(routeMatch[1]);
