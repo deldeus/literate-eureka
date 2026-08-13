@@ -422,9 +422,17 @@ test("整板切割与上墙排版使用统一标题和控件高度", () => {
   assert.match(wallPanel, /--tool-control-height:\s*44px/);
 });
 
+test("上墙排版板材参数左侧为板宽右侧为板高", () => {
+  const html = read("tools/wall-panel.html");
+  assert.match(html, /<label for="boardW">板宽 mm<\/label>\s*<input id="boardW"/);
+  assert.match(html, /<label for="boardH">板高 mm<\/label>\s*<input id="boardH"/);
+  assert.doesNotMatch(html, /<label[^>]*>板长 mm<\/label>/);
+  assert.match(html, /const baseW = value\("boardW"\);\s*const baseH = value\("boardH"\);/);
+});
+
 test("主页版本号和所有工具入口完整", () => {
   const index = read("index.html");
-  assert.match(index, /v2026\.08\.11\.1/);
+  assert.match(index, /v2026\.08\.13\.1/);
   const routeMatch = index.match(/const toolPaths = (\{[^;]+\});/);
   assert.ok(routeMatch, "未找到工具入口表");
   const routes = JSON.parse(routeMatch[1]);
