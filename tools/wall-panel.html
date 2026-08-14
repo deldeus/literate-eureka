@@ -980,6 +980,28 @@
         </div>
       </div>
 
+      <h2>板材留缝</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="jointGapPreset">板间缝隙</label>
+          <select id="jointGapPreset">
+            <option value="0">0 mm（不留缝）</option>
+            <option value="1">1 mm</option>
+            <option value="2">2 mm</option>
+            <option value="3">3 mm</option>
+            <option value="4">4 mm</option>
+            <option value="5">5 mm</option>
+            <option value="10">10 mm</option>
+            <option value="custom">自选填写</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="jointGapCustom">自选缝隙 mm</label>
+          <input id="jointGapCustom" type="number" min="0" step="0.1" inputmode="decimal" placeholder="选择自选后填写" disabled>
+        </div>
+      </div>
+      <p class="note" style="margin-top: 8px;">只计算板材与板材之间的伸缩缝，墙体四周一圈不预留缝隙。</p>
+
       <h2>原板开料</h2>
       <div class="grid">
         <div class="field">
@@ -1157,6 +1179,8 @@
       wallH: document.getElementById("wallH"),
       boardW: document.getElementById("boardW"),
       boardH: document.getElementById("boardH"),
+      jointGapPreset: document.getElementById("jointGapPreset"),
+      jointGapCustom: document.getElementById("jointGapCustom"),
       rawW: document.getElementById("rawW"),
       rawH: document.getElementById("rawH"),
       allowRotate: document.getElementById("allowRotate"),
@@ -1342,7 +1366,17 @@
         : { boardW: baseH, boardH: baseW };
     }
 
-    function distribute(total, unit, mode) {
+    function jointGapValue() {
+      if (els.jointGapPreset.value === "custom") return Math.max(value("jointGapCustom"), 0);
+      return Math.max(Number(els.jointGapPreset.value || 0), 0);
+    }
+
+    function syncJointGapControl() {
+      const isCustom = els.jointGapPreset.value === "custom";
+      els.jointGapCustom.disabled = !isCustom;
+    }
+
+    function distributeWithoutGap(total, unit, mode) {
       const fullCount = Math.floor(total / unit);
       const remainder = total - fullCount * unit;
       const pieces = Array.from({ length: fullCount }, () => unit);
@@ -1356,6 +1390,32 @@
       return [...pieces, remainder];
     }
 
+    function distribute(total, unit, mode, jointGap = 0) {
+      const safeTotal = Math.max(Number(total) || 0, 0);
+      const safeUnit = Math.max(Number(unit) || 0, 0);
+      const safeGap = Math.max(Number(jointGap) || 0, 0);
+      if (safeTotal <= 0 || safeUnit <= 0) return [];
+      if (safeGap <= 0) return distributeWithoutGap(safeTotal, safeUnit, mode);
+
+      const estimatedCount = Math.max(1, Math.ceil((safeTotal + safeGap) / (safeUnit + safeGap)));
+      const firstCandidate = Math.max(1, estimatedCount - 2);
+      const lastCandidate = estimatedCount + 4;
+      for (let count = firstCandidate; count <= lastCandidate; count += 1) {
+        const panelSpace = safeTotal - safeGap * (count - 1);
+        if (panelSpace <= 0) continue;
+        const pieces = distributeWithoutGap(panelSpace, safeUnit, mode);
+        const valid = pieces.length === count && pieces.every((piece) => piece > 0 && piece <= safeUnit + 0.0001);
+        if (valid) return pieces;
+      }
+
+      const panelSpace = safeTotal - safeGap * (estimatedCount - 1);
+      if (panelSpace <= 0) return [];
+      const evenSize = panelSpace / estimatedCount;
+      return Array.from({ length: estimatedCount }, (_, index) => (
+        index === estimatedCount - 1 ? panelSpace - evenSize * (estimatedCount - 1) : evenSize
+      ));
+    }
+
     function currentWall() {
       return walls[activeWall];
     }
@@ -1365,10 +1425,11 @@
       const wallW = Number(wall.wallW || 0);
       const wallH = Number(wall.wallH || 0);
       if (!Number.isFinite(wallW) || !Number.isFinite(wallH) || wallW <= 0 || wallH <= 0) {
-        return { wallW: 0, wallH: 0, boardW, boardH, cols: [], rows: [], panels: [], incomplete: true };
+        return { wallW: 0, wallH: 0, boardW, boardH, jointGap: jointGapValue(), cols: [], rows: [], panels: [], incomplete: true };
       }
-      const cols = distribute(wallW, boardW, els.cutX.value);
-      const rows = distribute(wallH, boardH, els.cutY.value);
+      const jointGap = jointGapValue();
+      const cols = distribute(wallW, boardW, els.cutX.value, jointGap);
+      const rows = distribute(wallH, boardH, els.cutY.value, jointGap);
       const panels = [];
       let y = 0;
       rows.forEach((h, row) => {
@@ -1376,10 +1437,12 @@
         cols.forEach((w, col) => {
           panels.push({ x, y, w, h, row, col, full: w === boardW && h === boardH });
           x += w;
+          if (col < cols.length - 1) x += jointGap;
         });
         y += h;
+        if (row < rows.length - 1) y += jointGap;
       });
-      return { wallW, wallH, boardW, boardH, cols, rows, panels };
+      return { wallW, wallH, boardW, boardH, jointGap, cols, rows, panels };
     }
 
     function syncWallFromInputs() {
@@ -1838,6 +1901,7 @@
         });
     
         g.appendChild(el("rect", {
+          class: "wall-outline",
           x: 0,
           y: 0,
           width: rightX,
@@ -1846,6 +1910,37 @@
           stroke: "#202520",
           "stroke-width": 2,
         }));
+
+        if (data.jointGap > 0) {
+          let seamX = 0;
+          data.cols.slice(0, -1).forEach((width) => {
+            seamX += width;
+            g.appendChild(el("rect", {
+              class: "joint-gap",
+              x: seamX * scale,
+              y: 0,
+              width: Math.max(data.jointGap * scale, 0.6),
+              height: bottomY,
+              fill: "#fffdf8",
+              opacity: 0.96,
+            }));
+            seamX += data.jointGap;
+          });
+          let seamY = 0;
+          data.rows.slice(0, -1).forEach((height) => {
+            seamY += height;
+            g.appendChild(el("rect", {
+              class: "joint-gap",
+              x: 0,
+              y: seamY * scale,
+              width: rightX,
+              height: Math.max(data.jointGap * scale, 0.6),
+              fill: "#fffdf8",
+              opacity: 0.96,
+            }));
+            seamY += data.jointGap;
+          });
+        }
     
         data.panels.forEach((p, i) => {
           const x = p.x * scale;
@@ -1906,42 +2001,40 @@
           });
         });
     
-        function dimensionRuns(values) {
+        function dimensionRuns(values, runGap) {
           const runs = [];
+          let cursor = 0;
           values.forEach((value) => {
             const last = runs[runs.length - 1];
             if (last && last.value === value) {
               last.count += 1;
-              last.total += value;
-              return;
+              last.end = cursor + value;
+            } else {
+              runs.push({ value, count: 1, start: cursor, end: cursor + value });
             }
-            runs.push({ value, count: 1, total: value });
+            cursor += value + runGap;
           });
           return runs;
         }
 
-        let labelX = 0;
-        dimensionRuns(data.cols).forEach((run) => {
-          const centerX = (labelX + run.total / 2) * scale;
+        dimensionRuns(data.cols, data.jointGap).forEach((run) => {
+          const centerX = ((run.start + run.end) / 2) * scale;
           const label = run.count > 1 ? `${run.count}列×${fmt(run.value)}` : fmt(run.value);
           addText(g, label, centerX, -7, {
             "font-size": 13,
             "text-anchor": "middle",
             fill: "#ff4d4d",
           });
-          labelX += run.total;
         });
 
-        let labelY = 0;
-        dimensionRuns(data.rows).forEach((run) => {
-          const centerY = (labelY + run.total / 2) * scale + 5;
+        dimensionRuns(data.rows, data.jointGap).forEach((run) => {
+          const centerY = ((run.start + run.end) / 2) * scale + 5;
           const label = run.count > 1 ? `${run.count}行×${fmt(run.value)}` : fmt(run.value);
           addText(g, label, -10, centerY, {
             "font-size": 13,
             "text-anchor": "end",
             fill: "#ff4d4d",
           });
-          labelY += run.total;
         });
 
         g.appendChild(el("line", { x1: 0, y1: -24, x2: rightX, y2: -24, stroke: "#202520", "stroke-width": 1 }));
@@ -1962,7 +2055,7 @@
         const holeText = noHole
           ? "不开孔"
           : `${holeModeLabel(defaultHoleMode, defaultTwoHoleDirection)} | 孔 ${fmt(holeD)} | 距边 ${fmt(inset)}${overrideCount ? ` | 单块调整 ${overrideCount} 处` : ""}`;
-        const infoText = `板材尺寸：${fmtBoardSize(data.boardW, data.boardH)} | ${holeText} | ${orientation === "horizontal" ? "横向排版" : "竖向排版"}`;
+        const infoText = `板材尺寸：${fmtBoardSize(data.boardW, data.boardH)} | 留缝 ${fmt(data.jointGap)}（仅板间） | ${holeText} | ${orientation === "horizontal" ? "横向排版" : "竖向排版"}`;
         const infoY = bottomY + 42;
         const infoW = Math.min(rightX, Math.max(390, infoText.length * 8.5 + 28));
         g.appendChild(el("rect", {
@@ -2160,6 +2253,7 @@
     document.querySelectorAll("input, select").forEach((node) => {
       node.addEventListener("input", () => {
         if (["panelHoleMode", "panelHoleInset", "panelTwoHoleDirection"].includes(node.id)) return;
+        if (node.id === "jointGapPreset") syncJointGapControl();
         if (["wallName", "wallW", "wallH"].includes(node.id)) {
           syncWallFromInputs();
           renderWallSelect();
@@ -2237,6 +2331,7 @@
     }
 
     preventNumberInputWheelChange();
+    syncJointGapControl();
     refresh();
   </script>
 </body>

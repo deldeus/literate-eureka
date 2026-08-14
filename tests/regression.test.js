@@ -430,9 +430,22 @@ test("上墙排版板材参数左侧为板宽右侧为板高", () => {
   assert.match(html, /const baseW = value\("boardW"\);\s*const baseH = value\("boardH"\);/);
 });
 
+test("上墙排版支持板间留缝且墙体四周不扣缝", () => {
+  const html = read("tools/wall-panel.html");
+  ["0", "1", "2", "3", "4", "5", "10", "custom"].forEach((value) => {
+    assert.match(html, new RegExp(`<option value="${value}">`));
+  });
+  assert.match(html, /id="jointGapCustom"[^>]+min="0"[^>]+step="0\.1"/);
+  assert.match(html, /只计算板材与板材之间的伸缩缝，墙体四周一圈不预留缝隙/);
+  assert.match(html, /const panelSpace = safeTotal - safeGap \* \(count - 1\);/);
+  assert.match(html, /if \(col < cols\.length - 1\) x \+= jointGap;/);
+  assert.match(html, /if \(row < rows\.length - 1\) y \+= jointGap;/);
+  assert.match(html, /留缝 \$\{fmt\(data\.jointGap\)\}（仅板间）/);
+});
+
 test("主页版本号和所有工具入口完整", () => {
   const index = read("index.html");
-  assert.match(index, /v2026\.08\.13\.1/);
+  assert.match(index, /v2026\.08\.14\.1/);
   const routeMatch = index.match(/const toolPaths = (\{[^;]+\});/);
   assert.ok(routeMatch, "未找到工具入口表");
   const routes = JSON.parse(routeMatch[1]);
