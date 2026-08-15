@@ -17,6 +17,13 @@ function loadCore(rateData) {
   return context.window.GoldFreightCore;
 }
 
+function loadShunxinRateData() {
+  const context = { window: {} };
+  vm.createContext(context);
+  vm.runInContext(read("tools/shunxin-rates.js"), context);
+  return JSON.parse(JSON.stringify(context.window.SHUNXIN_RATE_DATA));
+}
+
 function loadNingboCore() {
   const context = { window: {} };
   vm.createContext(context);
@@ -43,6 +50,68 @@ const sampleRates = {
     { region: "测试省乙市", aliases: ["测试省乙市", "乙市"], rates: [3, 2.8, 2.6], eta: "3-4天", note: "" }
   ]
 };
+
+test("顺心捷达使用2026-08-15嘉兴最新四档报价", () => {
+  const data = loadShunxinRateData();
+  assert.equal(data.updatedAt, "2026-08-15");
+  assert.deepEqual(data.tiers.map((tier) => tier.label), [
+    "100kg-500kg",
+    "500kg-999kg",
+    "1000kg-2000kg",
+    "2000kg以上"
+  ]);
+  const actual = Object.fromEntries(data.rows.map((row) => [row.region, row.rates]));
+  assert.deepEqual(actual, {
+    "江浙沪": [0.6, 0.55, 0.5, 0.46],
+    "安徽省": [0.65, 0.6, 0.55, 0.5],
+    "广东省": [0.85, 0.8, 0.75, 0.7],
+    "福建省": [0.85, 0.8, 0.75, 0.7],
+    "山东省": [0.85, 0.8, 0.8, 0.7],
+    "江西省": [0.85, 0.85, 0.8, 0.7],
+    "湖北省": [0.9, 0.8, 0.8, 0.7],
+    "湖南省": [0.9, 0.85, 0.8, 0.7],
+    "河南省": [0.9, 0.78, 0.75, 0.7],
+    "天津": [1, 0.9, 0.75, 0.7],
+    "北京": [1, 0.9, 0.8, 0.77],
+    "河北省": [0.9, 0.85, 0.8, 0.77],
+    "陕西省": [1.3, 1.2, 1, 0.86],
+    "山西省": [1.3, 1.2, 1, 0.86],
+    "重庆市": [1.3, 1.2, 1, 0.86],
+    "四川": [1.3, 1.2, 1, 0.86],
+    "广西省": [1.3, 1.2, 1, 0.86],
+    "贵州": [1.3, 1.2, 1, 0.86],
+    "云南省": [1.4, 1.3, 1.2, 1.1],
+    "海南省": [1.9, 1.7, 1.5, 1.4],
+    "甘肃省": [1.5, 1.4, 1.3, 1.2],
+    "东北三省": [1.4, 1.2, 1.1, 1],
+    "内蒙古": [1.6, 1.5, 1.4, 1.3],
+    "青海省": [1.6, 1.5, 1.4, 1.2],
+    "宁夏省": [1.6, 1.5, 1.4, 1.2],
+    "西藏": [2.5, 2.3, 1.9, 1.7],
+    "新疆": [2.5, 2.3, 1.9, 1.7]
+  });
+  assert.equal(data.conditionalFeeNotes.length, 3);
+});
+
+test("顺心捷达最新重量档边界连续并支持2000kg以上", () => {
+  const data = loadShunxinRateData();
+  const core = loadCore(data);
+  const quote = (weight) => core.buildShunxinQuote({
+    address: "广东省广州市",
+    totalWeight: weight,
+    pkg: { outer: "1*1*1" },
+    weightLine: `${weight}KG`,
+    packageLine: "木箱：1*1*1",
+    dbLine: "",
+    db: 0
+  });
+  assert.match(quote(500).processText, /0\.85元\/KG=.*100kg-500kg/);
+  assert.match(quote(500.5).processText, /0\.8元\/KG=.*500kg-999kg/);
+  assert.match(quote(1000).processText, /0\.75元\/KG=.*1000kg-2000kg/);
+  assert.match(quote(2000).processText, /0\.75元\/KG=.*1000kg-2000kg/);
+  assert.match(quote(2000.5).processText, /0\.7元\/KG=.*2000kg以上/);
+  assert.match(quote(2000.5).processText, /到付手续费按到付金额的6%/);
+});
 
 function quoteInput(address, totalWeight) {
   return {
@@ -149,7 +218,7 @@ test("浙江仓开单、鎏金运费和文字报价共用 DB 核心", () => {
   assert.match(order, /GoldFreightCore\.calculateDb\(products\)/);
   assert.doesNotMatch(order, /totalQty \* 1\.5/);
   for (const file of ["tools/order-template.html", "tools/freight-gold.html", "tools/quote-generator.html"]) {
-    assert.match(read(file), /<script src="freight-gold-core\.js\?v=20260810-2"><\/script>/, file);
+    assert.match(read(file), /<script src="freight-gold-core\.js\?v=20260815-1"><\/script>/, file);
   }
 });
 
@@ -395,10 +464,10 @@ test("三个业务页面共同读取产品数据", () => {
 
 test("公共业务逻辑带版本标记避免浏览器继续使用旧缓存", () => {
   for (const file of ["tools/order-template.html", "tools/freight-gold.html", "tools/quote-generator.html"]) {
-    assert.match(read(file), /<script src="freight-gold-core\.js\?v=20260810-2"><\/script>/, file);
+    assert.match(read(file), /<script src="freight-gold-core\.js\?v=20260815-1"><\/script>/, file);
   }
   for (const file of ["tools/order-template.html", "tools/freight-gold.html", "tools/quote-generator.html"]) {
-    assert.match(read(file), /<script src="shunxin-rates\.js\?v=20260808-1"><\/script>/, file);
+    assert.match(read(file), /<script src="shunxin-rates\.js\?v=20260815-1"><\/script>/, file);
   }
 });
 
@@ -445,7 +514,7 @@ test("上墙排版支持板间留缝且墙体四周不扣缝", () => {
 
 test("主页版本号和所有工具入口完整", () => {
   const index = read("index.html");
-  assert.match(index, /v2026\.08\.14\.1/);
+  assert.match(index, /v2026\.08\.15\.1/);
   const routeMatch = index.match(/const toolPaths = (\{[^;]+\});/);
   assert.ok(routeMatch, "未找到工具入口表");
   const routes = JSON.parse(routeMatch[1]);

@@ -245,7 +245,13 @@
 
   function shunxinTier(chargeWeight) {
     const tiers = shunxinData().tiers || [];
-    const index = tiers.findIndex((tier) => chargeWeight >= tier.min && chargeWeight <= tier.max);
+    const index = tiers.findIndex((tier) => {
+      const min = Number(tier.min);
+      const max = tier.max === null || tier.max === undefined ? null : Number(tier.max);
+      const aboveMin = tier.minExclusive ? chargeWeight > min : chargeWeight >= min;
+      const belowMax = max === null ? true : (tier.maxExclusive ? chargeWeight < max : chargeWeight <= max);
+      return Number.isFinite(min) && aboveMin && belowMax;
+    });
     return index >= 0 ? { index, tier: tiers[index] } : null;
   }
 
@@ -332,8 +338,8 @@
     if (!tierMatch) {
       return manualShunxinQuote(
         address,
-        `计费重量${formatWeight(chargeWeight)}KG，超出报价表100-1500KG范围，请手动查询。`,
-        `实际重量${formatWeight(totalWeight)}KG，体积重量${formatWeight(volumeWeight)}KG，取大值后无法匹配报价档。`
+        `计费重量${formatWeight(chargeWeight)}KG，未匹配到最新报价表重量档，请手动查询。`,
+        `实际重量${formatWeight(totalWeight)}KG，体积重量${formatWeight(volumeWeight)}KG；最新报价表100KG起计，当前取大值后无法匹配报价档。`
       );
     }
 
@@ -364,7 +370,15 @@
     const upstairsText = upstairsFee === 0
       ? "上门费：0元（40KG以内免费）"
       : `上门费：${formatMoney(upstairsFee)}元（${includeUpstairsFee ? "已计入合计" : "未勾选，不计入合计"}）`;
+    const rateData = shunxinData();
+    const sourceText = rateData.source
+      ? `费率来源：${rateData.source}${rateData.updatedAt ? `，更新于${rateData.updatedAt}` : ""}`
+      : "";
+    const conditionalFeeText = (rateData.conditionalFeeNotes || []).length
+      ? `附加条件（未自动计入）：${rateData.conditionalFeeNotes.join("；")}`
+      : "";
     const processText = [
+      sourceText,
       `匹配：${row.region}，时效约${row.eta}${row.note ? `；${row.note}` : ""}`,
       `包装：${formatMoney(length)}*${formatMoney(width)}*${formatMoney(height)}米`,
       `实际重量：${formatWeight(totalWeight)}KG`,
@@ -374,8 +388,9 @@
       insuranceText,
       upstairsText,
       `DB：${formatMoney(parsedDb)}元`,
-      `合计：${freightFee}+${formatMoney(insuranceFee)}+${formatMoney(parsedDb)}${includeUpstairsFee ? `+${formatMoney(upstairsFee)}` : ""}=${formatMoney(totalFee)}元`
-    ].join("\n");
+      `合计：${freightFee}+${formatMoney(insuranceFee)}+${formatMoney(parsedDb)}${includeUpstairsFee ? `+${formatMoney(upstairsFee)}` : ""}=${formatMoney(totalFee)}元`,
+      conditionalFeeText
+    ].filter(Boolean).join("\n");
 
     return {
       totalText: `${formatMoney(totalFee)}元`,
