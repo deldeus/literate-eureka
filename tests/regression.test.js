@@ -366,10 +366,29 @@ test("宁波重量提供多产品明细操作", () => {
 
 test("宁波重量同步开单模板的星云石产品", () => {
   const html = read("tools/ningbo-weight.html");
-  assert.match(html, /<script src="product-data\.js\?v=20260804-1"><\/script>/);
+  assert.match(html, /<script src="product-data\.js\?v=20260819-1"><\/script>/);
   assert.match(html, /"星云石": "星月石"/);
   assert.match(html, /"星云石B款": "星月石"/);
   assert.match(html, /JieGeProductData\?\.groupedNingboCatalog/);
+});
+
+test("宁波仓20圆柱和30内圆使用最新名称与底价", () => {
+  const productData = loadProductData();
+  const grouped = productData.groupedNingboCatalog();
+  const cylinder20 = grouped.find((item) => item.name === "20圆柱");
+  const inner30 = grouped.find((item) => item.name === "30内圆");
+  assert.equal(cylinder20?.price, 95);
+  assert.deepEqual(Array.from(cylinder20?.specs || []), ["3000*1200"]);
+  assert.equal(inner30?.price, 90);
+  assert.deepEqual(Array.from(inner30?.specs || []), ["3000*1200"]);
+  assert.equal(grouped.some((item) => item.name === "20内圆"), false);
+  for (const file of ["tools/order-template.html", "tools/quick-price.html", "tools/quote-generator.html", "tools/ningbo-weight.html"]) {
+    assert.doesNotMatch(read(file), /20内圆/, file);
+  }
+  const quote = read("tools/quote-generator.html");
+  assert.match(quote, /els\.unitPrice\.value = selectedProduct\.price;/);
+  assert.match(quote, /function syncMultiNingboProduct\(card\)/);
+  assert.match(quote, /\.multi-unit-price"\)\.value = ningboVariantForSpec\(product, specInput\.value\)\.price;/);
 });
 
 test("宁波新增产品复用已确认重量并同步最新规格", () => {
@@ -456,9 +475,9 @@ test("快速查价同步松诺与168附加费用说明", () => {
   assert.doesNotMatch(html, /倒边：\+5元\/米/);
 });
 
-test("三个业务页面共同读取产品数据", () => {
-  for (const file of ["tools/order-template.html", "tools/quick-price.html", "tools/quote-generator.html"]) {
-    assert.match(read(file), /<script src="product-data\.js\?v=20260804-1"><\/script>/, file);
+test("四个宁波业务页面共同读取最新产品数据", () => {
+  for (const file of ["tools/order-template.html", "tools/quick-price.html", "tools/quote-generator.html", "tools/ningbo-weight.html"]) {
+    assert.match(read(file), /<script src="product-data\.js\?v=20260819-1"><\/script>/, file);
   }
 });
 
@@ -514,7 +533,7 @@ test("上墙排版支持板间留缝且墙体四周不扣缝", () => {
 
 test("主页版本号和所有工具入口完整", () => {
   const index = read("index.html");
-  assert.match(index, /v2026\.08\.15\.1/);
+  assert.match(index, /v2026\.08\.19\.1/);
   const routeMatch = index.match(/const toolPaths = (\{[^;]+\});/);
   assert.ok(routeMatch, "未找到工具入口表");
   const routes = JSON.parse(routeMatch[1]);

@@ -1856,7 +1856,7 @@
     </section>
   </main>
 
-  <script src="product-data.js?v=20260804-1"></script>
+  <script src="product-data.js?v=20260819-1"></script>
   <script src="shunxin-rates.js?v=20260815-1"></script>
   <script src="freight-gold-core.js?v=20260815-1"></script>
   <script>
@@ -2033,6 +2033,14 @@
       return [...new Set(ningboProductVariants(product).flatMap((item) => item.specs).map(formatNingboSpec).filter(Boolean))];
     }
 
+    function ningboVariantForSpec(product, spec) {
+      if (!product) return null;
+      const normalizedSpec = formatNingboSpec(spec);
+      return ningboProductVariants(product).find((item) =>
+        item.specs.some((itemSpec) => formatNingboSpec(itemSpec) === normalizedSpec)
+      ) || product;
+    }
+
     function renderQuickSpecOptions(options, selected = "") {
       const selectedValue = selected || options[0] || "";
       els.quickSpec.innerHTML = [
@@ -2055,6 +2063,10 @@
         els.spec.value = specs[0];
       } else {
         syncQuickSpec();
+      }
+      if (product) {
+        const selectedProduct = ningboVariantForSpec(product, els.spec.value);
+        els.unitPrice.value = selectedProduct.price;
       }
     }
 
@@ -2212,6 +2224,15 @@
       card.querySelector(".multi-freight-fee").value = data.freightFee ?? 0;
       const radio = card.querySelector(`input[value="${data.pricingMode || "area"}"]`);
       if (radio) radio.checked = true;
+    }
+
+    function syncMultiNingboProduct(card) {
+      const product = findNingboProduct(card.querySelector(".multi-product").value);
+      if (!product) return;
+      const specInput = card.querySelector(".multi-spec");
+      const specs = ningboSpecsForProduct(product);
+      if (!specs.includes(formatNingboSpec(specInput.value)) && specs[0]) specInput.value = specs[0];
+      card.querySelector(".multi-unit-price").value = ningboVariantForSpec(product, specInput.value).price;
     }
 
     function getProductCards() { return [...els.multiProducts.querySelectorAll(".product-card")]; }
@@ -2604,6 +2625,14 @@
       button.closest(".product-card").remove();
       renumberProducts();
       render();
+    });
+    els.multiProducts.addEventListener("input", (event) => {
+      const productInput = event.target.closest(".multi-product");
+      if (productInput) syncMultiNingboProduct(productInput.closest(".product-card"));
+    });
+    els.multiProducts.addEventListener("change", (event) => {
+      const productInput = event.target.closest(".multi-product");
+      if (productInput) syncMultiNingboProduct(productInput.closest(".product-card"));
     });
 
     els.quickSpec.addEventListener("change", applyQuickSpecSelection);
