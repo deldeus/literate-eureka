@@ -385,10 +385,43 @@ test("宁波仓20圆柱和30内圆使用最新名称与底价", () => {
   for (const file of ["tools/order-template.html", "tools/quick-price.html", "tools/quote-generator.html", "tools/ningbo-weight.html"]) {
     assert.doesNotMatch(read(file), /20内圆/, file);
   }
-  const quote = read("tools/quote-generator.html");
-  assert.match(quote, /els\.unitPrice\.value = selectedProduct\.price;/);
-  assert.match(quote, /function syncMultiNingboProduct\(card\)/);
-  assert.match(quote, /\.multi-unit-price"\)\.value = ningboVariantForSpec\(product, specInput\.value\)\.price;/);
+});
+
+test("文字报价只自动识别宁波规格且优惠价始终手填", () => {
+  const html = read("tools/quote-generator.html");
+  assert.match(html, /id="unitPrice"[^>]+placeholder="请手动填写优惠价"/);
+  assert.doesNotMatch(html, /id="unitPrice"[^>]+value="95"/);
+  assert.match(html, /class="multi-unit-price"[^>]+placeholder="请手动填写优惠价"/);
+  assert.doesNotMatch(html, /class="multi-unit-price"[^>]+value="95"/);
+  assert.match(html, /els\.product\.addEventListener\("input", \(\) => \{\s*els\.unitPrice\.value = "";/);
+  assert.match(html, /card\.querySelector\("\.multi-unit-price"\)\.value = "";/);
+  assert.doesNotMatch(html, /selectedProduct\.price/);
+  assert.doesNotMatch(html, /ningboVariantForSpec/);
+});
+
+test("浙江仓修补剂支持四种规格多选数量并扣入KD", () => {
+  const html = read("tools/order-template.html");
+  [["50", "15"], ["100", "30"], ["200", "50"], ["500", "125"]].forEach(([weight, price]) => {
+    assert.match(html, new RegExp(`data-weight="${weight}" data-price="${price}"`));
+    assert.match(html, new RegExp(`aria-label="修补剂${weight}g数量"[^>]+value="1"`));
+  });
+  assert.match(html, /<section id="repairAgentSection" class="wide repair-agent-section">/);
+  assert.match(html, /id="repairAgentToggleButton"[^>]+aria-expanded="false"[^>]+aria-controls="repairAgentBody"/);
+  assert.match(html, /id="repairAgentBody" class="repair-agent-body" hidden/);
+  assert.match(html, /id="repairAgentToggleLabel">点击展开/);
+  assert.match(html, /可多选；勾选后默认数量1/);
+  assert.match(html, /id="repairAgentSummary" class="repair-agent-summary">合计：0元/);
+  assert.doesNotMatch(html, /repair-agent-subtotal|小计：/);
+  assert.match(html, /\.repair-agent-card \{\s*display: flex;/);
+  assert.match(html, /function repairAgentFees\(warehouse = currentWarehouse\(\)\)/);
+  assert.match(html, /修补剂\$\{item\.weight\}g\*\$\{item\.qtyValue\}：\$\{money\(item\.amount\)\}/);
+  assert.match(html, /const extraAmount = \(built\.extraAmount \|\| 0\) \+ repairAgent\.amount;/);
+  assert.match(html, /const extraLines = \[\.\.\.\(built\.extraLines \|\| \[\]\), \.\.\.repairAgent\.lines\];/);
+  assert.match(html, /const kd = total - dbDeduction - built\.materialAmount - extraAmount/);
+  assert.match(html, /els\.repairAgentSection\.classList\.toggle\("hidden", !enabled\);/);
+  assert.match(html, /function setRepairAgentExpanded\(expanded\)/);
+  assert.match(html, /els\.repairAgentToggleLabel\.textContent = isExpanded \? "点击收起" : "点击展开";/);
+  assert.match(html, /setRepairAgentExpanded\(false\);/);
 });
 
 test("宁波新增产品复用已确认重量并同步最新规格", () => {
@@ -533,7 +566,7 @@ test("上墙排版支持板间留缝且墙体四周不扣缝", () => {
 
 test("主页版本号和所有工具入口完整", () => {
   const index = read("index.html");
-  assert.match(index, /v2026\.08\.19\.1/);
+  assert.match(index, /v2026\.08\.20\.3/);
   const routeMatch = index.match(/const toolPaths = (\{[^;]+\});/);
   assert.ok(routeMatch, "未找到工具入口表");
   const routes = JSON.parse(routeMatch[1]);

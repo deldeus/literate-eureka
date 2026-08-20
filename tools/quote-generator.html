@@ -1632,7 +1632,7 @@
             </div>
             <div class="field">
               <label id="unitPriceLabel" for="unitPrice">折扣优惠价（元/平方）</label>
-              <input id="unitPrice" type="number" min="0" step="0.01" value="95">
+              <input id="unitPrice" type="number" min="0" step="0.01" placeholder="请手动填写优惠价">
             </div>
             </div>
 
@@ -2033,14 +2033,6 @@
       return [...new Set(ningboProductVariants(product).flatMap((item) => item.specs).map(formatNingboSpec).filter(Boolean))];
     }
 
-    function ningboVariantForSpec(product, spec) {
-      if (!product) return null;
-      const normalizedSpec = formatNingboSpec(spec);
-      return ningboProductVariants(product).find((item) =>
-        item.specs.some((itemSpec) => formatNingboSpec(itemSpec) === normalizedSpec)
-      ) || product;
-    }
-
     function renderQuickSpecOptions(options, selected = "") {
       const selectedValue = selected || options[0] || "";
       els.quickSpec.innerHTML = [
@@ -2063,10 +2055,6 @@
         els.spec.value = specs[0];
       } else {
         syncQuickSpec();
-      }
-      if (product) {
-        const selectedProduct = ningboVariantForSpec(product, els.spec.value);
-        els.unitPrice.value = selectedProduct.price;
       }
     }
 
@@ -2103,6 +2091,7 @@
       if (!product) return;
       const specs = ningboSpecsForProduct(product);
       els.product.value = product.name;
+      els.unitPrice.value = "";
       if (specs[0]) {
         renderQuickSpecOptions(specs, specs[0]);
         els.spec.value = specs[0];
@@ -2184,7 +2173,7 @@
           <div class="grid-2">
             <div class="field"><label>数量（张）</label><input class="multi-quantity" type="number" min="1" step="1" value="3"></div>
             <div class="field"><label class="multi-original-price-label">原价（元/平方，可不填）</label><input class="multi-original-price" type="number" min="0" step="0.01" placeholder="不填则不显示"></div>
-            <div class="field"><label class="multi-unit-price-label">折扣优惠价（元/平方）</label><input class="multi-unit-price" type="number" min="0" step="0.01" value="95"></div>
+            <div class="field"><label class="multi-unit-price-label">折扣优惠价（元/平方）</label><input class="multi-unit-price" type="number" min="0" step="0.01" placeholder="请手动填写优惠价"></div>
           </div>
           <div class="grid-2 different-fees hidden">
             <div class="field"><label>木箱（元）</label><input class="multi-box-fee" type="number" min="0" step="1" value="300"></div>
@@ -2219,7 +2208,7 @@
       card.querySelector(".multi-spec").value = data.spec || "";
       card.querySelector(".multi-quantity").value = data.quantity ?? 3;
       card.querySelector(".multi-original-price").value = data.originalPrice ?? "";
-      card.querySelector(".multi-unit-price").value = data.unitPrice ?? 95;
+      card.querySelector(".multi-unit-price").value = data.unitPrice ?? "";
       card.querySelector(".multi-box-fee").value = data.boxFee ?? 300;
       card.querySelector(".multi-freight-fee").value = data.freightFee ?? 0;
       const radio = card.querySelector(`input[value="${data.pricingMode || "area"}"]`);
@@ -2232,7 +2221,6 @@
       const specInput = card.querySelector(".multi-spec");
       const specs = ningboSpecsForProduct(product);
       if (!specs.includes(formatNingboSpec(specInput.value)) && specs[0]) specInput.value = specs[0];
-      card.querySelector(".multi-unit-price").value = ningboVariantForSpec(product, specInput.value).price;
     }
 
     function getProductCards() { return [...els.multiProducts.querySelectorAll(".product-card")]; }
@@ -2515,7 +2503,7 @@
         els.spec.value = state.single.spec ?? "";
         els.quantity.value = state.single.quantity ?? 3;
         els.originalPrice.value = state.single.originalPrice ?? "";
-        els.unitPrice.value = state.single.unitPrice ?? 95;
+        els.unitPrice.value = state.single.unitPrice ?? "";
         els.boxFee.value = state.single.boxFee ?? 300;
         els.freightFee.value = state.single.freightFee ?? 0;
         setCheckedValue("pricingMode", state.single.pricingMode || "area");
@@ -2600,10 +2588,12 @@
     }
 
     els.product.addEventListener("input", () => {
+      els.unitPrice.value = "";
       renderProductSuggestions();
       syncProductQuickSpecs();
     });
     els.product.addEventListener("change", () => {
+      els.unitPrice.value = "";
       syncProductQuickSpecs({ applyFirstSpec: Boolean(findNingboProduct(els.product.value)) && !els.spec.value.trim() });
     });
     els.product.addEventListener("blur", () => {
@@ -2628,11 +2618,19 @@
     });
     els.multiProducts.addEventListener("input", (event) => {
       const productInput = event.target.closest(".multi-product");
-      if (productInput) syncMultiNingboProduct(productInput.closest(".product-card"));
+      if (productInput) {
+        const card = productInput.closest(".product-card");
+        card.querySelector(".multi-unit-price").value = "";
+        syncMultiNingboProduct(card);
+      }
     });
     els.multiProducts.addEventListener("change", (event) => {
       const productInput = event.target.closest(".multi-product");
-      if (productInput) syncMultiNingboProduct(productInput.closest(".product-card"));
+      if (productInput) {
+        const card = productInput.closest(".product-card");
+        card.querySelector(".multi-unit-price").value = "";
+        syncMultiNingboProduct(card);
+      }
     });
 
     els.quickSpec.addEventListener("change", applyQuickSpecSelection);

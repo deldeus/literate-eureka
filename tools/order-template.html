@@ -208,6 +208,156 @@
       accent-color: var(--accent);
     }
 
+    .repair-agent-section {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.72);
+      overflow: hidden;
+    }
+
+    .repair-agent-toggle {
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 14px;
+    }
+
+    .repair-agent-title {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-weight: 850;
+    }
+
+    .repair-agent-title small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .repair-agent-toggle-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+
+    .repair-agent-action {
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid #b9d9f8;
+      border-radius: 8px;
+      background: #eef7ff;
+      color: #0b65ad;
+      padding: 6px 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .repair-agent-action:hover {
+      border-color: #83bff1;
+      background: #e2f1ff;
+    }
+
+    .repair-agent-action:focus-visible {
+      outline: 3px solid rgba(51, 156, 255, 0.24);
+      outline-offset: 2px;
+    }
+
+    .repair-agent-chevron {
+      font-size: 18px;
+      line-height: 1;
+      color: var(--muted);
+      transition: transform 180ms ease-out;
+    }
+
+    .repair-agent-section.is-open .repair-agent-chevron {
+      transform: rotate(180deg);
+    }
+
+    .repair-agent-body {
+      border-top: 1px solid var(--line);
+      padding: 12px 14px 14px;
+    }
+
+    .repair-agent-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .repair-agent-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px 10px;
+    }
+
+    .repair-agent-card .checkline {
+      width: auto;
+      justify-content: flex-start;
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+
+    .repair-agent-qty-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 0 0 auto;
+      font-size: 12px;
+      font-weight: 750;
+      color: var(--muted);
+    }
+
+    .repair-agent-qty {
+      width: 64px;
+      min-width: 64px;
+      min-height: 38px;
+      padding: 6px 8px;
+      text-align: center;
+    }
+
+    .repair-agent-summary {
+      color: #155f38;
+      font-weight: 850;
+    }
+
+    .repair-agent-body .hint {
+      margin: 10px 0 0;
+    }
+
+    @media (max-width: 900px) {
+      .repair-agent-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      .repair-agent-grid { grid-template-columns: 1fr; }
+      .repair-agent-toggle { align-items: flex-start; }
+      .repair-agent-title { display: grid; gap: 2px; }
+      .repair-agent-toggle-meta { gap: 6px; }
+      .repair-agent-action { padding-inline: 9px; }
+      .repair-agent-card { min-height: 52px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .repair-agent-chevron { transition: none; }
+    }
+
     .mini-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2279,6 +2429,36 @@
                   <label class="checkline"><input id="wearCoating" type="checkbox">耐磨罩面 8元/平</label>
                 </div>
               </div>
+              <section id="repairAgentSection" class="wide repair-agent-section">
+                <div class="repair-agent-toggle">
+                  <span class="repair-agent-title">修补剂 <small>2026年7月1日价格 · 按需选择</small></span>
+                  <span class="repair-agent-toggle-meta">
+                    <span id="repairAgentSummary" class="repair-agent-summary">合计：0元</span>
+                    <button id="repairAgentToggleButton" class="repair-agent-action" type="button" aria-expanded="false" aria-controls="repairAgentBody"><span id="repairAgentToggleLabel">点击展开</span><span class="repair-agent-chevron" aria-hidden="true">⌄</span></button>
+                  </span>
+                </div>
+                <div id="repairAgentBody" class="repair-agent-body" hidden>
+                  <div class="repair-agent-grid">
+                  <div class="repair-agent-card" data-weight="50" data-price="15">
+                    <label class="checkline"><input id="repairAgent50" class="repair-agent-check" type="checkbox">50g · 15元</label>
+                    <label class="repair-agent-qty-row">数量<input id="repairAgentQty50" class="repair-agent-qty" aria-label="修补剂50g数量" type="number" min="1" step="1" inputmode="numeric" value="1" disabled></label>
+                  </div>
+                  <div class="repair-agent-card" data-weight="100" data-price="30">
+                    <label class="checkline"><input id="repairAgent100" class="repair-agent-check" type="checkbox">100g · 30元</label>
+                    <label class="repair-agent-qty-row">数量<input id="repairAgentQty100" class="repair-agent-qty" aria-label="修补剂100g数量" type="number" min="1" step="1" inputmode="numeric" value="1" disabled></label>
+                  </div>
+                  <div class="repair-agent-card" data-weight="200" data-price="50">
+                    <label class="checkline"><input id="repairAgent200" class="repair-agent-check" type="checkbox">200g · 50元</label>
+                    <label class="repair-agent-qty-row">数量<input id="repairAgentQty200" class="repair-agent-qty" aria-label="修补剂200g数量" type="number" min="1" step="1" inputmode="numeric" value="1" disabled></label>
+                  </div>
+                  <div class="repair-agent-card" data-weight="500" data-price="125">
+                    <label class="checkline"><input id="repairAgent500" class="repair-agent-check" type="checkbox">500g · 125元</label>
+                    <label class="repair-agent-qty-row">数量<input id="repairAgentQty500" class="repair-agent-qty" aria-label="修补剂500g数量" type="number" min="1" step="1" inputmode="numeric" value="1" disabled></label>
+                  </div>
+                  </div>
+                  <p class="hint">可多选；勾选后默认数量1，金额自动写入明细并扣入KD。</p>
+                </div>
+              </section>
             </div>
 
             <div id="otherFields" class="wide form-grid hidden">
@@ -2920,6 +3100,11 @@
       sqmPrice: document.querySelector("#sqmPrice"),
       waterproofCoating: document.querySelector("#waterproofCoating"),
       wearCoating: document.querySelector("#wearCoating"),
+      repairAgentSection: document.querySelector("#repairAgentSection"),
+      repairAgentSummary: document.querySelector("#repairAgentSummary"),
+      repairAgentBody: document.querySelector("#repairAgentBody"),
+      repairAgentToggleButton: document.querySelector("#repairAgentToggleButton"),
+      repairAgentToggleLabel: document.querySelector("#repairAgentToggleLabel"),
       additionalProducts: document.querySelector("#additionalProducts"),
       otherProductName: document.querySelector("#otherProductName"),
       otherSpecText: document.querySelector("#otherSpecText"),
@@ -4157,6 +4342,57 @@
       };
     }
 
+    function repairAgentRows() {
+      return Array.from(els.repairAgentSection.querySelectorAll(".repair-agent-card")).map((card) => ({
+        card,
+        checked: card.querySelector(".repair-agent-check"),
+        qty: card.querySelector(".repair-agent-qty"),
+        weight: Number(card.dataset.weight) || 0,
+        price: Number(card.dataset.price) || 0
+      }));
+    }
+
+    function repairAgentFees(warehouse = currentWarehouse()) {
+      const enabled = warehouse === "浙江仓";
+      const items = repairAgentRows().filter((row) => enabled && row.checked.checked).map((row) => {
+        const qty = Math.max(1, Number.parseInt(row.qty.value || "1", 10) || 1);
+        return { ...row, qtyValue: qty, amount: row.price * qty };
+      });
+      return {
+        amount: items.reduce((sum, item) => sum + item.amount, 0),
+        lines: items.map((item) => item.qtyValue === 1
+          ? `修补剂${item.weight}g：${money(item.amount)}`
+          : `修补剂${item.weight}g*${item.qtyValue}：${money(item.amount)}`)
+      };
+    }
+
+    function setRepairAgentExpanded(expanded) {
+      const isExpanded = Boolean(expanded);
+      els.repairAgentBody.hidden = !isExpanded;
+      els.repairAgentToggleButton.setAttribute("aria-expanded", String(isExpanded));
+      els.repairAgentToggleLabel.textContent = isExpanded ? "点击收起" : "点击展开";
+      els.repairAgentSection.classList.toggle("is-open", isExpanded);
+    }
+
+    function syncRepairAgentUi(warehouse = currentWarehouse()) {
+      const enabled = warehouse === "浙江仓";
+      els.repairAgentSection.classList.toggle("hidden", !enabled);
+      repairAgentRows().forEach((row) => {
+        row.qty.disabled = !enabled || !row.checked.checked;
+      });
+      els.repairAgentSummary.textContent = `合计：${money(repairAgentFees(warehouse).amount)}元`;
+    }
+
+    function resetRepairAgentOptions() {
+      repairAgentRows().forEach((row) => {
+        row.checked.checked = false;
+        row.qty.value = 1;
+        row.qty.disabled = true;
+      });
+      setRepairAgentExpanded(false);
+      els.repairAgentSummary.textContent = "合计：0元";
+    }
+
     function liujinWeightLine(products, pkg) {
       if (!pkg) return "";
       const weightedProducts = products.filter((item) => item.qty > 0);
@@ -4924,6 +5160,7 @@
       els.manualPackageWrap.classList.toggle("hidden", hidesWeightPackage(warehouse));
       els.processingFeeWrap.classList.toggle("hidden", isCustom);
       els.crateFeeWrap.classList.toggle("hidden", isCustom);
+      syncRepairAgentUi(warehouse);
 
       const built = isCustom ? buildCustom() : (isCement ? buildCement() : (isConcrete ? buildSongnuo() : ((isLiujin || isSandstone) ? buildLiujin() : buildOther())));
       const processingFee = numberValue(els.processingFee);
@@ -4941,7 +5178,8 @@
       const dbAsSeparateLine = separatesDbLine(warehouse, logistics);
       const hideOrderShippingSummary = hidesZhejiangOrderShippingSummary(warehouse, logistics);
       const dbDeduction = warehouse === "浙江仓" && !dbAsSeparateLine ? built.db : 0;
-      const extraAmount = built.extraAmount || 0;
+      const repairAgent = repairAgentFees(warehouse);
+      const extraAmount = (built.extraAmount || 0) + repairAgent.amount;
       const kd = total - dbDeduction - built.materialAmount - extraAmount - processingFee - crateFee - freightAmount - taxAmount - paymentDeduction;
       const rawName = els.receiverName.value.trim();
       const rawPhone = els.receiverPhone.value.trim();
@@ -4953,7 +5191,8 @@
       const dbLine = dbAsSeparateLine && built.db > 0 ? `DB${money(built.db)}` : "";
       const taxPart = taxAmount > 0 ? `，税金：${money(taxAmount)}` : "";
       const paymentDeductionPart = paymentDeduction > 0 ? `，扣点：${money(paymentDeduction)}` : "";
-      const extraPart = built.extraLines && built.extraLines.length ? `，${built.extraLines.join("，")}` : "";
+      const extraLines = [...(built.extraLines || []), ...repairAgent.lines];
+      const extraPart = extraLines.length ? `，${extraLines.join("，")}` : "";
       const processingPart = !isCustom && processingFee > 0 ? `，加工费：${money(processingFee)}` : "";
       const kdPart = isCustom ? "" : `，KD：${money(kd)}`;
       const weightPart = (isCustom || hidesWeightPackage(warehouse)) ? "" : [built.weightLine, built.packageLine, dbLine].filter(Boolean).join("\n");
@@ -5023,6 +5262,7 @@
 
     function fillDemo() {
       manualResultMode = false;
+      resetRepairAgentOptions();
       els.orderIndex.value = 4;
       document.querySelector("input[name='warehouse'][value='浙江仓']").checked = true;
       setGreenCount(5);
@@ -5059,6 +5299,7 @@
 
     function fillNingboDemo() {
       manualResultMode = false;
+      resetRepairAgentOptions();
       els.orderIndex.value = 1;
       document.querySelector("input[name='warehouse'][value='宁波仓']").checked = true;
       setGreenCount(5);
@@ -5101,6 +5342,7 @@
 
     function fillSongnuoDemo() {
       manualResultMode = false;
+      resetRepairAgentOptions();
       els.orderIndex.value = 4;
       document.querySelector("input[name='warehouse'][value='混凝土仓']").checked = true;
       document.querySelector("input[name='concreteWarehouse'][value='松诺']").checked = true;
@@ -5168,6 +5410,7 @@
 
     function resetForNextOrder() {
       manualResultMode = false;
+      resetRepairAgentOptions();
       const currentIndex = Number.parseInt(els.orderIndex.value || "0", 10) || 0;
       els.orderIndex.value = currentIndex > 0 ? currentIndex + 1 : "";
       setGreenCount("");
@@ -5379,6 +5622,9 @@
     document.querySelectorAll("input[name='customPriceMode']").forEach((input) => input.addEventListener("change", calculate));
     els.addCustomFeeBtn.addEventListener("click", () => addCustomFeeRow());
     els.addConcretePromoBtn.addEventListener("click", () => addConcretePromoRow());
+    els.repairAgentToggleButton.addEventListener("click", () => {
+      setRepairAgentExpanded(els.repairAgentToggleButton.getAttribute("aria-expanded") !== "true");
+    });
     document.querySelectorAll("input, textarea, select").forEach((input) => {
       input.addEventListener("input", () => {
         if (input === els.receiverRaw) {
