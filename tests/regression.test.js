@@ -404,7 +404,7 @@ test("宁波重量提供多产品明细操作", () => {
 
 test("宁波重量同步开单模板的星云石产品", () => {
   const html = read("tools/ningbo-weight.html");
-  assert.match(html, /<script src="product-data\.js\?v=20260824-1"><\/script>/);
+  assert.match(html, /<script src="product-data\.js\?v=20260903-1"><\/script>/);
   assert.match(html, /"星云石": "星月石"/);
   assert.match(html, /"星云石B款": "星月石"/);
   assert.match(html, /JieGeProductData\?\.groupedNingboCatalog/);
@@ -691,8 +691,92 @@ test("快速查价同步松诺与168附加费用说明", () => {
 
 test("四个宁波业务页面共同读取最新产品数据", () => {
   for (const file of ["tools/order-template.html", "tools/quick-price.html", "tools/quote-generator.html", "tools/ningbo-weight.html"]) {
-    assert.match(read(file), /<script src="product-data\.js\?v=20260824-1"><\/script>/, file);
+    assert.match(read(file), /<script src="product-data\.js\?v=20260903-1"><\/script>/, file);
   }
+});
+
+test("美利来开单和快速查价共用完整价格表", () => {
+  const productData = loadProductData();
+  assert.equal(productData.meililaiProductCatalog.length, 148);
+
+  const beech = productData.meililaiProductCatalog.find((item) => item.name === "榉木板" && item.spec === "1200*3000");
+  const qianmo = productData.meililaiProductCatalog.find((item) => item.name === "阡陌石" && item.spec === "1200*3000");
+  const special = productData.meililaiProductCatalog.find((item) => item.name.includes("辰美小星月") && item.spec === "1200*2400");
+  assert.equal(beech?.price, 67);
+  assert.equal(qianmo?.price, 67);
+  assert.equal(special?.price, 40);
+  assert.equal(special?.importantNote, true);
+  assert.match(special?.note || "", /特价款只有纯白和米白/);
+
+  const order = read("tools/order-template.html");
+  const quick = read("tools/quick-price.html");
+  assert.match(order, /value="宁波仓"[\s\S]{0,300}value="美利来"/);
+  assert.match(order, /"美利来": \["默认", "自提"\]/);
+  assert.match(order, /const meililaiProductCatalog = productData\.meililaiProductCatalog/);
+  assert.match(quick, /const meililaiRows = productData\.meililaiProductCatalog/);
+  assert.match(quick, /productData\.groupedMeililaiCatalog\(\)/);
+});
+
+test("美利来包装费按合计片数和规格自动计算", () => {
+  const productData = loadProductData();
+  assert.deepEqual(JSON.parse(JSON.stringify(productData.meililaiPackagingFee([
+    { specText: "600*1200", qty: 1 }
+  ]))), { amount: 10, name: "纸箱费", totalQty: 1, confirmed: true, rule: "600*1200类纸箱10元" });
+  assert.equal(productData.meililaiPackagingFee([{ specText: "600*2400", qty: 2 }]).amount, 100);
+  assert.equal(productData.meililaiPackagingFee([{ specText: "1200*3000", qty: 4 }]).amount, 200);
+  assert.equal(productData.meililaiPackagingFee([{ specText: "1200*3000", qty: 5 }]).amount, 0);
+  assert.equal(productData.meililaiPackagingFee([
+    { specText: "600*1200", qty: 1 },
+    { specText: "1200*2400", qty: 1 }
+  ]).amount, 200);
+  assert.equal(productData.meililaiPackagingFee([{ specText: "待确认", qty: 1 }]).confirmed, false);
+});
+
+test("美利来只提供打印附加价、五个产品和多条自定义费用", () => {
+  const html = read("tools/order-template.html");
+  assert.match(html, /isMeililai \? productData\.meililaiPackagingFee\(products\)/);
+  assert.match(html, /class="checkline catalog-print-addon"[\s\S]{0,150}打印 \+10元\/平/);
+  assert.match(html, /row\.ningboOnlyAddons\?\.forEach\(\(item\) => item\.classList\.toggle\("hidden", isMeililai\)\)/);
+  assert.match(html, /id="meililaiCustomFeeEnabled"/);
+  assert.match(html, /id="addMeililaiFeeBtn"/);
+  assert.match(html, /function meililaiCustomFees\(\)/);
+  assert.match(html, /lines: fees\.map\(\(item\) => `\$\{item\.name\}\$\{money\(item\.amount\)\}`\)/);
+  for (const count of [1, 2, 3, 4, 5]) {
+    assert.match(html, new RegExp(`name="otherProductCount" value="${count}"`));
+  }
+});
+
+test("美利来费用排版、切仓清空、提示和品类保持正确", () => {
+  const html = read("tools/order-template.html");
+  assert.doesNotMatch(html, /id="meililaiPackagingHint"/);
+  assert.match(html, /<div>\s*<label class="field-label" for="otherUnitPrice">其它品类单片价格<\/label>/);
+  assert.doesNotMatch(html, /<div class="unit-price-field">\s*<label class="field-label" for="otherUnitPrice">/);
+  assert.match(html, /\? "例如 榉木板 \/ 阡陌石 \/ 辰美小星月"/);
+  assert.match(html, /function clearOtherProductsForWarehouseChange\(\)/);
+  assert.match(html, /catalogWarehouses = \["宁波仓", "美利来"\]/);
+  assert.match(html, /clearOtherProductsForWarehouseChange\(\)/);
+  assert.match(html, /currentWarehouseGroup\(\) === "宁波仓" \|\| isMeililaiWarehouseActive\(\)\) \? "柔岩板"/);
+});
+
+test("美利来包装费默认自动且可勾选改为手工金额", () => {
+  const html = read("tools/order-template.html");
+  assert.match(html, /id="meililaiManualPackaging" type="checkbox">手动填写/);
+  assert.match(html, /els\.crateFee\.readOnly = !manual/);
+  assert.match(html, /if \(!manual\) els\.crateFee\.value = result\.amount > 0/);
+  assert.match(html, /manualMeililaiPackaging \? numberValue\(els\.crateFee\) : Number\(built\.packaging\?\.amount \|\| 0\)/);
+  assert.match(html, /manualMeililaiPackaging \? "包装费"/);
+  assert.match(html, /els\.meililaiManualPackaging\.checked = false/);
+  assert.match(html, /取消勾选可恢复自动包装规则/);
+});
+
+test("美利来手填包装费开关紧跟标题且移动端不挤压税金栏", () => {
+  const order = read("tools/order-template.html");
+  const report = read("tools/report-template.html");
+  assert.match(order, /\.field-label-row\s*\{[\s\S]{0,220}justify-content:\s*flex-start/);
+  assert.match(order, /id="crateFeeLabel">木箱费<\/label>\s*<label class="inline-field-check hidden" id="meililaiManualPackagingWrap"/);
+  assert.match(order, /els\.crateFeeLabel\.textContent = manual[\s\S]{0,100}"自动包装费"/);
+  assert.match(report, /body\s*\{[\s\S]{0,120}overflow-x:\s*hidden/);
+  assert.match(report, /\.segmented input\s*\{[\s\S]{0,140}width:\s*1px;[\s\S]{0,80}height:\s*1px/);
 });
 
 test("公共业务逻辑带版本标记避免浏览器继续使用旧缓存", () => {
@@ -747,7 +831,7 @@ test("上墙排版支持板间留缝且墙体四周不扣缝", () => {
 
 test("主页版本号和所有工具入口完整", () => {
   const index = read("index.html");
-  assert.match(index, /v2026\.08\.27\.1/);
+  assert.match(index, /v2026\.09\.03\.4/);
   const routeMatch = index.match(/const toolPaths = (\{[^;]+\});/);
   assert.ok(routeMatch, "未找到工具入口表");
   const routes = JSON.parse(routeMatch[1]);

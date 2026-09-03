@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
   <title>鎏金板每日文字开单工具</title>
   <style>
     :root {
@@ -104,6 +105,35 @@
       color: #2f3a34;
       font-size: 13px;
       font-weight: 800;
+    }
+
+    .field-label-row {
+      min-height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      margin-bottom: 7px;
+    }
+
+    .field-label-row .field-label { margin: 0; }
+
+    .inline-field-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .inline-field-check input {
+      width: auto;
+      min-height: auto;
+      margin: 0;
+      accent-color: var(--accent);
     }
 
     input,
@@ -397,6 +427,11 @@
       gap: 10px;
     }
 
+    .order-panel .warehouse-options {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+    }
+
     .order-panel .sub-warehouse-row .option-row {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -650,6 +685,37 @@
       color: var(--muted);
       font-size: 13px;
       line-height: 1.45;
+    }
+
+    .catalog-product-note {
+      margin-top: 8px;
+      border-left: 3px solid #d34b42;
+      border-radius: 6px;
+      background: #fff4f2;
+      color: #9b2c26;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-weight: 760;
+      line-height: 1.5;
+    }
+
+    .catalog-product-note.secondary-note {
+      border-left-color: var(--gold);
+      background: rgba(63, 111, 168, 0.1);
+      color: #1f4168;
+    }
+
+    .meililai-fee-section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--system-gray);
+      padding: 12px;
+    }
+
+    .meililai-fee-body {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
     }
 
     .concrete-match-tools,
@@ -2278,9 +2344,10 @@
             <div class="order-panel">
               <div class="warehouse-row">
                 <label class="field-label">发货仓库</label>
-                <div class="option-row">
+                <div class="option-row warehouse-options">
                   <label class="option compact"><input type="radio" name="warehouse" value="浙江仓" checked><span>浙江仓</span></label>
                   <label class="option compact"><input type="radio" name="warehouse" value="宁波仓"><span>宁波仓</span></label>
+                  <label class="option compact"><input type="radio" name="warehouse" value="美利来"><span>美利来仓</span></label>
                   <label class="option compact"><input type="radio" name="warehouse" value="混凝土仓"><span>混凝土仓</span></label>
                   <label class="option compact"><input type="radio" name="warehouse" value="水泥板仓库"><span>水泥板仓库</span></label>
                   <label class="option compact"><input type="radio" name="warehouse" value="自选仓"><span>自选仓</span></label>
@@ -2463,7 +2530,7 @@
 
             <div id="otherFields" class="wide form-grid hidden">
               <div class="wide">
-                <label class="field-label">其它品类产品数量</label>
+                <label class="field-label" id="otherProductCountLabel">其它品类产品数量</label>
                 <div class="option-row" id="otherProductCount">
                   <label class="option compact"><input type="radio" name="otherProductCount" value="1" checked><span>1个</span></label>
                   <label class="option compact"><input type="radio" name="otherProductCount" value="2"><span>2个</span></label>
@@ -2482,19 +2549,20 @@
               <div class="wide ningbo-match-tools hidden">
                 <div class="ningbo-match-grid">
                   <div>
-                    <label class="field-label" for="ningboSpecSelect1">宁波规格选择</label>
+                    <label class="field-label catalog-spec-label" for="ningboSpecSelect1">宁波规格选择</label>
                     <select id="ningboSpecSelect1" class="ningbo-spec-select"></select>
                   </div>
                   <div>
                     <label class="field-label">价格选项</label>
                     <div class="checks">
-                      <label class="checkline"><input class="ningbo-print-addon" type="checkbox">打印 +10元/平</label>
-                      <label class="checkline"><input class="ningbo-uv-addon" type="checkbox">UV +10元/平</label>
-                      <label class="checkline"><input class="ningbo-metal-addon" type="checkbox">金属色 +5元/平</label>
+                      <label class="checkline catalog-print-addon"><input class="ningbo-print-addon" type="checkbox">打印 +10元/平</label>
+                      <label class="checkline ningbo-only-addon"><input class="ningbo-uv-addon" type="checkbox">UV +10元/平</label>
+                      <label class="checkline ningbo-only-addon"><input class="ningbo-metal-addon" type="checkbox">金属色 +5元/平</label>
                     </div>
                   </div>
                 </div>
                 <div class="ningbo-hint">选择表格产品后自动带出规格和平方单价；也可直接在下方规格框里手填规格。</div>
+                <div class="catalog-product-note hidden"></div>
               </div>
               <div>
                 <label class="field-label" for="otherSpecText">其它品类规格</label>
@@ -2508,12 +2576,32 @@
                 <label class="field-label" for="otherSqmPrice">其它品类平方单价</label>
                 <input id="otherSqmPrice" class="other-sqm-price" type="number" min="0" step="0.01" inputmode="decimal" placeholder="例如 105">
               </div>
-              <div class="unit-price-field">
+              <div>
                 <label class="field-label" for="otherUnitPrice">其它品类单片价格</label>
                 <input id="otherUnitPrice" class="other-unit-price" type="number" min="0" step="0.01" inputmode="decimal" placeholder="可自动计算，也可手填">
               </div>
               </div>
               <div id="otherAdditionalProducts" class="wide form-grid"></div>
+              <section id="meililaiFeeSection" class="wide meililai-fee-section hidden">
+                <label class="checkline"><input id="meililaiCustomFeeEnabled" type="checkbox">增加自定义费用（加工费、包装费等）</label>
+                <div id="meililaiFeeBody" class="meililai-fee-body hidden">
+                  <div id="meililaiFeeRows" class="custom-fee-list">
+                    <div class="custom-fee-row">
+                      <div>
+                        <label class="field-label">费用名称</label>
+                        <input class="meililai-fee-name" placeholder="例如 包装费 / 加工费">
+                      </div>
+                      <div>
+                        <label class="field-label">金额</label>
+                        <input class="meililai-fee-amount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="例如 80">
+                      </div>
+                      <button type="button" class="secondary meililai-fee-delete">删除</button>
+                    </div>
+                  </div>
+                  <button type="button" class="secondary" id="addMeililaiFeeBtn">新增一项费用</button>
+                  <p class="hint">可添加多项；填写后自动写入开单明细，并从 KD 中扣除。</p>
+                </div>
+              </section>
               <div class="wide optional-other-detail">
                 <label class="field-label" for="otherDetail">其它品类完整明细兜底</label>
                 <textarea id="otherDetail" placeholder="如果上面字段不适合，就在这里自己填写完整货物明细"></textarea>
@@ -2825,7 +2913,10 @@
               <input id="processingFee" type="number" min="0" step="0.01" inputmode="decimal" placeholder="水泥板需要时填写">
             </div>
             <div id="crateFeeWrap">
-              <label class="field-label" for="crateFee">木箱费</label>
+              <div class="field-label-row">
+                <label class="field-label" for="crateFee" id="crateFeeLabel">木箱费</label>
+                <label class="inline-field-check hidden" id="meililaiManualPackagingWrap"><input id="meililaiManualPackaging" type="checkbox">手动填写</label>
+              </div>
               <input id="crateFee" type="number" min="0" step="0.01" inputmode="decimal" placeholder="200">
             </div>
             <div class="tax-field">
@@ -2974,7 +3065,7 @@
 
   <datalist id="ningboProductList"></datalist>
 
-  <script src="product-data.js?v=20260824-1"></script>
+  <script src="product-data.js?v=20260903-1"></script>
   <script src="shunxin-rates.js?v=20260815-1"></script>
   <script src="freight-gold-core.js?v=20260824-1"></script>
   <script src="ningbo-freight-core.js?v=20260713-2"></script>
@@ -2985,6 +3076,8 @@
     const defaultRemarkPresets = new Set(["【货好拍照】", "修补剂随货发，谢谢！"]);
     const sandstoneSpecs = productData.sandstoneSpecs;
     const ningboProductCatalog = productData.ningboProductCatalog;
+    const meililaiProductCatalog = productData.meililaiProductCatalog;
+    const meililaiProductGroups = productData.groupedMeililaiCatalog();
 
     const ningboUvStyleKeywords = [
       "伊朗红",
@@ -3006,6 +3099,7 @@
     const logisticsByWarehouse = {
       "浙江仓": ["默认", "姜冉", "西武", "安能", "顺心捷达", "跨越", "货拉拉", "自提"],
       "宁波仓": ["默认", "安能", "明邦", "货拉拉", "自提"],
+      "美利来": ["默认", "自提"],
       "松诺": ["默认", "货拉拉", "自提", "工厂自提"],
       "168": ["默认", "货拉拉", "自提", "工厂自提"],
       "苏州仓": ["默认", "自提"],
@@ -3073,6 +3167,7 @@
       otherUnitPrice: document.querySelector("#otherUnitPrice"),
       otherAdditionalProducts: document.querySelector("#otherAdditionalProducts"),
       ningboProductList: document.querySelector("#ningboProductList"),
+      otherProductCountLabel: document.querySelector("#otherProductCountLabel"),
       otherDetail: document.querySelector("#otherDetail"),
       otherMaterialAmount: document.querySelector("#otherMaterialAmount"),
       otherDb: document.querySelector("#otherDb"),
@@ -3080,6 +3175,11 @@
       manualWeight: document.querySelector("#manualWeight"),
       manualPackageWrap: document.querySelector("#manualPackageWrap"),
       manualPackage: document.querySelector("#manualPackage"),
+      meililaiFeeSection: document.querySelector("#meililaiFeeSection"),
+      meililaiCustomFeeEnabled: document.querySelector("#meililaiCustomFeeEnabled"),
+      meililaiFeeBody: document.querySelector("#meililaiFeeBody"),
+      meililaiFeeRows: document.querySelector("#meililaiFeeRows"),
+      addMeililaiFeeBtn: document.querySelector("#addMeililaiFeeBtn"),
       songnuoProductName: document.querySelector("#songnuoProductName"),
       songnuoSpecText: document.querySelector("#songnuoSpecText"),
       songnuoArea: document.querySelector("#songnuoArea"),
@@ -3145,6 +3245,9 @@
       processingFee: document.querySelector("#processingFee"),
       crateFeeWrap: document.querySelector("#crateFeeWrap"),
       crateFee: document.querySelector("#crateFee"),
+      crateFeeLabel: document.querySelector("#crateFeeLabel"),
+      meililaiManualPackagingWrap: document.querySelector("#meililaiManualPackagingWrap"),
+      meililaiManualPackaging: document.querySelector("#meililaiManualPackaging"),
       taxAmount: document.querySelector("#taxAmount"),
       normalTaxAuto: document.querySelector("#normalTaxAuto"),
       specialTaxAuto: document.querySelector("#specialTaxAuto"),
@@ -3605,14 +3708,14 @@
     }
 
     function hasFixedCategory() {
-      return currentWarehouseGroup() === "宁波仓" || isConcreteWarehouse() || isCementWarehouse() || isCustomWarehouse();
+      return currentWarehouseGroup() === "宁波仓" || currentWarehouseGroup() === "美利来" || isConcreteWarehouse() || isCementWarehouse() || isCustomWarehouse();
     }
 
     function currentCategory() {
       if (isCustomWarehouse()) return "custom";
       if (isCementWarehouse()) return "cement";
       if (isConcreteWarehouse()) return "songnuo";
-      if (currentWarehouseGroup() === "宁波仓") return "other";
+      if (currentWarehouseGroup() === "宁波仓" || currentWarehouseGroup() === "美利来") return "other";
       return document.querySelector("input[name='category']:checked").value;
     }
 
@@ -3904,19 +4007,20 @@
             <div class="wide ningbo-match-tools hidden">
               <div class="ningbo-match-grid">
                 <div>
-                  <label class="field-label" for="ningboSpecSelect${index}">宁波规格选择</label>
+                  <label class="field-label catalog-spec-label" for="ningboSpecSelect${index}">宁波规格选择</label>
                   <select id="ningboSpecSelect${index}" class="ningbo-spec-select"></select>
                 </div>
                 <div>
                   <label class="field-label">价格选项</label>
                   <div class="checks">
-                    <label class="checkline"><input class="ningbo-print-addon" type="checkbox">打印 +10元/平</label>
-                    <label class="checkline"><input class="ningbo-uv-addon" type="checkbox">UV +10元/平</label>
-                    <label class="checkline"><input class="ningbo-metal-addon" type="checkbox">金属色 +5元/平</label>
+                    <label class="checkline catalog-print-addon"><input class="ningbo-print-addon" type="checkbox">打印 +10元/平</label>
+                    <label class="checkline ningbo-only-addon"><input class="ningbo-uv-addon" type="checkbox">UV +10元/平</label>
+                    <label class="checkline ningbo-only-addon"><input class="ningbo-metal-addon" type="checkbox">金属色 +5元/平</label>
                   </div>
                 </div>
               </div>
               <div class="ningbo-hint">选择表格产品后自动带出规格和平方单价；也可直接在下方规格框里手填规格。</div>
+              <div class="catalog-product-note hidden"></div>
             </div>
             <div>
               <label class="field-label" for="otherSpecText${index}">其它品类规格</label>
@@ -3930,7 +4034,7 @@
               <label class="field-label" for="otherSqmPrice${index}">其它品类平方单价</label>
               <input id="otherSqmPrice${index}" class="other-sqm-price" type="number" min="0" step="0.01" inputmode="decimal" placeholder="例如 75">
             </div>
-            <div class="unit-price-field">
+            <div>
               <label class="field-label" for="otherUnitPrice${index}">其它品类单片价格</label>
               <input id="otherUnitPrice${index}" class="other-unit-price" type="number" min="0" step="0.01" inputmode="decimal" placeholder="可自动计算，也可手填">
             </div>
@@ -3942,6 +4046,30 @@
       restoreControlState(els.otherAdditionalProducts, previousState);
       syncNingboRows(false);
       calculate();
+    }
+
+    function clearOtherProductsForWarehouseChange() {
+      setOtherProductCount(1);
+      els.otherAdditionalProducts.innerHTML = "";
+      const row = otherRows()[0];
+      [row.productName, row.specText, row.qty, row.sqmPrice, row.unitPrice].forEach((input) => {
+        input.value = "";
+        delete input.dataset.autoPrice;
+        delete input.dataset.manualOverride;
+      });
+      row.matchTools?.classList.add("hidden");
+      if (row.matchTools) delete row.matchTools.dataset.product;
+      row.suggestions?.classList.add("hidden");
+      if (row.suggestions) row.suggestions.innerHTML = "";
+      row.catalogNote?.classList.add("hidden");
+      if (row.catalogNote) row.catalogNote.textContent = "";
+      if (row.printAddon) row.printAddon.checked = false;
+      if (row.uvAddon) row.uvAddon.checked = false;
+      if (row.metalAddon) row.metalAddon.checked = false;
+      els.otherDetail.value = "";
+      els.otherMaterialAmount.value = "";
+      els.otherDb.value = "";
+      resetMeililaiFees();
     }
 
     function concreteProductCardMarkup(index) {
@@ -4202,6 +4330,7 @@
         return `运费：${logistics}-${amountPart}`;
       }
       if (logistics === "自提" || logistics === "工厂自提") return "工厂自提";
+      if (logistics === "默认" && isMeililaiWarehouseActive()) return amount ? `运费：${money(amount)}${pay}` : `运费：${pay}`;
       if (logistics === "默认" && isConcreteWarehouse()) return amount ? `运费：${money(amount)}${pay}` : `运费：${pay}`;
       if (logistics === "默认") return amount ? `运费：${money(amount)}${pay}` : `运费${pay}`;
       return amount ? `运费：${logistics}-${money(amount)}${pay}` : `运费：${logistics}${pay}`;
@@ -4474,22 +4603,28 @@
 
     function buildOther() {
       const isNingbo = isNingboWarehouseActive();
-      const manualDetail = isNingbo ? "" : els.otherDetail.value.trim();
+      const isMeililai = isMeililaiWarehouseActive();
+      const isCatalog = isNingbo || isMeililai;
+      const manualDetail = isCatalog ? "" : els.otherDetail.value.trim();
       const products = otherRows().map(readOtherProduct).filter((item) => item.qty > 0 || item.hasInput);
       const autoMaterialAmount = products.reduce((sum, item) => sum + item.materialAmount, 0);
-      const materialOverride = isNingbo || els.otherMaterialAmount.value.trim() === "" ? null : numberValue(els.otherMaterialAmount);
+      const materialOverride = isCatalog || els.otherMaterialAmount.value.trim() === "" ? null : numberValue(els.otherMaterialAmount);
       const materialAmount = materialOverride === null ? autoMaterialAmount : materialOverride;
       const autoDetail = products.length ? products.map((item) => item.detail).join("\n") : "";
+      const packaging = isMeililai ? productData.meililaiPackagingFee(products) : null;
+      const customFees = isMeililai ? meililaiCustomFees() : { amount: 0, lines: [] };
 
       return {
         detail: manualDetail || autoDetail || "请填写其它品类货物明细",
         materialAmount,
-        extraAmount: 0,
-        extraLines: [],
+        extraAmount: customFees.amount,
+        extraLines: customFees.lines,
         db: currentWarehouse() === "浙江仓" && !isNingbo ? numberValue(els.otherDb) : 0,
         weightLine: els.manualWeight.value.trim(),
         packageLine: els.manualPackage.value.trim(),
-        packageOk: true,
+        packaging,
+        packageOk: packaging ? packaging.confirmed : true,
+        packageError: packaging && !packaging.confirmed ? packaging.rule : "",
         qty: products.reduce((sum, item) => sum + item.qty, 0)
       };
     }
@@ -4523,6 +4658,9 @@
         row.uvAddon = row.card.querySelector(".ningbo-uv-addon");
         row.metalAddon = row.card.querySelector(".ningbo-metal-addon");
         row.ningboHint = row.card.querySelector(".ningbo-hint");
+        row.catalogNote = row.card.querySelector(".catalog-product-note");
+        row.catalogSpecLabel = row.card.querySelector(".catalog-spec-label");
+        row.ningboOnlyAddons = Array.from(row.card.querySelectorAll(".ningbo-only-addon"));
       });
 
       return rows;
@@ -4534,6 +4672,14 @@
 
     function isNingboWarehouseActive() {
       return currentWarehouseGroup() === "宁波仓";
+    }
+
+    function isMeililaiWarehouseActive() {
+      return currentWarehouseGroup() === "美利来";
+    }
+
+    function isCatalogWarehouseActive() {
+      return isNingboWarehouseActive() || isMeililaiWarehouseActive();
     }
 
     function formatNingboSpecNumber(value) {
@@ -4601,15 +4747,25 @@
       return Boolean(product && isNingboNew3DProductName(product.name) && shouldUseNingboUvStyle(row, product));
     }
 
+    function activeCatalogProducts() {
+      return isMeililaiWarehouseActive() ? meililaiProductGroups : ningboProductCatalog;
+    }
+
+    function catalogProductTerms(product) {
+      return [product?.name, ...(product?.aliases || [])].filter(Boolean);
+    }
+
     function findNingboProduct(value, allowPartial = false) {
       const keyword = normalizeLookupText(value);
       if (!keyword) return null;
-      const catalog = [...ningboProductCatalog].sort((a, b) => normalizeLookupText(b.name).length - normalizeLookupText(a.name).length);
-      const exact = catalog.find((item) => normalizeLookupText(item.name) === keyword);
+      const catalog = [...activeCatalogProducts()].sort((a, b) => normalizeLookupText(b.name).length - normalizeLookupText(a.name).length);
+      const exact = catalog.find((item) => catalogProductTerms(item).some((term) => normalizeLookupText(term) === keyword));
       if (exact || !allowPartial) return exact || null;
       const matched = uniqueNingboProducts(catalog.filter((item) => {
-        const name = normalizeLookupText(item.name);
-        return name.includes(keyword) || keyword.includes(name);
+        return catalogProductTerms(item).some((term) => {
+          const name = normalizeLookupText(term);
+          return name.includes(keyword) || keyword.includes(name);
+        });
       }));
       if (matched.length <= 1) return matched[0] || null;
       const ranked = matched.sort((a, b) => normalizeLookupText(b.name).length - normalizeLookupText(a.name).length);
@@ -4631,11 +4787,13 @@
     function ningboProductMatches(value) {
       const keyword = normalizeLookupText(value);
       if (!keyword) return [];
-      const exact = ningboProductCatalog.filter((item) => normalizeLookupText(item.name) === keyword);
+      const catalog = activeCatalogProducts();
+      const exact = catalog.filter((item) => catalogProductTerms(item).some((term) => normalizeLookupText(term) === keyword));
       if (exact.length) return uniqueNingboProducts(exact);
-      return uniqueNingboProducts(ningboProductCatalog.filter((item) =>
-        normalizeLookupText(item.name).includes(keyword) || keyword.includes(normalizeLookupText(item.name))
-      ));
+      return uniqueNingboProducts(catalog.filter((item) => catalogProductTerms(item).some((term) => {
+        const name = normalizeLookupText(term);
+        return name.includes(keyword) || keyword.includes(name);
+      })));
     }
 
     function escapeHtml(value) {
@@ -4651,7 +4809,7 @@
     function summarizeNingboProduct(product) {
       const variants = ningboProductVariants(product);
       const prices = [...new Set(variants.map((item) => `${money(item.price)}元/平`))].join(" / ");
-      const specs = [...new Set(variants.flatMap((item) => item.specs).map(formatNingboSpec))].slice(0, 4).join("、");
+      const specs = [...new Set(variants.flatMap((item) => isMeililaiWarehouseActive() ? [item.spec] : item.specs).map(formatNingboSpec))].slice(0, 4).join("、");
       return `${prices}${specs ? ` | ${specs}` : ""}`;
     }
 
@@ -4670,7 +4828,7 @@
 
     function renderNingboSuggestions(row) {
       if (!row.suggestions) return;
-      const matches = isNingboWarehouseActive() ? ningboProductMatches(row.productName.value) : [];
+      const matches = isCatalogWarehouseActive() ? ningboProductMatches(row.productName.value) : [];
       const exact = findNingboProduct(row.productName.value, false);
       if (!matches.length || exact) {
         hideNingboSuggestions(row);
@@ -4693,12 +4851,23 @@
 
     function ningboProductVariants(product) {
       if (!product) return [];
+      if (isMeililaiWarehouseActive()) return product.variants || [];
       const key = normalizeLookupText(product.name);
       return ningboProductCatalog.filter((item) => normalizeLookupText(item.name) === key);
     }
 
     function ningboProductForSelectedSpec(product, row) {
       if (!product) return null;
+      if (isMeililaiWarehouseActive()) {
+        const selectedId = row.specSelect?.selectedOptions?.[0]?.dataset.catalogId || "";
+        const specKey = productData.normalizeNingboSpec(row.specText.value || "");
+        if (selectedId) {
+          const selected = ningboProductVariants(product).find((item) => item.id === selectedId) || null;
+          if (selected && (!specKey || productData.normalizeNingboSpec(selected.spec) === specKey)) return selected;
+        }
+        const matches = ningboProductVariants(product).filter((item) => productData.normalizeNingboSpec(item.spec) === specKey);
+        return matches.length === 1 ? matches[0] : null;
+      }
       const spec = formatNingboSpec(row.specText.value || row.specSelect?.value || "");
       const variants = ningboProductVariants(product);
       const matched = variants.find((item) =>
@@ -4717,6 +4886,7 @@
       if (!product) return numberValue(row.sqmPrice);
       const selectedProduct = ningboProductForSelectedSpec(product, row);
       if (!selectedProduct) return numberValue(row.sqmPrice);
+      if (isMeililaiWarehouseActive()) return Math.max(0, selectedProduct.price + (row.printAddon?.checked ? 10 : 0));
       if (isNingbo3DProductName(selectedProduct.name)) return Math.max(0, selectedProduct.price);
       let price = selectedProduct.price;
       const includedPrint = hasIncludedPrint(selectedProduct.name);
@@ -4731,12 +4901,14 @@
 
     function syncNingboProductPrice(row) {
       const product = findNingboProduct(row.productName.value, true);
-      if (!isNingboWarehouseActive() || !product) return;
+      if (!isCatalogWarehouseActive() || !product) return;
       const selectedProduct = ningboProductForSelectedSpec(product, row);
       if (!selectedProduct) {
         if (row.sqmPrice.value === row.sqmPrice.dataset.autoPrice) row.sqmPrice.value = "";
         delete row.sqmPrice.dataset.autoPrice;
-        if (row.ningboHint) row.ningboHint.textContent = "该规格不在价格表，请人工填写平方单价，并人工确认重量和运费。";
+        if (row.ningboHint) row.ningboHint.textContent = isMeililaiWarehouseActive()
+          ? "该规格不在美利来价格表，请人工填写平方单价，并人工确认包装费。"
+          : "该规格不在价格表，请人工填写平方单价，并人工确认重量和运费。";
         return;
       }
       const autoPrice = money(ningboEffectiveSqmPrice(product, row));
@@ -4752,6 +4924,23 @@
 
     function renderNingboSpecOptions(row, product) {
       if (!row.specSelect || !product) return;
+      if (isMeililaiWarehouseActive()) {
+        const selectedId = row.specSelect.selectedOptions?.[0]?.dataset.catalogId || row.specSelect.value || "";
+        const manualSpecKey = productData.normalizeNingboSpec(row.specText.value);
+        const variants = ningboProductVariants(product);
+        row.specSelect.innerHTML = variants.map((item) => {
+          const formattedSpec = formatNingboSpec(item.spec);
+          const detail = [item.condition, `${money(item.price)}元/平`].filter(Boolean).join(" · ");
+          return `<option value="${escapeHtml(item.id)}" data-catalog-id="${escapeHtml(item.id)}" data-spec="${escapeHtml(formattedSpec)}">${escapeHtml(formattedSpec)}${detail ? ` · ${escapeHtml(detail)}` : ""}</option>`;
+        }).join("");
+        if (variants.some((item) => item.id === selectedId)) {
+          row.specSelect.value = selectedId;
+        } else if (manualSpecKey) {
+          const matched = variants.find((item) => productData.normalizeNingboSpec(item.spec) === manualSpecKey);
+          if (matched) row.specSelect.value = matched.id;
+        }
+        return;
+      }
       const selected = formatNingboSpec(row.specSelect.value || row.specText.value);
       const manualSpec = formatNingboSpec(row.specText.value);
       const specs = ningboProductVariants(product).flatMap((item) => item.specs).map(formatNingboSpec).filter(Boolean);
@@ -4771,49 +4960,67 @@
 
     function applyNingboSpecSelection(row) {
       if (!row.specSelect) return;
-      row.specText.value = row.specSelect.value;
+      row.specText.value = isMeililaiWarehouseActive()
+        ? (row.specSelect.selectedOptions?.[0]?.dataset.spec || "")
+        : row.specSelect.value;
     }
 
     function syncNingboSpecSelect(row) {
       if (!row.specSelect) return;
       const spec = formatNingboSpec(row.specText.value);
       if (!spec) return;
+      if (isMeililaiWarehouseActive()) {
+        const current = row.specSelect.selectedOptions?.[0];
+        if (current && formatNingboSpec(current.dataset.spec || "") === spec) return;
+        const option = [...row.specSelect.options].find((item) => formatNingboSpec(item.dataset.spec || "") === spec);
+        if (option) row.specSelect.value = option.value;
+        return;
+      }
       const option = [...row.specSelect.options].find((item) => item.value === spec);
       if (!option) row.specSelect.insertAdjacentHTML("beforeend", `<option value="${spec}">${spec}</option>`);
       row.specSelect.value = spec;
     }
 
     function syncNingboProductRow(row, allowPartial = false, replacePartialName = false) {
+      const isMeililai = isMeililaiWarehouseActive();
+      row.productName.placeholder = isMeililai
+        ? "例如 榉木板 / 阡陌石 / 辰美小星月"
+        : (isNingboWarehouseActive() ? "例如 20圆柱（3D圆柱黄）" : "例如 产品名称");
       const product = findNingboProduct(row.productName.value, allowPartial);
-      const showTools = isNingboWarehouseActive() && Boolean(product);
+      const showTools = isCatalogWarehouseActive() && Boolean(product);
       row.matchTools?.classList.toggle("hidden", !showTools);
+      row.catalogNote?.classList.add("hidden");
       if (!showTools) return;
+
+      row.catalogSpecLabel && (row.catalogSpecLabel.textContent = isMeililai ? "美利来规格选择" : "宁波规格选择");
+      row.ningboOnlyAddons?.forEach((item) => item.classList.toggle("hidden", isMeililai));
 
       if (replacePartialName && allowPartial && normalizeLookupText(row.productName.value) !== normalizeLookupText(product.name)) {
         row.productName.value = product.name;
         hideNingboSuggestions(row);
       }
 
+      const productKey = `${currentWarehouseGroup()}::${product.name}`;
       const previousProduct = row.matchTools.dataset.product || "";
-      const changedProduct = previousProduct !== product.name;
-      row.matchTools.dataset.product = product.name;
-      const usesUvStyle = shouldUseNingboUvStyle(row, product);
+      const changedProduct = previousProduct !== productKey;
+      row.matchTools.dataset.product = productKey;
+      const usesUvStyle = !isMeililai && shouldUseNingboUvStyle(row, product);
 
       renderNingboSpecOptions(row, product);
       if (changedProduct) {
-        if (row.printAddon) row.printAddon.checked = usesUvStyle ? false : hasIncludedPrint(product.name);
-        if (row.uvAddon) row.uvAddon.checked = usesUvStyle;
-        if (row.metalAddon) row.metalAddon.checked = hasIncludedMetal(product.name);
-        row.specSelect.value = formatNingboSpec(product.specs[0]);
+        if (row.printAddon) row.printAddon.checked = isMeililai ? false : (usesUvStyle ? false : hasIncludedPrint(product.name));
+        if (row.uvAddon) row.uvAddon.checked = isMeililai ? false : usesUvStyle;
+        if (row.metalAddon) row.metalAddon.checked = isMeililai ? false : hasIncludedMetal(product.name);
+        row.specSelect.value = isMeililai ? (ningboProductVariants(product)[0]?.id || "") : formatNingboSpec(product.specs[0]);
         applyNingboSpecSelection(row);
       } else {
         syncNingboSpecSelect(row);
       }
-      if (usesUvStyle) {
+      if (!isMeililai && usesUvStyle) {
         if (row.printAddon) row.printAddon.checked = false;
         if (row.uvAddon) row.uvAddon.checked = true;
       }
-      if (shouldDisableNingboThreeMeter(row, product) && isNingboThreeMeterSpec(row.specSelect?.value)) {
+      if (!isMeililai && shouldDisableNingboThreeMeter(row, product) && isNingboThreeMeterSpec(row.specSelect?.value)) {
         const firstEnabled = [...row.specSelect.options].find((item) => !item.disabled);
         if (firstEnabled) {
           row.specSelect.value = firstEnabled.value;
@@ -4821,11 +5028,20 @@
         }
       }
       if (row.ningboHint) {
-        row.ningboHint.textContent = shouldDisableNingboThreeMeter(row, product)
-          ? "UV款不可选3米，因为以上颜色不能选这个尺寸。"
-          : "选择表格产品后自动带出规格和平方单价；也可直接在下方规格框里手填规格。";
+        row.ningboHint.textContent = isMeililai
+          ? "底价来自《美利来价格明细表2026.4.13》；打印另加10元/平。"
+          : (shouldDisableNingboThreeMeter(row, product)
+            ? "UV款不可选3米，因为以上颜色不能选这个尺寸。"
+            : "选择表格产品后自动带出规格和平方单价；也可直接在下方规格框里手填规格。");
       }
       syncNingboProductPrice(row);
+      if (isMeililai && row.catalogNote) {
+        const selected = ningboProductForSelectedSpec(product, row);
+        const messages = [selected?.condition ? `适用说明：${selected.condition}` : "", selected?.note || ""].filter(Boolean);
+        row.catalogNote.textContent = messages.join("；");
+        row.catalogNote.classList.toggle("hidden", messages.length === 0);
+        row.catalogNote.classList.toggle("secondary-note", Boolean(messages.length && !selected?.importantNote));
+      }
     }
 
     function syncNingboRows(allowPartial = false) {
@@ -4833,7 +5049,7 @@
     }
 
     function renderNingboProductList() {
-      els.ningboProductList.innerHTML = uniqueNingboProducts(ningboProductCatalog).map((item) => `<option value="${item.name}"></option>`).join("");
+      els.ningboProductList.innerHTML = uniqueNingboProducts([...ningboProductCatalog, ...meililaiProductGroups]).map((item) => `<option value="${item.name}"></option>`).join("");
     }
 
     function readOtherProduct(row) {
@@ -5078,6 +5294,98 @@
       syncZhejiangAccessoryFields();
     }
 
+    function meililaiFeeRows() {
+      return Array.from(els.meililaiFeeRows.querySelectorAll(".custom-fee-row")).map((row) => ({
+        row,
+        name: row.querySelector(".meililai-fee-name"),
+        amount: row.querySelector(".meililai-fee-amount"),
+        remove: row.querySelector(".meililai-fee-delete")
+      }));
+    }
+
+    function bindMeililaiFeeRows() {
+      meililaiFeeRows().forEach((row) => {
+        [row.name, row.amount].forEach((input) => {
+          if (!input || input.dataset.meililaiFeeBound === "1") return;
+          input.dataset.meililaiFeeBound = "1";
+          input.addEventListener("input", calculate);
+          input.addEventListener("change", calculate);
+        });
+        if (row.remove && row.remove.dataset.meililaiFeeBound !== "1") {
+          row.remove.dataset.meililaiFeeBound = "1";
+          row.remove.addEventListener("click", () => {
+            row.row.remove();
+            calculate();
+          });
+        }
+      });
+    }
+
+    function addMeililaiFeeRow(name = "", amount = "", shouldCalculate = true) {
+      els.meililaiFeeRows.insertAdjacentHTML("beforeend", `
+        <div class="custom-fee-row">
+          <div>
+            <label class="field-label">费用名称</label>
+            <input class="meililai-fee-name" value="${escapeHtml(name)}" placeholder="例如 包装费 / 加工费">
+          </div>
+          <div>
+            <label class="field-label">金额</label>
+            <input class="meililai-fee-amount" type="number" min="0" step="0.01" inputmode="decimal" value="${escapeHtml(amount)}" placeholder="例如 80">
+          </div>
+          <button type="button" class="secondary meililai-fee-delete">删除</button>
+        </div>
+      `);
+      bindMeililaiFeeRows();
+      if (shouldCalculate) calculate();
+    }
+
+    function meililaiCustomFees() {
+      if (!isMeililaiWarehouseActive() || !els.meililaiCustomFeeEnabled.checked) return { amount: 0, lines: [] };
+      const fees = meililaiFeeRows().map((item) => ({
+        name: item.name.value.trim(),
+        amount: numberValue(item.amount)
+      })).filter((item) => item.name && item.amount > 0);
+      return {
+        amount: fees.reduce((sum, item) => sum + item.amount, 0),
+        lines: fees.map((item) => `${item.name}${money(item.amount)}`)
+      };
+    }
+
+    function syncMeililaiFeeUi() {
+      const enabled = isMeililaiWarehouseActive();
+      els.meililaiFeeSection.classList.toggle("hidden", !enabled);
+      els.meililaiFeeBody.classList.toggle("hidden", !enabled || !els.meililaiCustomFeeEnabled.checked);
+    }
+
+    function resetMeililaiFees() {
+      els.meililaiCustomFeeEnabled.checked = false;
+      els.meililaiFeeRows.innerHTML = "";
+      addMeililaiFeeRow("", "", false);
+      els.meililaiManualPackaging.checked = false;
+      syncMeililaiFeeUi();
+    }
+
+    function syncMeililaiPackagingUi(packaging) {
+      const enabled = isMeililaiWarehouseActive();
+      els.meililaiManualPackagingWrap.classList.toggle("hidden", !enabled);
+      if (!enabled) {
+        if (els.crateFee.dataset.meililaiAuto === "1") els.crateFee.value = "";
+        delete els.crateFee.dataset.meililaiAuto;
+        els.crateFee.readOnly = false;
+        els.crateFeeLabel.textContent = "木箱费";
+        return;
+      }
+
+      const result = packaging || { amount: 0, name: "", totalQty: 0, confirmed: true, rule: "" };
+      const manual = els.meililaiManualPackaging.checked;
+      els.crateFee.dataset.meililaiAuto = "1";
+      els.crateFee.readOnly = !manual;
+      if (!manual) els.crateFee.value = result.amount > 0 ? money(result.amount) : "";
+      els.crateFeeLabel.textContent = manual
+        ? "包装费（手填）"
+        : "自动包装费";
+    }
+
     function currentCustomPriceMode() {
       const checked = document.querySelector("input[name='customPriceMode']:checked");
       return checked ? checked.value : "piece";
@@ -5234,7 +5542,9 @@
       const isSandstone = category === "sandstone";
       const isConcrete = category === "songnuo";
       const isCustom = category === "custom";
-      const fixedCategoryText = isCement ? "水泥板" : (isConcrete ? "混凝土" : (currentWarehouseGroup() === "宁波仓" ? "柔岩板" : ""));
+      const fixedCategoryText = isCement
+        ? "水泥板"
+        : (isConcrete ? "混凝土" : ((currentWarehouseGroup() === "宁波仓" || isMeililaiWarehouseActive()) ? "柔岩板" : ""));
       els.concreteWarehouseRow.classList.toggle("hidden", !isConcreteWarehouse());
       els.cementWarehouseRow.classList.toggle("hidden", !isCementWarehouse());
       els.customWarehousePanel.classList.toggle("hidden", !isCustomWarehouse());
@@ -5250,13 +5560,15 @@
       els.songnuoFields.classList.toggle("hidden", !isConcrete);
       els.cementFields.classList.toggle("hidden", !isCement);
       els.customSpecWrap.classList.remove("hidden");
+      els.otherProductCountLabel.textContent = isMeililaiWarehouseActive() ? "美利来产品数量" : "其它品类产品数量";
       syncCementAccessoryFields();
       syncZhejiangAccessoryFields(warehouse);
-      if (!isNingboWarehouseActive()) {
-        document.querySelectorAll(".ningbo-match-tools, .ningbo-suggestions").forEach((item) => item.classList.add("hidden"));
+      syncMeililaiFeeUi();
+      if (!isCatalogWarehouseActive()) {
+        document.querySelectorAll(".ningbo-match-tools, .ningbo-suggestions, .catalog-product-note").forEach((item) => item.classList.add("hidden"));
       }
       document.querySelectorAll(".optional-other-detail, .ningbo-hide-field").forEach((item) => {
-        item.classList.toggle("hidden", isNingboWarehouseActive());
+        item.classList.toggle("hidden", isCatalogWarehouseActive());
       });
       document.querySelectorAll(".liujin-spec-select-wrap").forEach((item) => item.classList.toggle("hidden", usesManualSpec(warehouse)));
       document.querySelectorAll(".liujin-spec-text-wrap").forEach((item) => item.classList.toggle("hidden", !usesManualSpec(warehouse)));
@@ -5267,8 +5579,12 @@
       syncRepairAgentUi(warehouse);
 
       const built = isCustom ? buildCustom() : (isCement ? buildCement() : (isConcrete ? buildSongnuo() : ((isLiujin || isSandstone) ? buildLiujin() : buildOther())));
+      syncMeililaiPackagingUi(built.packaging);
       const processingFee = numberValue(els.processingFee);
-      const crateFee = numberValue(els.crateFee);
+      const manualMeililaiPackaging = isMeililaiWarehouseActive() && els.meililaiManualPackaging.checked;
+      const crateFee = isMeililaiWarehouseActive()
+        ? (manualMeililaiPackaging ? numberValue(els.crateFee) : Number(built.packaging?.amount || 0))
+        : numberValue(els.crateFee);
       const total = numberValue(els.totalAmount);
       syncAutoTax();
       const taxAmount = numberValue(els.taxAmount);
@@ -5310,7 +5626,10 @@
       const deliveryPart = (freightLine === "工厂自提" || freightLine === "运费：工厂自提")
         ? (isCement || isCustom ? "运费：工厂自提" : "工厂自提")
         : `${freightLine}  送货`;
-      const cratePart = !isCustom && crateFee > 0 ? `，木箱费${money(crateFee)}` : "";
+      const crateName = isMeililaiWarehouseActive()
+        ? (manualMeililaiPackaging ? "包装费" : (built.packaging?.name || "包装费"))
+        : "木箱费";
+      const cratePart = !isCustom && crateFee > 0 ? `，${crateName}${money(crateFee)}` : "";
       const receiverInfo = receiverLine(rawName, rawPhone, rawAddress);
       const receiverPart = receiverInfo ? `${xCode}-${receiverInfo}` : xCode;
 
@@ -5358,6 +5677,14 @@
         els.formNotice.className = "notice";
       } else if (isConcrete) {
         els.formNotice.textContent = "混凝土仓不写 DB；KD 已扣除材料费、附加费、加工费、木箱费、税金、扣点和代付运费。手工修改平方单价后会保留，清空单价可恢复自动价。";
+        els.formNotice.className = "notice";
+      } else if (isMeililaiWarehouseActive() && !manualMeililaiPackaging && !built.packageOk) {
+        els.formNotice.textContent = built.packageError || "规格无法识别，请人工确认美利来包装费。";
+        els.formNotice.className = "notice error";
+      } else if (isMeililaiWarehouseActive()) {
+        els.formNotice.textContent = manualMeililaiPackaging
+          ? "美利来包装费已改为手动填写，当前金额会写入开单明细并扣入KD；取消勾选可恢复自动包装规则。"
+          : "美利来底价与快速查价共用同一份价格表；打印另加10元/平。合计1–4片自动计算包装费，合计5片及以上免包装费；自定义费用会写入明细并扣入KD。";
         els.formNotice.className = "notice";
       } else if (isNingboWarehouseActive()) {
         els.formNotice.textContent = "宁波仓按匹配规格计算材料费；KD 会扣除材料费、木箱费、加工费、税金、扣点和代付运费；不写 DB，运费询价在下方单独生成。";
@@ -5523,6 +5850,7 @@
       manualResultMode = false;
       resetRepairAgentOptions();
       resetZhejiangAccessories();
+      resetMeililaiFees();
       const currentIndex = Number.parseInt(els.orderIndex.value || "0", 10) || 0;
       els.orderIndex.value = currentIndex > 0 ? currentIndex + 1 : "";
       setGreenCount("");
@@ -5632,6 +5960,7 @@
     renderCementAdditionalProducts();
     renderConcreteAdditionalProducts();
     bindCustomFeeRows();
+    bindMeililaiFeeRows();
     bindConcretePromoRows();
     syncCementAccessoryFields();
     syncZhejiangAccessoryFields();
@@ -5647,8 +5976,16 @@
     clearPaymentChoice();
     calculate();
 
+    let previousWarehouseGroup = currentWarehouseGroup();
     document.querySelectorAll("input[name='warehouse']").forEach((input) => {
       input.addEventListener("change", () => {
+        const nextWarehouseGroup = currentWarehouseGroup();
+        const catalogWarehouses = ["宁波仓", "美利来"];
+        if (nextWarehouseGroup !== previousWarehouseGroup
+          && (catalogWarehouses.includes(previousWarehouseGroup) || catalogWarehouses.includes(nextWarehouseGroup))) {
+          clearOtherProductsForWarehouseChange();
+        }
+        previousWarehouseGroup = nextWarehouseGroup;
         if (isCementWarehouse() || isConcreteWarehouse()) {
           resetDefaultRemarks();
         }
@@ -5738,6 +6075,19 @@
     });
     document.querySelectorAll("input[name='customPriceMode']").forEach((input) => input.addEventListener("change", calculate));
     els.addCustomFeeBtn.addEventListener("click", () => addCustomFeeRow());
+    els.addMeililaiFeeBtn.addEventListener("click", () => addMeililaiFeeRow());
+    els.meililaiCustomFeeEnabled.addEventListener("change", () => {
+      syncMeililaiFeeUi();
+      calculate();
+    });
+    els.meililaiManualPackaging.addEventListener("change", () => {
+      syncMeililaiPackagingUi(buildOther().packaging);
+      calculate();
+      if (els.meililaiManualPackaging.checked) {
+        els.crateFee.focus();
+        els.crateFee.select();
+      }
+    });
     els.addConcretePromoBtn.addEventListener("click", () => addConcretePromoRow());
     els.repairAgentToggleButton.addEventListener("click", () => {
       setRepairAgentExpanded(els.repairAgentToggleButton.getAttribute("aria-expanded") !== "true");

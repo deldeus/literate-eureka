@@ -155,6 +155,2012 @@
     { name: "3D新版洞石", price: 55, specs: ["1200*600"] }
   ];
 
+  const meililaiProductCatalog = [
+  {
+    "id": "mll-3",
+    "name": "粗布纹石",
+    "aliases": [],
+    "price": 67,
+    "spec": "580*1220",
+    "thickness": "3-5mm",
+    "weight": "3.75KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 3
+  },
+  {
+    "id": "mll-4",
+    "name": "粗布纹石",
+    "aliases": [],
+    "price": 67,
+    "spec": "1175*2440",
+    "thickness": "3-5mm",
+    "weight": "15KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 4
+  },
+  {
+    "id": "mll-6",
+    "name": "细布纹石",
+    "aliases": [],
+    "price": 55,
+    "spec": "600*1200",
+    "thickness": "2-3mm",
+    "weight": "2.8KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 6
+  },
+  {
+    "id": "mll-7",
+    "name": "细布纹石",
+    "aliases": [],
+    "price": 55,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "11.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 7
+  },
+  {
+    "id": "mll-9",
+    "name": "大细布纹",
+    "aliases": [],
+    "price": 55,
+    "spec": "585*2975",
+    "thickness": "2-3mm",
+    "weight": "7.6KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 9
+  },
+  {
+    "id": "mll-10",
+    "name": "大细布纹",
+    "aliases": [],
+    "price": 55,
+    "spec": "1200*3000（新）",
+    "thickness": "2-3mm",
+    "weight": "15KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 10
+  },
+  {
+    "id": "mll-12",
+    "name": "直纹线石 （原名：细布纹石）",
+    "aliases": [
+      "细布纹石",
+      "直纹线石"
+    ],
+    "price": 55,
+    "spec": "600*1500",
+    "thickness": "2-3mm",
+    "weight": "3.8KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 12
+  },
+  {
+    "id": "mll-15",
+    "name": "麻编",
+    "aliases": [],
+    "price": 55,
+    "spec": "600*1200",
+    "thickness": "2-4mm",
+    "weight": "3.4KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 15
+  },
+  {
+    "id": "mll-16",
+    "name": "麻编",
+    "aliases": [],
+    "price": 55,
+    "spec": "1200*2400",
+    "thickness": "2-4mm",
+    "weight": "14KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 16
+  },
+  {
+    "id": "mll-17",
+    "name": "麻编",
+    "aliases": [],
+    "price": 55,
+    "spec": "1200*3000",
+    "thickness": "2-4mm",
+    "weight": "17.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 17
+  },
+  {
+    "id": "mll-18",
+    "name": "细麻编",
+    "aliases": [],
+    "price": 55,
+    "spec": "600*1200",
+    "thickness": "2-4mm",
+    "weight": "3.2KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 18
+  },
+  {
+    "id": "mll-21",
+    "name": "辰美小洞石特价",
+    "aliases": [],
+    "price": 40,
+    "spec": "580*1200（老版）",
+    "thickness": "2-3mm",
+    "weight": "2.7KG/块",
+    "condition": "纯白、米白",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 21
+  },
+  {
+    "id": "mll-22",
+    "name": "辰美小洞石特价",
+    "aliases": [],
+    "price": 40,
+    "spec": "1195*2400（老版）",
+    "thickness": "2-3mm",
+    "weight": "16KG/块",
+    "condition": "纯白、米白",
+    "note": "特价款只有纯白和米白",
+    "importantNote": true,
+    "sourceRow": 22
+  },
+  {
+    "id": "mll-24",
+    "name": "辰美小洞石特价",
+    "aliases": [],
+    "price": 40,
+    "spec": "600*1200",
+    "thickness": "2-3mm",
+    "weight": "3.5KG/块",
+    "condition": "纯白、米白",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 24
+  },
+  {
+    "id": "mll-25",
+    "name": "辰美小洞石特价",
+    "aliases": [],
+    "price": 40,
+    "spec": "600*2400",
+    "thickness": "2-3mm",
+    "weight": "7KG/块",
+    "condition": "纯白、米白",
+    "note": "特价款只有纯白和米白",
+    "importantNote": true,
+    "sourceRow": 25
+  },
+  {
+    "id": "mll-26",
+    "name": "辰美小洞石特价",
+    "aliases": [],
+    "price": 40,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "14KG/块",
+    "condition": "纯白、米白",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 26
+  },
+  {
+    "id": "mll-27",
+    "name": "辰美小洞石特价",
+    "aliases": [],
+    "price": 40,
+    "spec": "1200*3000",
+    "thickness": "2-3mm",
+    "weight": "17.5KG/块",
+    "condition": "纯白、米白",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 27
+  },
+  {
+    "id": "mll-28",
+    "name": "小洞石（美利来非特价产品）",
+    "aliases": [
+      "小洞石"
+    ],
+    "price": 50,
+    "spec": "590*1190",
+    "thickness": "2-3mm",
+    "weight": "3.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": true,
+    "sourceRow": 28
+  },
+  {
+    "id": "mll-29",
+    "name": "小洞石（美利来非特价产品）",
+    "aliases": [
+      "小洞石"
+    ],
+    "price": 50,
+    "spec": "590*2390",
+    "thickness": "2-3mm",
+    "weight": "7KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 29
+  },
+  {
+    "id": "mll-31",
+    "name": "小洞石（美利来非特价产品）",
+    "aliases": [
+      "小洞石"
+    ],
+    "price": 50,
+    "spec": "1190*2390",
+    "thickness": "2-3mm",
+    "weight": "14KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 31
+  },
+  {
+    "id": "mll-32",
+    "name": "小洞石（美利来非特价产品）",
+    "aliases": [
+      "小洞石"
+    ],
+    "price": 50,
+    "spec": "1200*2880",
+    "thickness": "2-3mm",
+    "weight": "16KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 32
+  },
+  {
+    "id": "mll-34",
+    "name": "虫洞石",
+    "aliases": [],
+    "price": 75,
+    "spec": "1175*2340",
+    "thickness": "5mm",
+    "weight": "20KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 34
+  },
+  {
+    "id": "mll-37",
+    "name": "鎏金洞石",
+    "aliases": [],
+    "price": 55,
+    "spec": "600*1200",
+    "thickness": "2-3mm",
+    "weight": "3KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 37
+  },
+  {
+    "id": "mll-38",
+    "name": "鎏金洞石",
+    "aliases": [],
+    "price": 55,
+    "spec": "600*2400",
+    "thickness": "2-3mm",
+    "weight": "6KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 38
+  },
+  {
+    "id": "mll-39",
+    "name": "鎏金洞石",
+    "aliases": [],
+    "price": 55,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "12KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 39
+  },
+  {
+    "id": "mll-40",
+    "name": "打印款洞石",
+    "aliases": [],
+    "price": 55,
+    "spec": "600*1200",
+    "thickness": "2-3mm",
+    "weight": "3.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 40
+  },
+  {
+    "id": "mll-41",
+    "name": "打印款洞石",
+    "aliases": [],
+    "price": 55,
+    "spec": "580*1200（老版）",
+    "thickness": "2-3mm",
+    "weight": "3KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 41
+  },
+  {
+    "id": "mll-43",
+    "name": "打印款洞石",
+    "aliases": [],
+    "price": 60,
+    "spec": "600*2400",
+    "thickness": "2-3mm",
+    "weight": "7KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 43
+  },
+  {
+    "id": "mll-46",
+    "name": "打印款洞石",
+    "aliases": [],
+    "price": 60,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "14KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 46
+  },
+  {
+    "id": "mll-49",
+    "name": "打印款洞石",
+    "aliases": [],
+    "price": 70,
+    "spec": "600*2880",
+    "thickness": "2-3mm",
+    "weight": "8KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 49
+  },
+  {
+    "id": "mll-52",
+    "name": "打印款洞石",
+    "aliases": [],
+    "price": 70,
+    "spec": "1200*2880",
+    "thickness": "2-3mm",
+    "weight": "16KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 52
+  },
+  {
+    "id": "mll-53",
+    "name": "打印款洞石",
+    "aliases": [],
+    "price": 70,
+    "spec": "1200*3000（辰美尺寸）",
+    "thickness": "2-3mm",
+    "weight": "17.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 53
+  },
+  {
+    "id": "mll-55",
+    "name": "竖纹流水石（老）",
+    "aliases": [
+      "竖纹流水石"
+    ],
+    "price": 60,
+    "spec": "575*1175",
+    "thickness": "3-5mm",
+    "weight": "4.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 55
+  },
+  {
+    "id": "mll-58",
+    "name": "横纹流水石（新）",
+    "aliases": [
+      "横纹流水石"
+    ],
+    "price": 60,
+    "spec": "600*1200",
+    "thickness": "3-5mm",
+    "weight": "4.2KG/块",
+    "condition": "",
+    "note": "2025.9月新品",
+    "importantNote": false,
+    "sourceRow": 58
+  },
+  {
+    "id": "mll-61",
+    "name": "条形石",
+    "aliases": [],
+    "price": 60,
+    "spec": "575*1175",
+    "thickness": "3-5mm",
+    "weight": "4.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 61
+  },
+  {
+    "id": "mll-64",
+    "name": "辰美板岩（单色）",
+    "aliases": [
+      "辰美板岩"
+    ],
+    "price": 40,
+    "spec": "600*1200",
+    "thickness": "2-3mm",
+    "weight": "3KG/块",
+    "condition": "纯白、米白",
+    "note": "",
+    "importantNote": true,
+    "sourceRow": 64
+  },
+  {
+    "id": "mll-65",
+    "name": "辰美板岩（单色）",
+    "aliases": [
+      "辰美板岩"
+    ],
+    "price": 45,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "12KG/块",
+    "condition": "纯白、米白",
+    "note": "特价款只有纯白和米白",
+    "importantNote": true,
+    "sourceRow": 65
+  },
+  {
+    "id": "mll-66",
+    "name": "辰美板岩（单色）",
+    "aliases": [
+      "辰美板岩"
+    ],
+    "price": 45,
+    "spec": "1200*3000",
+    "thickness": "2-3mm",
+    "weight": "15KG/块",
+    "condition": "纯白、米白",
+    "note": "",
+    "importantNote": true,
+    "sourceRow": 66
+  },
+  {
+    "id": "mll-67",
+    "name": "板岩（美利来非特价产品）",
+    "aliases": [
+      "板岩"
+    ],
+    "price": 50,
+    "spec": "590*1190",
+    "thickness": "2-3mm",
+    "weight": "3KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 67
+  },
+  {
+    "id": "mll-68",
+    "name": "板岩（美利来非特价产品）",
+    "aliases": [
+      "板岩"
+    ],
+    "price": 50,
+    "spec": "590*2390",
+    "thickness": "2-3mm",
+    "weight": "6KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 68
+  },
+  {
+    "id": "mll-69",
+    "name": "板岩（美利来非特价产品）",
+    "aliases": [
+      "板岩"
+    ],
+    "price": 50,
+    "spec": "1190*2390",
+    "thickness": "2-3mm",
+    "weight": "12KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 69
+  },
+  {
+    "id": "mll-70",
+    "name": "板岩（福美纹理）",
+    "aliases": [
+      "板岩"
+    ],
+    "price": 50,
+    "spec": "600*1200",
+    "thickness": "2-3mm",
+    "weight": "3KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 70
+  },
+  {
+    "id": "mll-73",
+    "name": "板岩打印款",
+    "aliases": [],
+    "price": 55,
+    "spec": "600*1200",
+    "thickness": "2-3mm",
+    "weight": "3KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 73
+  },
+  {
+    "id": "mll-74",
+    "name": "板岩打印款",
+    "aliases": [],
+    "price": 70,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "12KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 74
+  },
+  {
+    "id": "mll-75",
+    "name": "板岩打印款",
+    "aliases": [],
+    "price": 70,
+    "spec": "1200*3000（辰美尺寸）",
+    "thickness": "2-3mm",
+    "weight": "15KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 75
+  },
+  {
+    "id": "mll-76",
+    "name": "海底洞石",
+    "aliases": [],
+    "price": 80,
+    "spec": "1190*2750",
+    "thickness": "3-5mm",
+    "weight": "20KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 76
+  },
+  {
+    "id": "mll-79",
+    "name": "貝磊石",
+    "aliases": [
+      "贝磊石"
+    ],
+    "price": 55,
+    "spec": "570*1200",
+    "thickness": "2-3mm",
+    "weight": "3KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 79
+  },
+  {
+    "id": "mll-82",
+    "name": "石皮",
+    "aliases": [],
+    "price": 55,
+    "spec": "590*1180",
+    "thickness": "2-3mm",
+    "weight": "3.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 82
+  },
+  {
+    "id": "mll-83",
+    "name": "石皮",
+    "aliases": [],
+    "price": 55,
+    "spec": "1190*2390",
+    "thickness": "2-3mm",
+    "weight": "",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 83
+  },
+  {
+    "id": "mll-85",
+    "name": "夯土板（细）",
+    "aliases": [
+      "夯土板"
+    ],
+    "price": 50,
+    "spec": "560*2360",
+    "thickness": "2-3mm",
+    "weight": "6KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 85
+  },
+  {
+    "id": "mll-86",
+    "name": "夯土板（细）",
+    "aliases": [
+      "夯土板"
+    ],
+    "price": 50,
+    "spec": "1200*3000",
+    "thickness": "2-3mm",
+    "weight": "15KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 86
+  },
+  {
+    "id": "mll-88",
+    "name": "夯土板（复合色）",
+    "aliases": [
+      "夯土板"
+    ],
+    "price": 60,
+    "spec": "560*2360",
+    "thickness": "2-3mm",
+    "weight": "6KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 88
+  },
+  {
+    "id": "mll-91",
+    "name": "粗夯土板（单色）",
+    "aliases": [
+      "粗夯土板"
+    ],
+    "price": 55,
+    "spec": "1190*2690",
+    "thickness": "2-3mm",
+    "weight": "15KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 91
+  },
+  {
+    "id": "mll-94",
+    "name": "粗夯土板（复合色）",
+    "aliases": [
+      "粗夯土板"
+    ],
+    "price": 67,
+    "spec": "1190*2690",
+    "thickness": "2-3mm",
+    "weight": "15KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 94
+  },
+  {
+    "id": "mll-97",
+    "name": "辰美夯土板",
+    "aliases": [],
+    "price": 50,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "14KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 97
+  },
+  {
+    "id": "mll-98",
+    "name": "辰美夯土板",
+    "aliases": [],
+    "price": 50,
+    "spec": "1200*3000",
+    "thickness": "2-3mm",
+    "weight": "15KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 98
+  },
+  {
+    "id": "mll-100",
+    "name": "打印款夯土板",
+    "aliases": [],
+    "price": 55,
+    "spec": "600*1200",
+    "thickness": "2-3mm",
+    "weight": "3.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 100
+  },
+  {
+    "id": "mll-101",
+    "name": "打印款夯土板",
+    "aliases": [],
+    "price": 70,
+    "spec": "600*2400",
+    "thickness": "2-3mm",
+    "weight": "7KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 101
+  },
+  {
+    "id": "mll-102",
+    "name": "打印款夯土板",
+    "aliases": [],
+    "price": 70,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "14KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 102
+  },
+  {
+    "id": "mll-103",
+    "name": "打印款夯土板",
+    "aliases": [],
+    "price": 70,
+    "spec": "1200*3000",
+    "thickness": "2-3mm",
+    "weight": "15KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 103
+  },
+  {
+    "id": "mll-104",
+    "name": "融景夯土板",
+    "aliases": [],
+    "price": 80,
+    "spec": "590*2980",
+    "thickness": "3-6mm",
+    "weight": "10KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 104
+  },
+  {
+    "id": "mll-107",
+    "name": "雨落夯土",
+    "aliases": [],
+    "price": 75,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "20KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 107
+  },
+  {
+    "id": "mll-110",
+    "name": "落珠板",
+    "aliases": [],
+    "price": 75,
+    "spec": "600*3000",
+    "thickness": "2-3mm",
+    "weight": "12KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 110
+  },
+  {
+    "id": "mll-111",
+    "name": "落珠板",
+    "aliases": [],
+    "price": 75,
+    "spec": "1200*3000",
+    "thickness": "2-3mm",
+    "weight": "24kg/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 111
+  },
+  {
+    "id": "mll-113",
+    "name": "银沙夯土",
+    "aliases": [],
+    "price": 55,
+    "spec": "600*1200",
+    "thickness": "2-3mm",
+    "weight": "3.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 113
+  },
+  {
+    "id": "mll-114",
+    "name": "银沙夯土",
+    "aliases": [],
+    "price": 55,
+    "spec": "600*2400",
+    "thickness": "2-3mm",
+    "weight": "7KG",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 114
+  },
+  {
+    "id": "mll-115",
+    "name": "银沙夯土",
+    "aliases": [],
+    "price": 55,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "14KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 115
+  },
+  {
+    "id": "mll-116",
+    "name": "流痕板",
+    "aliases": [],
+    "price": 75,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "20KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 116
+  },
+  {
+    "id": "mll-119",
+    "name": "旧土墙",
+    "aliases": [],
+    "price": 80,
+    "spec": "1200*2640",
+    "thickness": "3-5mm",
+    "weight": "20KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 119
+  },
+  {
+    "id": "mll-122",
+    "name": "仿古砖",
+    "aliases": [],
+    "price": 31,
+    "spec": "60*230",
+    "thickness": "2-3mm",
+    "weight": "23KG/箱",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 122
+  },
+  {
+    "id": "mll-125",
+    "name": "劈开砖",
+    "aliases": [],
+    "price": 31,
+    "spec": "60*240",
+    "thickness": "2-3mm",
+    "weight": "25KG/箱",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 125
+  },
+  {
+    "id": "mll-128",
+    "name": "连体砖",
+    "aliases": [],
+    "price": 45,
+    "spec": "400*2300",
+    "thickness": "2-3mm",
+    "weight": "3.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 128
+  },
+  {
+    "id": "mll-129",
+    "name": "连体砖",
+    "aliases": [],
+    "price": 45,
+    "spec": "1210*2300",
+    "thickness": "2-3mm",
+    "weight": "10KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 129
+  },
+  {
+    "id": "mll-131",
+    "name": "辰美新线石",
+    "aliases": [],
+    "price": 47,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "12KG/块",
+    "condition": "纯白、米白",
+    "note": "计划3月份上新",
+    "importantNote": false,
+    "sourceRow": 131
+  },
+  {
+    "id": "mll-132",
+    "name": "辰美新线石",
+    "aliases": [],
+    "price": 47,
+    "spec": "1200*3000",
+    "thickness": "2-3mm",
+    "weight": "15KG/块",
+    "condition": "纯白、米白",
+    "note": "计划3月份上新",
+    "importantNote": false,
+    "sourceRow": 132
+  },
+  {
+    "id": "mll-133",
+    "name": "标准新线石（美利来非特价产品）",
+    "aliases": [
+      "标准新线石"
+    ],
+    "price": 55,
+    "spec": "590*1200",
+    "thickness": "2-3mm",
+    "weight": "3KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 133
+  },
+  {
+    "id": "mll-134",
+    "name": "标准新线石（美利来非特价产品）",
+    "aliases": [
+      "标准新线石"
+    ],
+    "price": 55,
+    "spec": "590*2400",
+    "thickness": "2-3mm",
+    "weight": "6KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 134
+  },
+  {
+    "id": "mll-135",
+    "name": "标准新线石（美利来非特价产品）",
+    "aliases": [
+      "标准新线石"
+    ],
+    "price": 55,
+    "spec": "1190*2400",
+    "thickness": "2-3mm",
+    "weight": "12KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 135
+  },
+  {
+    "id": "mll-136",
+    "name": "标准新线石（美利来非特价产品）",
+    "aliases": [
+      "标准新线石"
+    ],
+    "price": 55,
+    "spec": "600*3240",
+    "thickness": "2-3mm",
+    "weight": "8KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 136
+  },
+  {
+    "id": "mll-137",
+    "name": "标准新线石（美利来非特价产品）",
+    "aliases": [
+      "标准新线石"
+    ],
+    "price": 55,
+    "spec": "1200*3230",
+    "thickness": "2-3mm",
+    "weight": "16KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 137
+  },
+  {
+    "id": "mll-139",
+    "name": "阡陌石",
+    "aliases": [],
+    "price": 67,
+    "spec": "590*1190",
+    "thickness": "3-5mm",
+    "weight": "4.1KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 139
+  },
+  {
+    "id": "mll-140",
+    "name": "阡陌石",
+    "aliases": [],
+    "price": 67,
+    "spec": "590*2390",
+    "thickness": "3-5mm",
+    "weight": "8.3KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 140
+  },
+  {
+    "id": "mll-141",
+    "name": "阡陌石",
+    "aliases": [],
+    "price": 67,
+    "spec": "1190*2390",
+    "thickness": "3-5mm",
+    "weight": "16.7KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 141
+  },
+  {
+    "id": "mll-142",
+    "name": "阡陌石",
+    "aliases": [],
+    "price": 67,
+    "spec": "1200*3000",
+    "thickness": "3-5mm",
+    "weight": "24kg/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 142
+  },
+  {
+    "id": "mll-143",
+    "name": "大星月（小版）",
+    "aliases": [
+      "大星月"
+    ],
+    "price": 67,
+    "spec": "600*1200",
+    "thickness": "3-7mm",
+    "weight": "8KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 143
+  },
+  {
+    "id": "mll-146",
+    "name": "大星月石",
+    "aliases": [],
+    "price": 75,
+    "spec": "1170*3230",
+    "thickness": "3-7mm",
+    "weight": "30KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 146
+  },
+  {
+    "id": "mll-149",
+    "name": "小魔方",
+    "aliases": [],
+    "price": 67,
+    "spec": "300*600",
+    "thickness": "2-3mm",
+    "weight": "1.35KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 149
+  },
+  {
+    "id": "mll-152",
+    "name": "水泥板",
+    "aliases": [],
+    "price": 67,
+    "spec": "550*2760",
+    "thickness": "3-4mm",
+    "weight": "7.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 152
+  },
+  {
+    "id": "mll-153",
+    "name": "水泥板",
+    "aliases": [],
+    "price": 67,
+    "spec": "1100*2760",
+    "thickness": "3-4mm",
+    "weight": "15KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 153
+  },
+  {
+    "id": "mll-155",
+    "name": "双线脉络石",
+    "aliases": [],
+    "price": 67,
+    "spec": "580*2650",
+    "thickness": "3-5mm",
+    "weight": "11KG",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 155
+  },
+  {
+    "id": "mll-156",
+    "name": "双线脉络石",
+    "aliases": [],
+    "price": 67,
+    "spec": "1175*2650",
+    "thickness": "3-5mm",
+    "weight": "22KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 156
+  },
+  {
+    "id": "mll-158",
+    "name": "大板脉络石",
+    "aliases": [],
+    "price": 67,
+    "spec": "1200*3000",
+    "thickness": "3-5mm",
+    "weight": "25KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 158
+  },
+  {
+    "id": "mll-161",
+    "name": "鎏金板（软板）",
+    "aliases": [
+      "鎏金板"
+    ],
+    "price": 90,
+    "spec": "1200*2950",
+    "thickness": "2-3mm",
+    "weight": "17.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 161
+  },
+  {
+    "id": "mll-164",
+    "name": "鎏金板（硬板）",
+    "aliases": [
+      "鎏金板"
+    ],
+    "price": 90,
+    "spec": "1220*2440",
+    "thickness": "3mm/5mm/8mm",
+    "weight": "18KG/块（5mm）",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 164
+  },
+  {
+    "id": "mll-165",
+    "name": "鎏金板（硬板）",
+    "aliases": [
+      "鎏金板"
+    ],
+    "price": 90,
+    "spec": "1220*3000",
+    "thickness": "3mm/5mm/8mm",
+    "weight": "22KG/块（5mm）",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 165
+  },
+  {
+    "id": "mll-167",
+    "name": "波浪石",
+    "aliases": [],
+    "price": 80,
+    "spec": "1190*2395",
+    "thickness": "3-6mm",
+    "weight": "22KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 167
+  },
+  {
+    "id": "mll-170",
+    "name": "洞石波浪板",
+    "aliases": [],
+    "price": 80,
+    "spec": "600*1200",
+    "thickness": "3-6mm",
+    "weight": "5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 170
+  },
+  {
+    "id": "mll-173",
+    "name": "辰美小星月 （原名：辰美英安岩）",
+    "aliases": [
+      "辰美英安岩",
+      "辰美小星月"
+    ],
+    "price": 40,
+    "spec": "600*1200",
+    "thickness": "2-3mm",
+    "weight": "3KG/块",
+    "condition": "纯白、米白",
+    "note": "特价款只有纯白和米白",
+    "importantNote": true,
+    "sourceRow": 173
+  },
+  {
+    "id": "mll-174",
+    "name": "辰美小星月 （原名：辰美英安岩）",
+    "aliases": [
+      "辰美英安岩",
+      "辰美小星月"
+    ],
+    "price": 40,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "12KG/块",
+    "condition": "纯白、米白",
+    "note": "特价款只有纯白和米白",
+    "importantNote": true,
+    "sourceRow": 174
+  },
+  {
+    "id": "mll-175",
+    "name": "辰美小星月 （原名：辰美英安岩）",
+    "aliases": [
+      "辰美英安岩",
+      "辰美小星月"
+    ],
+    "price": 40,
+    "spec": "1200*3000",
+    "thickness": "2-3mm",
+    "weight": "15KG/块",
+    "condition": "纯白、米白",
+    "note": "特价款只有纯白和米白",
+    "importantNote": true,
+    "sourceRow": 175
+  },
+  {
+    "id": "mll-176",
+    "name": "小星月 （原名：辰美英安岩）",
+    "aliases": [
+      "辰美英安岩",
+      "小星月"
+    ],
+    "price": 47,
+    "spec": "600*1200",
+    "thickness": "2-3mm",
+    "weight": "3KG/块",
+    "condition": "除纯白、米白特价款颜色以外颜色",
+    "note": "",
+    "importantNote": true,
+    "sourceRow": 176
+  },
+  {
+    "id": "mll-177",
+    "name": "小星月 （原名：辰美英安岩）",
+    "aliases": [
+      "辰美英安岩",
+      "小星月"
+    ],
+    "price": 47,
+    "spec": "1200*2400",
+    "thickness": "2-3mm",
+    "weight": "12KG/块",
+    "condition": "除纯白、米白特价款颜色以外颜色",
+    "note": "",
+    "importantNote": true,
+    "sourceRow": 177
+  },
+  {
+    "id": "mll-178",
+    "name": "小星月 （原名：辰美英安岩）",
+    "aliases": [
+      "辰美英安岩",
+      "小星月"
+    ],
+    "price": 47,
+    "spec": "1200*3000",
+    "thickness": "2-3mm",
+    "weight": "15KG/块",
+    "condition": "除纯白、米白特价款颜色以外颜色",
+    "note": "",
+    "importantNote": true,
+    "sourceRow": 178
+  },
+  {
+    "id": "mll-179",
+    "name": "毛面花岗岩",
+    "aliases": [],
+    "price": 45,
+    "spec": "580*1200",
+    "thickness": "2-3mm",
+    "weight": "2.8KG/块",
+    "condition": "纯白、米白",
+    "note": "特价款只有纯白和米白",
+    "importantNote": true,
+    "sourceRow": 179
+  },
+  {
+    "id": "mll-180",
+    "name": "毛面花岗岩",
+    "aliases": [],
+    "price": 45,
+    "spec": "1180*2400",
+    "thickness": "2-3mm",
+    "weight": "11.5KG/块",
+    "condition": "纯白、米白",
+    "note": "特价款只有纯白和米白",
+    "importantNote": true,
+    "sourceRow": 180
+  },
+  {
+    "id": "mll-181",
+    "name": "毛面花岗岩",
+    "aliases": [],
+    "price": 51,
+    "spec": "580*1200",
+    "thickness": "2-3mm",
+    "weight": "2.8KG/块",
+    "condition": "除纯白、米白特价款颜色以外颜色",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 181
+  },
+  {
+    "id": "mll-182",
+    "name": "毛面花岗岩",
+    "aliases": [],
+    "price": 51,
+    "spec": "1180*2400",
+    "thickness": "2-3mm",
+    "weight": "11.5KG/块",
+    "condition": "除纯白、米白特价款颜色以外颜色",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 182
+  },
+  {
+    "id": "mll-183",
+    "name": "鲁班木",
+    "aliases": [],
+    "price": 67,
+    "spec": "600*2780",
+    "thickness": "3mm",
+    "weight": "9KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 183
+  },
+  {
+    "id": "mll-184",
+    "name": "鲁班木",
+    "aliases": [],
+    "price": 67,
+    "spec": "1200*2780",
+    "thickness": "3mm",
+    "weight": "18KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 184
+  },
+  {
+    "id": "mll-186",
+    "name": "皮革纹/鎏金软底板",
+    "aliases": [],
+    "price": 67,
+    "spec": "1200*3000",
+    "thickness": "3mm",
+    "weight": "17.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 186
+  },
+  {
+    "id": "mll-189",
+    "name": "皮革纹打印款",
+    "aliases": [],
+    "price": 80,
+    "spec": "1200*3000",
+    "thickness": "3mm",
+    "weight": "18KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 189
+  },
+  {
+    "id": "mll-192",
+    "name": "碳化木",
+    "aliases": [],
+    "price": 73,
+    "spec": "600*2800",
+    "thickness": "3mm",
+    "weight": "10KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 192
+  },
+  {
+    "id": "mll-193",
+    "name": "碳化木",
+    "aliases": [],
+    "price": 73,
+    "spec": "1200*2800",
+    "thickness": "3mm",
+    "weight": "20KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 193
+  },
+  {
+    "id": "mll-195",
+    "name": "星云石",
+    "aliases": [],
+    "price": 67,
+    "spec": "1200*2800",
+    "thickness": "3-5mm",
+    "weight": "18.6KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 195
+  },
+  {
+    "id": "mll-196",
+    "name": "星云石",
+    "aliases": [],
+    "price": 67,
+    "spec": "1200*3000",
+    "thickness": "3-5mm",
+    "weight": "20KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 196
+  },
+  {
+    "id": "mll-198",
+    "name": "斧开石",
+    "aliases": [],
+    "price": 75,
+    "spec": "1200*3000",
+    "thickness": "3-5mm",
+    "weight": "27KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 198
+  },
+  {
+    "id": "mll-201",
+    "name": "榉木板",
+    "aliases": [],
+    "price": 67,
+    "spec": "1200*3000",
+    "thickness": "3mm",
+    "weight": "22KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 201
+  },
+  {
+    "id": "mll-204",
+    "name": "洞石马赛克",
+    "aliases": [],
+    "price": 87,
+    "spec": "600*3000",
+    "thickness": "3-6mm",
+    "weight": "14KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 204
+  },
+  {
+    "id": "mll-205",
+    "name": "洞石马赛克",
+    "aliases": [],
+    "price": 87,
+    "spec": "1175*2950",
+    "thickness": "3-6mm",
+    "weight": "28KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 205
+  },
+  {
+    "id": "mll-207",
+    "name": "发泡铝",
+    "aliases": [],
+    "price": 80,
+    "spec": "1100*2750",
+    "thickness": "3mm",
+    "weight": "24KG/块",
+    "condition": "",
+    "note": "二次上色另加15元",
+    "importantNote": true,
+    "sourceRow": 207
+  },
+  {
+    "id": "mll-210",
+    "name": "珊瑚石",
+    "aliases": [],
+    "price": 93,
+    "spec": "1200*2950",
+    "thickness": "3-8mm",
+    "weight": "38KG/块",
+    "condition": "",
+    "note": "涉及颜色：中国红 通体色每平方加40元； 半通体每平方加20元； 二次上色每平方加15元",
+    "importantNote": true,
+    "sourceRow": 210
+  },
+  {
+    "id": "mll-213",
+    "name": "树皮纹",
+    "aliases": [],
+    "price": 73,
+    "spec": "1200*3000",
+    "thickness": "2-3mm",
+    "weight": "20KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 213
+  },
+  {
+    "id": "mll-216",
+    "name": "木纹浇筑板",
+    "aliases": [],
+    "price": 73,
+    "spec": "1200*3000",
+    "thickness": "2-3mm",
+    "weight": "22KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 216
+  },
+  {
+    "id": "mll-219",
+    "name": "木纹",
+    "aliases": [],
+    "price": 60,
+    "spec": "165*1200",
+    "thickness": "2-3mm",
+    "weight": "1.16KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 219
+  },
+  {
+    "id": "mll-222",
+    "name": "大木纹板",
+    "aliases": [],
+    "price": 73,
+    "spec": "1200*2950",
+    "thickness": "2-3mm",
+    "weight": "20.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 222
+  },
+  {
+    "id": "mll-225",
+    "name": "新打印木纹",
+    "aliases": [],
+    "price": 67,
+    "spec": "600*1200",
+    "thickness": "2-3mm",
+    "weight": "5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 225
+  },
+  {
+    "id": "mll-226",
+    "name": "新打印木纹",
+    "aliases": [],
+    "price": 80,
+    "spec": "1200*2950",
+    "thickness": "2-3mm",
+    "weight": "20.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 226
+  },
+  {
+    "id": "mll-227",
+    "name": "粗纹星云石",
+    "aliases": [],
+    "price": 67,
+    "spec": "1150*2850",
+    "thickness": "3-5mm",
+    "weight": "17.5KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 227
+  },
+  {
+    "id": "mll-230",
+    "name": "三棱砖",
+    "aliases": [],
+    "price": 80,
+    "spec": "1200*3200",
+    "thickness": "3-5mm",
+    "weight": "27KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 230
+  },
+  {
+    "id": "mll-233",
+    "name": "竹编",
+    "aliases": [],
+    "price": 75,
+    "spec": "600*1200",
+    "thickness": "2-5mm",
+    "weight": "3.8KG/块",
+    "condition": "",
+    "note": "2025.9月新品",
+    "importantNote": false,
+    "sourceRow": 233
+  },
+  {
+    "id": "mll-234",
+    "name": "竹编",
+    "aliases": [],
+    "price": 80,
+    "spec": "1200*2400",
+    "thickness": "2-5mm",
+    "weight": "15KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 234
+  },
+  {
+    "id": "mll-235",
+    "name": "小城堡石",
+    "aliases": [],
+    "price": 60,
+    "spec": "600*1200",
+    "thickness": "2-5mm",
+    "weight": "4.5KG/块",
+    "condition": "",
+    "note": "2025.9月新品",
+    "importantNote": false,
+    "sourceRow": 235
+  },
+  {
+    "id": "mll-236",
+    "name": "小城堡石",
+    "aliases": [],
+    "price": 75,
+    "spec": "1200*2400",
+    "thickness": "2-5mm",
+    "weight": "18KG/块",
+    "condition": "",
+    "note": "",
+    "importantNote": false,
+    "sourceRow": 236
+  },
+  {
+    "id": "mll-237",
+    "name": "龙鳞石",
+    "aliases": [],
+    "price": 87,
+    "spec": "1200*3000",
+    "thickness": "2-4mm",
+    "weight": "15KG/块",
+    "condition": "",
+    "note": "2025.10月新品",
+    "importantNote": false,
+    "sourceRow": 237
+  },
+  {
+    "id": "mll-238",
+    "name": "纵痕砂绫石",
+    "aliases": [],
+    "price": 60,
+    "spec": "1200*3000",
+    "thickness": "3mm",
+    "weight": "17KG/块",
+    "condition": "",
+    "note": "2025.10月新品",
+    "importantNote": false,
+    "sourceRow": 238
+  },
+  {
+    "id": "mll-239",
+    "name": "绳编A",
+    "aliases": [],
+    "price": 75,
+    "spec": "1160*2650",
+    "thickness": "4mm",
+    "weight": "13.5kg/块",
+    "condition": "",
+    "note": "2025.12月新品",
+    "importantNote": false,
+    "sourceRow": 239
+  },
+  {
+    "id": "mll-240",
+    "name": "绳编B",
+    "aliases": [],
+    "price": 75,
+    "spec": "1160*2650",
+    "thickness": "4mm",
+    "weight": "13.5kg/块",
+    "condition": "",
+    "note": "2025.12月新品",
+    "importantNote": false,
+    "sourceRow": 240
+  },
+  {
+    "id": "mll-241",
+    "name": "鞭炮纹",
+    "aliases": [],
+    "price": 75,
+    "spec": "1160*2650",
+    "thickness": "4mm",
+    "weight": "13.5kg/块",
+    "condition": "",
+    "note": "2025.12月新品",
+    "importantNote": false,
+    "sourceRow": 241
+  },
+  {
+    "id": "mll-242",
+    "name": "草编",
+    "aliases": [],
+    "price": 75,
+    "spec": "1200*3000",
+    "thickness": "4mm",
+    "weight": "16kg/块",
+    "condition": "",
+    "note": "2025.12月新品",
+    "importantNote": false,
+    "sourceRow": 242
+  },
+  {
+    "id": "mll-243",
+    "name": "木纹（水曲柳）",
+    "aliases": [
+      "木纹"
+    ],
+    "price": 55,
+    "spec": "1200*2400",
+    "thickness": "3mm",
+    "weight": "12.5kg/块",
+    "condition": "",
+    "note": "2026.1月新品",
+    "importantNote": false,
+    "sourceRow": 243
+  },
+  {
+    "id": "mll-244",
+    "name": "芭蕉叶",
+    "aliases": [],
+    "price": 75,
+    "spec": "1200*3000",
+    "thickness": "2-4mm",
+    "weight": "20.5kg/块",
+    "condition": "",
+    "note": "2026.1月新品",
+    "importantNote": false,
+    "sourceRow": 244
+  },
+  {
+    "id": "mll-245",
+    "name": "罗马柱",
+    "aliases": [],
+    "price": 75,
+    "spec": "1200*3000",
+    "thickness": "2-6mm",
+    "weight": "36kg/块",
+    "condition": "",
+    "note": "2026.1月新品",
+    "importantNote": false,
+    "sourceRow": 245
+  },
+  {
+    "id": "mll-246",
+    "name": "罗马柱拼板",
+    "aliases": [],
+    "price": 75,
+    "spec": "620*1220",
+    "thickness": "2-10mm",
+    "weight": "7.5KG/块",
+    "condition": "",
+    "note": "2026.2月新品",
+    "importantNote": false,
+    "sourceRow": 246
+  },
+  {
+    "id": "mll-247",
+    "name": "碎石板",
+    "aliases": [],
+    "price": 75,
+    "spec": "1200*3000",
+    "thickness": "4mm",
+    "weight": "22.5kg/块",
+    "condition": "",
+    "note": "2026.1月新品",
+    "importantNote": false,
+    "sourceRow": 247
+  },
+  {
+    "id": "mll-248",
+    "name": "月球石",
+    "aliases": [],
+    "price": 75,
+    "spec": "1200*3000",
+    "thickness": "5mm",
+    "weight": "18kg/块",
+    "condition": "",
+    "note": "2026.1月新品",
+    "importantNote": false,
+    "sourceRow": 248
+  },
+  {
+    "id": "mll-249",
+    "name": "油业岩",
+    "aliases": [],
+    "price": 75,
+    "spec": "1200*2900",
+    "thickness": "3-8mm",
+    "weight": "18kg/块",
+    "condition": "",
+    "note": "2026.1月新品",
+    "importantNote": false,
+    "sourceRow": 249
+  },
+  {
+    "id": "mll-250",
+    "name": "页岩石",
+    "aliases": [],
+    "price": 75,
+    "spec": "1200*2900",
+    "thickness": "4mm",
+    "weight": "23.5kg/块",
+    "condition": "",
+    "note": "2026.1月新品",
+    "importantNote": false,
+    "sourceRow": 250
+  },
+  {
+    "id": "mll-251",
+    "name": "流星雨",
+    "aliases": [],
+    "price": 80,
+    "spec": "1200*2900",
+    "thickness": "2-10mm",
+    "weight": "31.5kg/块",
+    "condition": "",
+    "note": "2026.1月新品",
+    "importantNote": false,
+    "sourceRow": 251
+  }
+];
+
   const ningboWeightRules = [
     { keys: ["脉络石", "圆线石"], kgPerSqm: 10, thickness: 8, family: "" },
     { keys: ["3d新版洞石", "新版洞石"], kgPerSqm: 7, thickness: 4.5, family: "洞石" },
@@ -227,6 +2233,58 @@
     return Array.from(groups.values());
   }
 
+  function groupedMeililaiCatalog() {
+    const groups = new Map();
+    meililaiProductCatalog.forEach((item) => {
+      const key = normalizeNingboText(item.name);
+      if (!groups.has(key)) {
+        groups.set(key, {
+          name: item.name,
+          aliases: [],
+          variants: []
+        });
+      }
+      const target = groups.get(key);
+      (item.aliases || []).forEach((alias) => {
+        if (alias && !target.aliases.includes(alias)) target.aliases.push(alias);
+      });
+      target.variants.push({ ...item });
+    });
+    return Array.from(groups.values());
+  }
+
+  function meililaiPackagingFee(products) {
+    const items = (Array.isArray(products) ? products : []).filter((item) => Number(item?.qty) > 0);
+    const totalQty = items.reduce((sum, item) => sum + Math.max(0, Number(item.qty) || 0), 0);
+    if (!totalQty || totalQty >= 5) {
+      return { amount: 0, name: "", totalQty, confirmed: true, rule: totalQty >= 5 ? "合计5片及以上免包装费" : "" };
+    }
+
+    let requiredAmount = 0;
+    for (const item of items) {
+      const values = String(item.specText || item.spec || "").replace(/[×xX]/g, "*").match(/\d+(?:\.\d+)?/g) || [];
+      if (values.length < 2) {
+        return { amount: 0, name: "", totalQty, confirmed: false, rule: "规格无法识别，请人工确认包装费" };
+      }
+      const first = Number(values[0]);
+      const second = Number(values[1]);
+      const longSide = Math.max(first, second);
+      const shortSide = Math.min(first, second);
+      const itemAmount = shortSide <= 650 ? (longSide <= 1500 ? 10 : 100) : 200;
+      requiredAmount = Math.max(requiredAmount, itemAmount);
+    }
+
+    return {
+      amount: requiredAmount,
+      name: requiredAmount === 10 ? "纸箱费" : "木箱费",
+      totalQty,
+      confirmed: true,
+      rule: requiredAmount === 10
+        ? "600*1200类纸箱10元"
+        : (requiredAmount === 100 ? "600*2400类木箱100元" : "1200*2400及大板类木箱200元")
+    };
+  }
+
   function isLiujinProductName(value) {
     const text = String(value || "").replace(/\s+/g, "").toLowerCase();
     if (!text) return false;
@@ -285,8 +2343,10 @@
     sandstoneSpecs,
     concretePriceTable,
     ningboProductCatalog,
+    meililaiProductCatalog,
     ningboWeightRules,
     groupedNingboCatalog,
+    groupedMeililaiCatalog,
     normalizeNingboSpec,
     findNingboVariant,
     findNingboWeightProfile,
@@ -294,6 +2354,7 @@
     findLiujinSeriesPrice,
     concrete168PackagingNote,
     specAreaSquareMeters,
-    concrete168PackagingFee
+    concrete168PackagingFee,
+    meililaiPackagingFee
   };
 })();

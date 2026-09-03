@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
   <title>快速查价</title>
   <style>
     :root { color-scheme: light; --bg:#f5f7f4; --panel:#fff; --ink:#17201b; --muted:#65716a; --line:#d8e0da; --accent:#1f7a52; --soft:#e7f4ed; --gold:#b78324; --shadow:0 16px 42px rgba(22,40,30,.11); }
@@ -554,11 +555,11 @@
 </head>
 <body>
   <main>
-    <div class="topbar"><div><h1>快速查价</h1><p class="subtitle">输入产品关键词，快速查看各规格价格；鎏金板同时显示底价与最低售价。</p></div><div class="pill">按关键词查价格</div></div>
+    <div class="topbar"><div><h1>快速查价</h1><p class="subtitle">输入产品关键词，快速查看鎏金板、宁波柔岩、美利来和混凝土各规格价格；鎏金板同时显示底价与最低售价。</p></div><div class="pill">按关键词查价格</div></div>
     <section class="panel search-panel"><label for="query">产品关键词</label><div class="search-wrap"><input id="query" autocomplete="off" placeholder="例如 雪岩 / 拉丝 / 仿金属 / 星月石"><button id="clearSearchBtn" class="search-clear" type="button">清空</button><div id="suggestions" class="suggestions"></div></div><div class="quick-tags" id="quickTags"></div></section>
     <section id="results" class="results"><div class="panel empty">输入关键词后显示价格。比如输入“仿”会出现“仿金属”，点击后显示硬质、软质各规格的底价与最低售价。</div></section>
   </main>
-  <script src="product-data.js?v=20260824-1"></script>
+  <script src="product-data.js?v=20260903-1"></script>
   <script>
     const productData = window.JieGeProductData;
     const specs = productData.liujinSpecs;
@@ -715,53 +716,9 @@
       { series: '砂岩系列', specs: [{ size:'1200*600', sales:130 }, { size:'2400*1200', sales:140 }] },
       { series: '仿清水混凝土', specs: [{ size:'1200*600', sales:135 }, { size:'2400*1200', sales:150 }] }
     ];
-    const meililaiRows = [
-      { name:'劈开砖', price:31, specs:[{ size:'60*240', thickness:'2-3mm', weight:'25KG/箱' }] },
-      { name:'连体砖', price:45, specs:[{ size:'400*2300', thickness:'2-3mm', weight:'3.5KG/块' }, { size:'1210*2300', thickness:'2-3mm', weight:'10KG/块' }] },
-      { name:'辰美新线石', price:47, specs:[{ size:'1200*2400', thickness:'2-3mm', weight:'12KG/块' }, { size:'1200*3000', thickness:'2-3mm', weight:'15KG/块' }] },
-      { name:'标准新线石', price:55, aliases:['标准新线石美利来非特价产品'], specs:[{ size:'590*1200', thickness:'2-3mm', weight:'3KG/块' }, { size:'590*2400', thickness:'2-3mm', weight:'6KG/块' }, { size:'1190*2400', thickness:'2-3mm', weight:'12KG/块' }, { size:'600*3240', thickness:'2-3mm', weight:'8KG/块' }, { size:'1200*3230', thickness:'2-3mm', weight:'16KG/块' }] },
-      { name:'阡陌石', price:67, specs:[{ size:'590*1190', thickness:'3-5mm', weight:'4.1KG/块' }, { size:'590*2390', thickness:'3-5mm', weight:'8.3KG/块' }, { size:'1190*2390', thickness:'3-5mm', weight:'16.7KG/块' }, { size:'1200*3000', thickness:'3-5mm', weight:'24KG/块' }] },
-      { name:'大星月（小版）', price:67, aliases:['星月小版'], specs:[{ size:'600*1200', thickness:'3-7mm', weight:'8KG/块' }] },
-      { name:'月球石', price:75, aliases:['大星月石'], specs:[{ size:'1170*3230', thickness:'3-7mm', weight:'30KG/块' }] },
-      { name:'小魔方', price:67, specs:[{ size:'300*600', thickness:'2-3mm', weight:'1.35KG/块' }] },
-      { name:'水泥板', price:67, specs:[{ size:'550*2760', thickness:'3-4mm', weight:'7.5KG/块' }, { size:'1100*2760', thickness:'3-4mm', weight:'15KG/块' }] },
-      { name:'双线脉络石', price:67, specs:[{ size:'580*2650', thickness:'3-5mm', weight:'11KG' }, { size:'1175*2650', thickness:'3-5mm', weight:'22KG/块' }] },
-      { name:'大板脉络石', price:67, specs:[{ size:'1200*3000', thickness:'3-5mm', weight:'25KG/块' }] },
-      { name:'鎏金板（软板）', price:90, aliases:['鎏金软板'], specs:[{ size:'1200*2950', thickness:'2-3mm', weight:'17.5KG/块' }] },
-      { name:'鎏金板（硬板）', price:90, aliases:['鎏金硬板'], specs:[{ size:'1220*2440', thickness:'3mm/5mm/8mm', weight:'18KG/块（5mm）' }, { size:'1220*3000', thickness:'3mm/5mm/8mm', weight:'22KG/块（5mm）' }] },
-      { name:'波浪石', price:80, specs:[{ size:'1200*2750', thickness:'3-6mm', weight:'22KG/块' }] },
-      { name:'洞石波浪板', price:80, specs:[{ size:'600*1200', thickness:'3-6mm', weight:'5KG/块' }] },
-      { name:'小洞石', price:50, aliases:['美利来非特价产品', '洞石'], specs:[{ size:'1190*2390', thickness:'2-3mm', weight:'14KG/块' }, { size:'1200*2880', thickness:'2-3mm', weight:'16KG/块' }] },
-      { name:'虫洞石', price:75, aliases:['洞石'], specs:[{ size:'1175*2340', thickness:'5mm', weight:'20KG/块' }] },
-      { name:'鎏金洞石', price:55, aliases:['洞石'], specs:[{ size:'600*1200', thickness:'2-3mm', weight:'3KG/块' }, { size:'600*2400', thickness:'2-3mm', weight:'6KG/块' }, { size:'1200*2400', thickness:'2-3mm', weight:'12KG/块' }] },
-      { name:'打印款洞石', price:55, aliases:['洞石'], specs:[{ size:'600*1200', thickness:'2-3mm', weight:'3.5KG/块' }, { size:'580*1200（老版）', thickness:'2-3mm', weight:'3KG/块' }] },
-      { name:'打印款洞石', price:60, aliases:['洞石'], specs:[{ size:'600*2400', thickness:'2-3mm', weight:'7KG/块' }, { size:'1200*2400', thickness:'2-3mm', weight:'14KG/块' }] },
-      { name:'打印款洞石', price:70, aliases:['洞石'], specs:[{ size:'600*2880', thickness:'2-3mm', weight:'8KG/块' }, { size:'1200*2880', thickness:'2-3mm', weight:'16KG/块' }, { size:'1200*3000（辰美尺寸）', thickness:'2-3mm', weight:'17.5KG/块' }] },
-      { name:'辰美小星月', price:40, aliases:['辰美英安岩'], specs:[{ size:'600*1200', thickness:'2-3mm', weight:'3KG/块' }, { size:'1200*2400', thickness:'2-3mm', weight:'12KG/块' }, { size:'1200*3000', thickness:'2-3mm', weight:'15KG/块' }] },
-      { name:'小星月', price:47, aliases:['辰美英安岩'], specs:[{ size:'600*1200', thickness:'2-3mm', weight:'3KG/块' }, { size:'1200*2400', thickness:'2-3mm', weight:'12KG/块' }, { size:'1200*3000', thickness:'2-3mm', weight:'15KG/块' }] },
-      { name:'毛面花岗岩', price:45, specs:[{ size:'580*1200', thickness:'2-3mm', weight:'2.8KG/块' }, { size:'1180*2400', thickness:'2-3mm', weight:'11.5KG/块' }] },
-      { name:'毛面花岗岩', price:51, specs:[{ size:'580*1200', thickness:'2-3mm', weight:'2.8KG/块' }, { size:'1180*2400', thickness:'2-3mm', weight:'11.5KG/块' }] },
-      { name:'鲁班木', price:67, specs:[{ size:'600*2780', thickness:'3mm', weight:'9KG/块' }, { size:'1200*2780', thickness:'3mm', weight:'18KG/块' }] },
-      { name:'皮革纹/鎏金软底板', price:67, specs:[{ size:'1200*3000', thickness:'3mm', weight:'17.5KG/块' }] },
-      { name:'皮革纹打印款', price:80, specs:[{ size:'1200*3000', thickness:'3mm', weight:'18KG/块' }] },
-      { name:'碳化木', price:73, specs:[{ size:'1200*2800', thickness:'3mm', weight:'20KG/块' }] },
-      { name:'星云石', price:67, specs:[{ size:'1200*2800', thickness:'3-5mm', weight:'18.6KG/块' }, { size:'1200*3000', thickness:'3-5mm', weight:'20KG/块' }] },
-      { name:'斧开石', price:75, specs:[{ size:'1200*3000', thickness:'3-5mm', weight:'27KG/块' }] },
-      { name:'榉木板', price:67, specs:[{ size:'1200*3000', thickness:'3mm', weight:'22KG/块' }] },
-      { name:'洞石马赛克', price:87, specs:[{ size:'600*3000', thickness:'3-6mm', weight:'14KG/块' }, { size:'1175*2950', thickness:'3-6mm', weight:'28KG/块' }] },
-      { name:'发泡铝', price:80, specs:[{ size:'1100*2750', thickness:'3mm', weight:'24KG/块' }] },
-      { name:'珊瑚石', price:93, specs:[{ size:'1200*2950', thickness:'3-8mm', weight:'38KG/块' }] },
-      { name:'树皮纹', price:73, specs:[{ size:'1200*3000', thickness:'2-3mm', weight:'20KG/块' }] },
-      { name:'木纹浇筑板', price:73, specs:[{ size:'1200*3000', thickness:'2-3mm', weight:'22KG/块' }] },
-      { name:'木纹', price:60, specs:[{ size:'165*1200', thickness:'2-3mm', weight:'1.16KG/块' }] },
-      { name:'大木纹板', price:73, specs:[{ size:'1200*2950', thickness:'2-3mm', weight:'20.5KG/块' }] },
-      { name:'新打印木纹', price:67, specs:[{ size:'600*1200', thickness:'2-3mm', weight:'5KG/块' }] },
-      { name:'新打印木纹', price:80, specs:[{ size:'1200*2950', thickness:'2-3mm', weight:'20.5KG/块' }] },
-      { name:'粗纹星云石', price:67, specs:[{ size:'1150*2850', thickness:'3-5mm', weight:'17.5KG/块' }] },
-      { name:'三棱砖', price:80, specs:[{ size:'1200*3200', thickness:'3-5mm', weight:'27KG/块' }] }
-    ];
+    const meililaiRows = productData.meililaiProductCatalog;
     const els = { query: document.querySelector('#query'), clearSearchBtn: document.querySelector('#clearSearchBtn'), suggestions: document.querySelector('#suggestions'), results: document.querySelector('#results'), quickTags: document.querySelector('#quickTags') };
-    const quickWordsDefault = ['鎏金板', 'NB柔岩板', '混凝土', '陨石板', '雪岩', '美岩', 'MLL柔岩板', '夯土板', '透光板', '坐凳', '拉丝', '洞石'];
+    const quickWordsDefault = ['鎏金板', 'NB柔岩板', '美利来', '混凝土', '陨石板', '雪岩', '美岩', '夯土板', '透光板', '坐凳', '拉丝', '洞石'];
     function esc(value) { return String(value ?? '').replace(/[&<>"']/g, (ch) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
     function normalize(value) { return String(value || '').replace(/[\s（）()、/·-]+/g, '').toLowerCase(); }
     function money(value) { const num = Number(value); if (value === '' || value === null || value === undefined || Number.isNaN(num)) return String(value ?? ''); return Number.isInteger(num) ? String(num) : String(num).replace(/\.?0+$/, ''); }
@@ -1012,32 +969,38 @@
       }];
     }
     function meililaiEntries() {
-      return meililaiRows.map((item) => ({
+      return productData.groupedMeililaiCatalog().map((item) => ({
         type:'meililai',
-        title:'MLL' + item.name,
-        aliases:[item.name, 'MLL' + item.name, '美利来' + item.name, '美丽来' + item.name, '美利来' + item.name, 'MLL', '美利来', '美丽来', '美利来', ...(item.aliases || [])],
+        title:item.name,
+        aliases:[item.name, 'MLL' + item.name, '美利来' + item.name, '美丽来' + item.name, ...(item.aliases || [])],
         warehouse:'美利来',
-        category:'MLL',
+        category:'柔岩板',
         unit:'平方单价 / 元每平',
-        note:'美利来产品。标题统一加 MLL；每行显示规格、厚度、重量。',
-        rows:item.specs.map((spec) => ({ label:'规格 ' + spec.size + ' · 厚度 ' + spec.thickness + ' · 重量 ' + spec.weight, price:item.price }))
+        note:[...new Set(item.variants.flatMap((variant) => [variant.condition, variant.note]).filter(Boolean))].join('；'),
+        rows:item.variants.map((variant) => ({
+          label:'规格 ' + specLabel(variant.spec) + (variant.condition ? ' · ' + variant.condition : ''),
+          subLabel:[variant.thickness ? '厚度 ' + variant.thickness : '', variant.weight ? '重量 ' + variant.weight : '', variant.note || ''].filter(Boolean).join(' · '),
+          price:variant.price
+        }))
       }));
     }
     function meililaiTableEntries() {
       const rows = [];
       meililaiRows.forEach((item) => {
-        item.specs.forEach((spec) => {
-          rows.push({ label:item.name + ' · 规格 ' + spec.size, subLabel:'厚度 ' + spec.thickness + ' · 重量 ' + spec.weight, price:item.price });
+        rows.push({
+          label:item.name + ' · 规格 ' + specLabel(item.spec) + (item.condition ? ' · ' + item.condition : ''),
+          subLabel:[item.thickness ? '厚度 ' + item.thickness : '', item.weight ? '重量 ' + item.weight : '', item.note || ''].filter(Boolean).join(' · '),
+          price:item.price
         });
       });
       return [{
         type:'meililai-table',
-        title:'MLL价格表',
+        title:'美利来价格表',
         aliases:['MLL', 'MLL柔岩板', 'MLL价格表', '美利来', '美丽来', '美利来价格表', '美丽来价格表'],
         warehouse:'美利来',
-        category:'MLL',
+        category:'柔岩板',
         unit:'平方单价 / 元每平',
-        note:'点击候选词“MLL”显示完整美利来价格表；搜索具体产品仍显示对应 MLL 产品。',
+        note:'价格统一读取《美利来价格明细表2026.4.13》；打印另加10元/㎡。搜索具体产品可查看规格、底价和备注。',
         rows
       }];
     }
