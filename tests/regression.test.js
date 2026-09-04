@@ -404,7 +404,7 @@ test("宁波重量提供多产品明细操作", () => {
 
 test("宁波重量同步开单模板的星云石产品", () => {
   const html = read("tools/ningbo-weight.html");
-  assert.match(html, /<script src="product-data\.js\?v=20260903-1"><\/script>/);
+  assert.match(html, /<script src="product-data\.js\?v=20260904-1"><\/script>/);
   assert.match(html, /"星云石": "星月石"/);
   assert.match(html, /"星云石B款": "星月石"/);
   assert.match(html, /JieGeProductData\?\.groupedNingboCatalog/);
@@ -522,6 +522,54 @@ test("宁波20圆柱和30内圆规格价格重量统一", () => {
   assert.deepEqual(JSON.parse(JSON.stringify(productData.findNingboWeightProfile("20圆柱", "3000*1200"))), { kgPerSqm: 8, thickness: 7, family: "" });
   assert.deepEqual(JSON.parse(JSON.stringify(productData.findNingboWeightProfile("30内圆", "3000*1200"))), { kgPerSqm: 8, thickness: 7, family: "" });
   assert.equal(productData.ningboProductCatalog.some((item) => item.name === "20内圆"), false);
+});
+
+test("宁波最新尺寸表同步22项且洞石系列保持原值", () => {
+  const productData = loadProductData();
+  const grouped = productData.groupedNingboCatalog();
+  const specsByName = Object.fromEntries(grouped.map((item) => [item.name, Array.from(item.specs)]));
+  const expected = {
+    "粗纹线石": ["2380*1180", "2360*580"],
+    "波浪": ["3000*1200"],
+    "中线石": ["1200*3000"],
+    "脊线石": ["3000*1200"],
+    "环型石": ["3000*1200"],
+    "三角板（山纹）": ["1200*3000"],
+    "圆铝": ["2360*1160"],
+    "马赛克": ["1190*2990"],
+    "方形马赛克": ["2950*1180"],
+    "条石拼接": ["2800*1200"],
+    "斧开石": ["3000*1200", "2300*560"],
+    "溶积岩": ["2950*1160"],
+    "平板": ["1160*2950", "1200*2400"],
+    "平面锈石": ["1160*2950", "1200*2400"],
+    "条石纹": ["2900*1000"],
+    "苹果叶": ["2950*1160"],
+    "芭蕉叶": ["2900*1150"],
+    "齿木纹": ["2950*1180"],
+    "岩板": ["1160*2950"],
+    "岩板3D": ["1160*2950"],
+    "大理石3D": ["1160*2950", "1200*2400"],
+    "山丘": ["2680*1180"]
+  };
+  Object.entries(expected).forEach(([name, specs]) => assert.deepEqual(specsByName[name], specs, name));
+
+  const caveStone = productData.ningboProductCatalog
+    .filter((item) => item.name.includes("洞石"))
+    .map((item) => ({ name: item.name, price: item.price, specs: Array.from(item.specs) }));
+  assert.deepEqual(JSON.parse(JSON.stringify(caveStone)), [
+    { name: "洞石", price: 70, specs: ["2800*1200", "2400*1200"] },
+    { name: "洞石", price: 50, specs: ["1200*600"] },
+    { name: "新洞石（密孔）", price: 70, specs: ["2380*1160"] },
+    { name: "海洞石", price: 75, specs: ["2400*1200"] },
+    { name: "新版洞石", price: 70, specs: ["3000*1200", "2400*1200"] },
+    { name: "洞石拼接", price: 100, specs: ["3000*1200"] },
+    { name: "3D洞石", price: 75, specs: ["1200*2400", "1200*2800"] },
+    { name: "3D洞石", price: 55, specs: ["1200*600"] },
+    { name: "3D新版洞石", price: 75, specs: ["1200*2400", "1200*2800", "1200*3000"] },
+    { name: "3D新版洞石", price: 55, specs: ["1200*600"] }
+  ]);
+  assert.equal(fs.existsSync(path.join(root, "docs/柔岩板价格表_最终尺寸替换版.xlsx")), true);
 });
 
 test("混凝土价格使用公共表且手工单价不会被自动覆盖", () => {
@@ -691,7 +739,7 @@ test("快速查价同步松诺与168附加费用说明", () => {
 
 test("四个宁波业务页面共同读取最新产品数据", () => {
   for (const file of ["tools/order-template.html", "tools/quick-price.html", "tools/quote-generator.html", "tools/ningbo-weight.html"]) {
-    assert.match(read(file), /<script src="product-data\.js\?v=20260903-1"><\/script>/, file);
+    assert.match(read(file), /<script src="product-data\.js\?v=20260904-1"><\/script>/, file);
   }
 });
 
@@ -831,7 +879,7 @@ test("上墙排版支持板间留缝且墙体四周不扣缝", () => {
 
 test("主页版本号和所有工具入口完整", () => {
   const index = read("index.html");
-  assert.match(index, /v2026\.09\.03\.4/);
+  assert.match(index, /v2026\.09\.04\.1/);
   const routeMatch = index.match(/const toolPaths = (\{[^;]+\});/);
   assert.ok(routeMatch, "未找到工具入口表");
   const routes = JSON.parse(routeMatch[1]);
