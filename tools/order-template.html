@@ -2562,8 +2562,8 @@
                   </div>
                 </div>
                 <div class="ningbo-hint">选择表格产品后自动带出规格和平方单价；也可直接在下方规格框里手填规格。</div>
-                <div class="catalog-product-note hidden"></div>
               </div>
+              <div class="wide catalog-product-note hidden"></div>
               <div>
                 <label class="field-label" for="otherSpecText">其它品类规格</label>
                 <input id="otherSpecText" class="other-spec-text" placeholder="例如 1200*3000">
@@ -3065,10 +3065,10 @@
 
   <datalist id="ningboProductList"></datalist>
 
-  <script src="product-data.js?v=20260904-1"></script>
+  <script src="product-data.js?v=20260905-1"></script>
   <script src="shunxin-rates.js?v=20260815-1"></script>
   <script src="freight-gold-core.js?v=20260824-1"></script>
-  <script src="ningbo-freight-core.js?v=20260713-2"></script>
+  <script src="ningbo-freight-core.js?v=20260905-1"></script>
   <script>
     const productData = window.JieGeProductData;
     const specs = productData.liujinSpecs;
@@ -3538,6 +3538,9 @@
           row.sqmPrice.dataset.manualOverride = "0";
         }
         row.sqmPrice.dataset.autoPrice = String(match.price);
+      } else {
+        if (row.sqmPrice.dataset.manualOverride !== "1" && row.sqmPrice.value === previousAutoPrice) row.sqmPrice.value = "";
+        delete row.sqmPrice.dataset.autoPrice;
       }
       row.priceHint.textContent = row.sqmPrice.dataset.manualOverride === "1"
         ? `${match.hint}；当前使用手工单价，清空后恢复自动价。`
@@ -4020,8 +4023,8 @@
                 </div>
               </div>
               <div class="ningbo-hint">选择表格产品后自动带出规格和平方单价；也可直接在下方规格框里手填规格。</div>
-              <div class="catalog-product-note hidden"></div>
             </div>
+            <div class="wide catalog-product-note hidden"></div>
             <div>
               <label class="field-label" for="otherSpecText${index}">其它品类规格</label>
               <input id="otherSpecText${index}" class="other-spec-text" placeholder="例如 1200*2400mm">
@@ -4990,7 +4993,19 @@
       const showTools = isCatalogWarehouseActive() && Boolean(product);
       row.matchTools?.classList.toggle("hidden", !showTools);
       row.catalogNote?.classList.add("hidden");
-      if (!showTools) return;
+      if (!showTools) {
+        if (isCatalogWarehouseActive()) {
+          if (row.sqmPrice.dataset.manualOverride !== "1" && row.sqmPrice.value === row.sqmPrice.dataset.autoPrice) row.sqmPrice.value = "";
+          delete row.sqmPrice.dataset.autoPrice;
+          if (row.matchTools) delete row.matchTools.dataset.product;
+          [row.printAddon, row.uvAddon, row.metalAddon].forEach((input) => { if (input) input.checked = false; });
+          if (row.catalogNote && row.productName.value.trim()) {
+            row.catalogNote.textContent = "未匹配到价格表产品，请人工核对规格并填写单价，不能沿用上一款自动价。";
+            row.catalogNote.classList.remove("hidden");
+          }
+        }
+        return;
+      }
 
       row.catalogSpecLabel && (row.catalogSpecLabel.textContent = isMeililai ? "美利来规格选择" : "宁波规格选择");
       row.ningboOnlyAddons?.forEach((item) => item.classList.toggle("hidden", isMeililai));
@@ -5105,7 +5120,7 @@
           family: profile.family
         };
       }).filter(Boolean);
-      if (!items.length) return { manual: true, warnings };
+      if (warnings.length || !items.length) return { manual: true, warnings };
       const result = window.NingboFreightCore.calculateShipment(items);
       return result ? { ...result, warnings } : null;
     }

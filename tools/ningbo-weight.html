@@ -1072,7 +1072,7 @@
       <h1>宁波重量快速计算</h1>
       <div class="hint">输入产品关键字，选择规格和数量后自动计算板重、总重和木箱尺寸。</div>
     </div>
-    <div class="source">数据来自：平方重量厚度(1).docx</div>
+    <div class="source">重量依据：平方重量厚度；规格同步最新价格表</div>
   </header>
 
   <main>
@@ -1080,7 +1080,7 @@
       <div class="search-row">
         <label for="search">产品搜索</label>
         <input id="search" autocomplete="off" placeholder="例如：脉、脉络石、圆线石">
-        <div class="hint">支持连续关键字和单字匹配。输入“脉”会匹配“圆线石脉络石”。</div>
+        <div class="hint">支持产品名称和旧名称搜索；输入“脉”或“圆线石”会匹配“脉络石”。</div>
       </div>
       <div id="productList" class="list"></div>
     </section>
@@ -1206,8 +1206,8 @@
     </section>
   </main>
 
-  <script src="product-data.js?v=20260904-1"></script>
-  <script src="ningbo-freight-core.js?v=20260713-2"></script>
+  <script src="product-data.js?v=20260905-1"></script>
+  <script src="ningbo-freight-core.js?v=20260905-1"></script>
   <script>
     const products = [
       {
@@ -2061,6 +2061,7 @@
       "3D洞石": { default: "洞石", sizeSources: { "1200*600": "小洞石" } },
       "3D新版洞石": "新款洞石",
       "粗纹线石": "粗线石",
+      "粗纹线石B款": "B款粗线石",
       "炭烧木": "碳化木",
       "大竹纹（凸模）": "凸竹纹",
       "大竹纹（凹模）": "凹竹纹",
@@ -2098,11 +2099,12 @@
     };
 
     const ningboCatalog = window.JieGeProductData?.groupedNingboCatalog?.() || [];
+    const weightSourceProducts = [...products];
     ningboCatalog.forEach((catalogProduct) => {
       const alias = weightProductAliases[catalogProduct.name] || catalogProduct.name;
       const sourceName = typeof alias === "string" ? alias : alias.default;
-      const exactCandidates = products.filter((product) => product.name === catalogProduct.name);
-      const sourceCandidates = products.filter((product) => product.name === sourceName);
+      const exactCandidates = weightSourceProducts.filter((product) => product.name === catalogProduct.name);
+      const sourceCandidates = weightSourceProducts.filter((product) => product.name === sourceName);
       const candidates = [...exactCandidates, ...sourceCandidates.filter((item) => !exactCandidates.includes(item))];
       const source = candidates.find((product) =>
         product.sizes.some((size) => catalogProduct.specs.includes(size))
@@ -2120,7 +2122,7 @@
       }
       const sizeProfiles = Object.fromEntries(catalogProduct.specs.map((spec) => {
         const specSourceName = typeof alias === "string" ? alias : (alias.sizeSources?.[spec] || alias.default);
-        const specCandidates = products.filter((product) => product.name === specSourceName);
+        const specCandidates = weightSourceProducts.filter((product) => product.name === specSourceName);
         const specSource = [...exactCandidates, ...specCandidates].find((product) => product.sizes.includes(spec)) || specCandidates[0] || source;
         return [spec, { kgPerSqm: specSource.kgPerSqm, thickness: specSource.thickness }];
       }));
@@ -2142,6 +2144,14 @@
         products.push(synchronized);
       }
     });
+
+    // 旧名称继续作为检索别名，不再作为可选产品暴露过期尺寸。
+    const catalogNames = new Set(ningboCatalog.map((item) => item.name));
+    const supersededNames = new Set(Object.values(weightProductAliases)
+      .filter((name) => typeof name === "string" && !name.includes("洞石") && !catalogNames.has(name)));
+    for (let index = products.length - 1; index >= 0; index -= 1) {
+      if (supersededNames.has(products[index].name)) products.splice(index, 1);
+    }
 
     const els = {
       search: document.querySelector("#search"),
@@ -2206,6 +2216,9 @@
     }
 
     function sizeProfile(product, size) {
+      if (catalogNames.has(product.name) && !product.name.includes("洞石")) {
+        return window.JieGeProductData.findNingboWeightProfile(product.name, size) || { kgPerSqm: "", thickness: "" };
+      }
       return product.sizeProfiles?.[size] || { kgPerSqm: product.kgPerSqm, thickness: product.thickness };
     }
 
@@ -2378,20 +2391,21 @@
 
     function renderProducts() {
       const query = els.search.value;
-      const matches = productListCollapsed ? [selectedProduct] : products.filter(product => fuzzyMatch(product.name, query));
+      const matches = productListCollapsed ? [selectedProduct] : products.filter(product => fuzzyMatch(`${product.name} ${product.sourceName || ""}`, query));
       els.productList.innerHTML = "";
       if (!matches.length) {
         els.productList.innerHTML = '<div class="empty">没有找到匹配产品</div>';
         return;
       }
       matches.forEach(product => {
+        const profile = sizeProfile(product, product.sizes[0]);
         const button = document.createElement("button");
         button.className = `product${product === selectedProduct ? " active" : ""}`;
         button.innerHTML = `
           <div class="product-name">${product.name}</div>
           <div class="product-meta">
-            <span>${product.unsupported ? "厚度待人工填写" : `厚度 ${product.thickness}mm`}</span>
-            <span>${product.unsupported ? "重量待人工填写" : `${product.kgPerSqm}kg/㎡`}</span>
+            <span>${profile.thickness ? `厚度 ${profile.thickness}mm` : "厚度待人工填写"}</span>
+            <span>${profile.kgPerSqm ? `${profile.kgPerSqm}kg/㎡（首个规格）` : "重量待人工填写"}</span>
             <span>${product.sizes.join("、")}</span>
           </div>
         `;
@@ -2555,8 +2569,8 @@
       const kgPerSqm = params.get("kgPerSqm");
 
       if (productQuery) {
-        const found = products.find(product => fuzzyMatch(product.name, productQuery) && (!sizeQuery || product.sizes.includes(sizeQuery)))
-          || products.find(product => fuzzyMatch(product.name, productQuery));
+        const found = products.find(product => fuzzyMatch(`${product.name} ${product.sourceName || ""}`, productQuery) && (!sizeQuery || product.sizes.includes(sizeQuery)))
+          || products.find(product => fuzzyMatch(`${product.name} ${product.sourceName || ""}`, productQuery));
         if (found) selectedProduct = found;
       }
       els.search.value = query;

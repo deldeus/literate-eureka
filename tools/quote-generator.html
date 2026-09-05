@@ -1701,7 +1701,7 @@
               <input id="accessoryFee" type="number" min="0" step="1" value="0" placeholder="不填为 0">
             </div>
             <div class="field">
-              <label for="manualTaxFee">税金（元，可手填）</label>
+              <label for="manualTaxFee">税金（元，手填金额优先计入）</label>
               <input id="manualTaxFee" type="number" min="0" step="1" value="0" placeholder="不填则按税率">
             </div>
           </div>
@@ -1713,7 +1713,7 @@
             </div>
             <div class="inline">
               <input id="includeTax" type="checkbox">
-              <label for="includeTax">报价含税金</label>
+              <label for="includeTax">按税率自动计税（手填税金优先）</label>
             </div>
           </div>
 
@@ -1763,8 +1763,10 @@
             <button id="copyBtn" type="button">复制报价</button>
             <button id="historyBtn" class="secondary" type="button">历史记录</button>
             <button id="resetBtn" class="secondary" type="button">重置选项</button>
+            <button id="resumeQuoteAuto" class="secondary" type="button" hidden>恢复自动生成</button>
           </div>
         </div>
+        <p id="quoteEditStatus" class="hint" hidden>正文已手动编辑，表单修改暂不覆盖正文；复制前请核对金额，或点击“恢复自动生成”。</p>
         <div id="quote" class="quote" contenteditable="true" spellcheck="false" aria-label="可编辑报价单正文"></div>
       </section>
 
@@ -1857,7 +1859,7 @@
     </section>
   </main>
 
-  <script src="product-data.js?v=20260904-1"></script>
+  <script src="product-data.js?v=20260905-1"></script>
   <script src="shunxin-rates.js?v=20260815-1"></script>
   <script src="freight-gold-core.js?v=20260824-1"></script>
   <script>
@@ -2367,6 +2369,7 @@
     }
 
     function renderSingle() {
+      syncProductQuickSpecs();
       const product = els.product.value.trim();
       const spec = els.spec.value.trim();
       const quantity = money(els.quantity.value);
@@ -2381,7 +2384,6 @@
       const includeTax = els.includeTax.checked;
       const freightFee = includeFreight ? enteredFreightFee : 0;
       const specSize = parseSpec(spec);
-      syncProductQuickSpecs();
       els.taxBox.hidden = !includeTax;
       els.includeFreight.checked = includeFreight;
       els.originalPriceLabel.textContent = isSheetPricing ? "原价（元/张，可不填）" : "原价（元/平方，可不填）";
@@ -2402,7 +2404,7 @@
       pushExtraFeeLines(lines, extraFees);
       lines.push(`总计：${total}元`, "", buildNote(extraFees.taxFee > 0 || includeTax, includeFreight));
       appendExtra(lines);
-      els.quote.textContent = lines.join("\n");
+      if (!quoteManuallyEdited) els.quote.textContent = lines.join("\n");
       const calcPrefix = isSheetPricing ? "按张材料原价" : "按平方材料原价";
       const extraText = extraFeeCalcText(extraFees);
       els.calcLine.innerHTML = `${calcPrefix}：<strong>${rawMaterial.toFixed(3)}</strong>，取整后：<strong>${materialFee}</strong>${extraText ? `；${extraText}` : ""}；总计：<strong>${total}</strong>`;
@@ -2441,7 +2443,7 @@
       pushExtraFeeLines(lines, extraFees);
       lines.push(`总计：${total}元`, "", buildNote(extraFees.taxFee > 0 || includeTax, freightTotal > 0));
       appendExtra(lines);
-      els.quote.textContent = lines.join("\n");
+      if (!quoteManuallyEdited) els.quote.textContent = lines.join("\n");
       const extraText = extraFeeCalcText(extraFees);
       els.multiCalcLine.innerHTML = `材料合计：<strong>${materialTotal}</strong>；木箱合计：<strong>${boxTotal}</strong>；运费合计：<strong>${freightTotal}</strong>${extraText ? `；${extraText}` : ""}；总计：<strong>${total}</strong>`;
     }
@@ -2449,6 +2451,13 @@
     function appendExtra(lines) {
       const extra = els.noteExtra.value.trim();
       if (extra) lines.push("", extra);
+    }
+
+    let quoteManuallyEdited = false;
+    function setQuoteManualMode(manual) {
+      quoteManuallyEdited = manual;
+      document.querySelector("#resumeQuoteAuto").hidden = !manual;
+      document.querySelector("#quoteEditStatus").hidden = !manual;
     }
 
     function render() {
@@ -2492,6 +2501,7 @@
 
     function applyState(state) {
       if (!state) return;
+      setQuoteManualMode(false);
       els.multiMode.checked = !!state.multiMode;
       els.includeTax.checked = !!state.includeTax;
       els.customTax.value = state.customTax ?? 10;
@@ -2561,6 +2571,7 @@
     function hideHistory() { document.body.classList.remove("history-open"); }
 
     function resetQuoteForm() {
+      setQuoteManualMode(false);
       els.multiMode.checked = false;
       els.includeFreight.checked = false;
       els.includeTax.checked = false;
@@ -2611,7 +2622,9 @@
       selectNingboProduct(button.dataset.product || "");
     });
 
-    document.addEventListener("input", (event) => { if (event.target === els.quote || event.target === els.quoteFreightAddress) return; if (event.target === els.spec) syncQuickSpec(); render(); });
+    els.quote.addEventListener("input", () => setQuoteManualMode(true));
+    document.querySelector("#resumeQuoteAuto").addEventListener("click", () => { setQuoteManualMode(false); render(); });
+    document.addEventListener("input", (event) => { if (event.target === els.quote || els.quote.contains(event.target) || event.target === els.quoteFreightAddress) return; if (event.target === els.spec) syncQuickSpec(); render(); });
     document.addEventListener("change", (event) => { if (event.target === els.spec) syncQuickSpec(); render(); });
 
     els.multiProducts.addEventListener("click", (event) => {
@@ -2680,7 +2693,7 @@
       const item = items.find((entry) => entry.id === itemEl.dataset.id);
       if (!item) return;
       if (event.target.closest(".delete-history")) { writeHistory(items.filter((entry) => entry.id !== item.id)); renderHistory(); return; }
-      if (event.target.closest(".load-history")) { applyState(item.state); els.quote.textContent = item.quote; hideHistory(); }
+      if (event.target.closest(".load-history")) { applyState(item.state); els.quote.textContent = item.quote; setQuoteManualMode(true); hideHistory(); }
     });
     function preventNumberInputWheelChange() {
       document.addEventListener("wheel", (event) => {

@@ -600,14 +600,15 @@ function parseInput(text) {
   const rows = text
     .replace(/[×Xx]/g, '*')
     .replace(/[，,；;]/g, '\n')
-    .split(/\n|\s{2,}/)
+    .split(/\n|\s+(?=\d+(?:\.\d+)?\s*\*)/)
     .map(s => s.trim())
     .filter(Boolean);
 
   const parsed = [];
   for (const row of rows) {
-    const m = row.match(/(\d+(?:\.\d+)?)\s*\*\s*(\d+(?:\.\d+)?)\s*=\s*(\d+)/);
+    const m = row.match(/^(\d+(?:\.\d+)?)\s*\*\s*(\d+(?:\.\d+)?)\s*=\s*(\d+)$/);
     if (!m) throw new Error('无法识别这一行：' + row + '，请使用 318*771=20 这种格式');
+    if (![Number(m[1]), Number(m[2])].every(n => Number.isFinite(n) && n > 0) || !Number.isSafeInteger(Number(m[3])) || Number(m[3]) <= 0) throw new Error('尺寸必须大于0，数量必须为正整数：' + row);
     parsed.push({ w: Number(m[1]), h: Number(m[2]), qty: Number(m[3]), label: `${Number(m[1])}×${Number(m[2])}` });
   }
   if (!parsed.length) throw new Error('请先输入规格和数量');
@@ -784,7 +785,8 @@ function run() {
     const boardH = Number(document.getElementById('boardH').value);
     const gap = Number(document.getElementById('gap').value || 0);
     const allowRotate = document.getElementById('rotate').value === 'yes';
-    if (!boardW || !boardH) throw new Error('整板尺寸不能为空');
+    if (![boardW, boardH].every(n => Number.isFinite(n) && n > 0)) throw new Error('整板尺寸必须大于0');
+    if (!Number.isFinite(gap) || gap < 0) throw new Error('锯缝不能为负数');
     const items = expandItems(parsed, gap);
     for (const it of items) {
       const fits = (it.w <= boardW && it.h <= boardH) || (allowRotate && it.h <= boardW && it.w <= boardH);
@@ -794,12 +796,16 @@ function run() {
     if (!result) throw new Error('未能完成排版，请检查规格或减少锯缝');
     render(parsed, items, result, boardW, boardH, gap, allowRotate);
   } catch(e) {
+    document.getElementById('summary').innerHTML = '';
+    document.getElementById('boards').innerHTML = '';
     err.innerText = e.message;
     err.style.display = 'block';
   }
 }
 
 function clearInput() {
+  document.getElementById('err').textContent = '';
+  document.getElementById('err').style.display = 'none';
   document.getElementById('input').value = '';
   document.getElementById('summary').innerHTML = '';
   document.getElementById('boards').innerHTML = '';

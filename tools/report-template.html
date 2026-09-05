@@ -1758,7 +1758,7 @@
     }
 
     function hasProvincePrefix(text) {
-      return provinceNames.some((province) => text.startsWith(province));
+      return provinceNames.some((province) => text.startsWith(province) && !/^[路街巷道]/.test(text.slice(province.length)));
     }
 
     function normalizeCityName(text) {
@@ -1771,12 +1771,18 @@
         return { text: "", label: "未匹配", matched: false };
       }
 
+      const explicitProvinces = provinceNames.filter(province => {
+        const suffix = municipalities.has(province) ? "(?:市|特别行政区)" : "(?:省|壮族自治区|回族自治区|维吾尔自治区|自治区)";
+        return new RegExp(province + suffix).test(value);
+      });
+      if (explicitProvinces.length > 1) return { text: value, label: "多个省份，请人工确认", matched: false };
+
       if (hasProvincePrefix(value)) {
         return { text: value, label: "已含省份", matched: true };
       }
 
-      const compact = normalizeCityName(value);
-      const city = Object.keys(provinceByCity).find((item) => compact.startsWith(item) || compact.includes(item));
+      const city = Object.keys(provinceByCity).sort((a, b) => b.length - a.length)
+        .find((item) => value.startsWith(item) && !/^[路街巷道]/.test(value.slice(item.length)));
       if (!city) {
         return { text: value, label: "未匹配", matched: false };
       }

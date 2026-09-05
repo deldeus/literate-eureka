@@ -4,7 +4,7 @@
   }
 
   function parseSize(value) {
-    const match = String(value || "").replace(/×/g, "*").match(/(\d+(?:\.\d+)?)\s*\*\s*(\d+(?:\.\d+)?)/);
+    const match = String(value || "").replace(/[xX×]/g, "*").match(/(?:^|[^\d.+-])(\d+(?:\.\d+)?)\s*\*\s*(\d+(?:\.\d+)?)/);
     if (!match) return { length: 0, width: 0 };
     const first = Number(match[1]) || 0;
     const second = Number(match[2]) || 0;
@@ -102,9 +102,14 @@
   }
 
   function calculateShipment(sources) {
-    const items = (Array.isArray(sources) ? sources : [])
-      .map(normalizeItem)
-      .filter((item) => item.qty > 0 && item.length > 0 && item.width > 0);
+    const activeSources = (Array.isArray(sources) ? sources : [])
+      .filter((item) => item && item.qty !== "" && item.qty != null && Number(item.qty) !== 0);
+    if (activeSources.some((item) => {
+      const dims = parseSize(item.spec);
+      return !Number.isSafeInteger(Number(item.qty)) || Number(item.qty) < 0
+        || ![dims.length, dims.width, Number(item.kgPerSqm), Number(item.thickness)].every((value) => Number.isFinite(value) && value > 0);
+    })) return null;
+    const items = activeSources.map(normalizeItem);
     if (!items.length) return null;
 
     const productWeight = items.reduce((sum, item) => sum + item.productWeight, 0);
@@ -112,10 +117,20 @@
     const crateWidth = Math.max(...items.map((item) => item.width)) + 100;
     const contentThickness = items.reduce((sum, item) => sum + item.thickness * item.qty, 0);
     const crateHeight = Math.ceil(contentThickness + 200);
-    const itemPackages = items.map(singlePackage);
+    // 同一产品拆成多行不能绕过包装数量门槛；仅合并参数完全一致的行。
+    const packageGroups = new Map();
+    items.forEach((item) => {
+      const key = JSON.stringify([item.name, item.length, item.width, item.family, item.finishType, item.kgPerSqm, item.thickness]);
+      const group = packageGroups.get(key);
+      if (group) {
+        group.qty += item.qty;
+        group.productWeight += item.productWeight;
+      } else packageGroups.set(key, { ...item });
+    });
+    const itemPackages = Array.from(packageGroups.values(), singlePackage);
     let crate;
 
-    if (items.length === 1) {
+    if (itemPackages.length === 1) {
       crate = itemPackages[0];
     } else {
       const needsLargeCrate = itemPackages.some((item) => item.weight >= 65);

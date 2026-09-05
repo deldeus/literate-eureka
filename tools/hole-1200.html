@@ -625,10 +625,27 @@
       const heightMm = getValue('heightMm');
       const holes = getValue('holes');
       const diameter = getValue('diameter');
-      const columns = Math.min(getValue('columns'), holes);
+      const requestedColumns = getValue('columns');
+      const columns = Math.min(requestedColumns, holes);
       const rows = Math.ceil(holes / columns);
       const marginX = getValue('marginX');
       const marginY = getValue('marginY');
+      let validationError = '';
+      if (![widthMm, heightMm, diameter].every(n => Number.isFinite(n) && n > 0)
+        || ![holes, requestedColumns].every(n => Number.isSafeInteger(n) && n > 0)
+        || ![marginX, marginY].every(n => Number.isFinite(n) && n >= 0)) {
+        validationError = '请填写有效尺寸、孔径和正整数孔数；边距不能为负数。';
+      } else if (diameter > Math.min(widthMm, heightMm)
+        || marginX > widthMm / 2 || marginY > heightMm / 2
+        || (columns > 1 && (marginX < diameter / 2 || (widthMm - 2 * marginX) / (columns - 1) < diameter))
+        || (rows > 1 && (marginY < diameter / 2 || (heightMm - 2 * marginY) / (rows - 1) < diameter))) {
+        validationError = '孔位超出板材或相互重叠，请调整孔数、孔径和边距。';
+      }
+      document.querySelector('#downloadSvg').disabled = Boolean(validationError);
+      if (validationError) {
+        svg.append(el('text', { x: 30, y: 70, fill: '#b42318', 'font-size': 20 }, validationError));
+        return;
+      }
 
       const canvasW = 1100;
       const canvasH = 700;
@@ -656,7 +673,7 @@
         const row = Math.floor(i / columns);
         const rowCount = Math.min(columns, holes - row * columns);
         const offsetCols = rowCount < columns ? (columns - rowCount) / 2 : 0;
-        const xMm = marginX + (col + offsetCols) * gapX;
+        const xMm = columns > 1 ? marginX + (col + offsetCols) * gapX : widthMm / 2;
         const yMm = rows > 1 ? marginY + row * gapY : heightMm / 2;
         points.push([xMm, yMm]);
         g.append(el('circle', {

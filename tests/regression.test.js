@@ -6,6 +6,19 @@ const vm = require("node:vm");
 
 const root = path.resolve(__dirname, "..");
 
+function functionSource(file, name) {
+  const source = read(file);
+  const match = new RegExp(`^([ \\t]*)function ${name}\\(`, "m").exec(source);
+  assert.ok(match, name);
+  const closing = new RegExp(`^${match[1]}\\}`, "gm");
+  closing.lastIndex = match.index;
+  for (let end; (end = closing.exec(source));) {
+    const candidate = source.slice(match.index, end.index + end[0].length);
+    try { new vm.Script(`(${candidate})`); return candidate; } catch {}
+  }
+  throw new Error(`Cannot extract ${name}`);
+}
+
 function read(relativePath) {
   return fs.readFileSync(path.join(root, relativePath), "utf8");
 }
@@ -391,7 +404,7 @@ test("宁波 1200*600 规格带厚度时仍按小板包装", () => {
 test("宁波重量和开单模板共同读取宁波运费核心", () => {
   for (const file of ["tools/ningbo-weight.html", "tools/order-template.html"]) {
     const html = read(file);
-    assert.match(html, /<script src="ningbo-freight-core\.js\?v=20260713-2"><\/script>/, file);
+    assert.match(html, /<script src="ningbo-freight-core\.js\?v=20260905-1"><\/script>/, file);
     assert.match(html, /NingboFreightCore\.calculateShipment/, file);
   }
 });
@@ -404,7 +417,7 @@ test("宁波重量提供多产品明细操作", () => {
 
 test("宁波重量同步开单模板的星云石产品", () => {
   const html = read("tools/ningbo-weight.html");
-  assert.match(html, /<script src="product-data\.js\?v=20260904-1"><\/script>/);
+  assert.match(html, /<script src="product-data\.js\?v=20260905-1"><\/script>/);
   assert.match(html, /"星云石": "星月石"/);
   assert.match(html, /"星云石B款": "星月石"/);
   assert.match(html, /JieGeProductData\?\.groupedNingboCatalog/);
@@ -739,7 +752,7 @@ test("快速查价同步松诺与168附加费用说明", () => {
 
 test("四个宁波业务页面共同读取最新产品数据", () => {
   for (const file of ["tools/order-template.html", "tools/quick-price.html", "tools/quote-generator.html", "tools/ningbo-weight.html"]) {
-    assert.match(read(file), /<script src="product-data\.js\?v=20260904-1"><\/script>/, file);
+    assert.match(read(file), /<script src="product-data\.js\?v=20260905-1"><\/script>/, file);
   }
 });
 
@@ -778,6 +791,9 @@ test("美利来包装费按合计片数和规格自动计算", () => {
     { specText: "1200*2400", qty: 1 }
   ]).amount, 200);
   assert.equal(productData.meililaiPackagingFee([{ specText: "待确认", qty: 1 }]).confirmed, false);
+  for (const specText of ["0*1200", "-600*1200", "600*-1200"]) {
+    assert.equal(productData.meililaiPackagingFee([{ specText, qty: 1 }]).confirmed, false);
+  }
 });
 
 test("美利来只提供打印附加价、五个产品和多条自定义费用", () => {
@@ -879,13 +895,161 @@ test("上墙排版支持板间留缝且墙体四周不扣缝", () => {
 
 test("主页版本号和所有工具入口完整", () => {
   const index = read("index.html");
-  assert.match(index, /v2026\.09\.04\.1/);
+  assert.match(index, /v2026\.09\.05\.1/);
   const routeMatch = index.match(/const toolPaths = (\{[^;]+\});/);
   assert.ok(routeMatch, "未找到工具入口表");
   const routes = JSON.parse(routeMatch[1]);
   Object.values(routes).forEach((relativePath) => {
     assert.ok(fs.existsSync(path.join(root, relativePath)), `缺少工具文件：${relativePath}`);
   });
+});
+
+test("宁波B款产品和规格级重量使用原始资料而非泛关键词", () => {
+  const data = loadProductData();
+  assert.equal(data.findNingboVariant("粗纹线石B款", "2800*1200").price, 80);
+  const cases = [
+    ["粗纹线石B款", "2800*1200", 7.5, 7],
+    ["新线石", "2950*1200", 6.5, 4],
+    ["双线石", "2650*1180", 10, 8],
+    ["阡陌石（方线石）", "2800*1000", 10, 8],
+    ["水波纹板", "3000*1150", 8.5, 9],
+    ["大竹纹（凹模）", "2800*980", 11, 10],
+    ["页岩", "3100*1160", 13, 15],
+    ["斧开石", "3000*1200", 11, 13],
+    ["斧开石", "2300*560", 12, 12]
+  ];
+  for (const [name, spec, kg, thickness] of cases) {
+    const profile = data.findNingboWeightProfile(name, spec);
+    assert.equal(profile.kgPerSqm, kg, name);
+    assert.equal(profile.thickness, thickness, name);
+  }
+  assert.equal(data.findNingboWeightProfile("任意线石", "3000*1200"), null);
+  assert.equal(data.findNingboWeightProfile("新线石", "999*999"), null);
+  assert.equal(data.findNingboWeightProfile("花岗岩拼接", "2700*1200"), null);
+});
+
+test("宁波重量目录旧别名不再暴露过期尺寸", () => {
+  const context = { window: { JieGeProductData: loadProductData() } };
+  vm.createContext(context);
+  const html = read("tools/ningbo-weight.html");
+  vm.runInContext(html.slice(html.indexOf("    const products = ["), html.indexOf("    const els = {")) + ";this.rows = products;", context);
+  assert.equal(context.rows.some((item) => item.name === "圆线石 脉络石"), false);
+  assert.equal(context.rows.some((item) => item.name === "粗线石"), false);
+  assert.equal(context.rows.some((item) => item.name === "B款粗线石"), false);
+  const pulse = context.rows.find((item) => item.name === "脉络石");
+  assert.deepEqual(Array.from(pulse.sizes), ["2800*990", "2800*1200", "2800*600"]);
+  assert.equal(pulse.sourceName, "圆线石 脉络石");
+  const b = context.rows.find((item) => item.name === "粗纹线石B款");
+  assert.deepEqual(Array.from(b.sizes), ["2800*1200"]);
+});
+
+test("宁波相同产品拆行不改变包装门槛且原明细保留", () => {
+  const core = loadNingboCore();
+  const item = { name: "洞石", spec: "1200*600", thickness: 3, kgPerSqm: 5 };
+  for (const [a, b] of [[5, 5], [120, 121]]) {
+    const single = core.calculateShipment([{ ...item, qty: a + b }]);
+    const split = core.calculateShipment([{ ...item, qty: a }, { ...item, qty: b }]);
+    assert.equal(split.packageWeight, single.packageWeight);
+    assert.equal(split.shippingWeight, single.shippingWeight);
+    assert.equal(split.crateHeight, single.crateHeight);
+    assert.equal(split.items.length, 2);
+  }
+});
+
+test("宁波含无效规格或重量时禁止输出部分精确总重", () => {
+  const core = loadNingboCore();
+  const valid = { name: "新线石", spec: "2950*1200", qty: 10, thickness: 4, kgPerSqm: 6.5 };
+  for (const patch of [{ spec: "bad" }, { spec: "-1200*600" }, { thickness: "" }, { kgPerSqm: "" }, { kgPerSqm: Infinity }, { qty: 1.9 }]) {
+    assert.equal(core.calculateShipment([valid, { ...valid, ...patch }]), null);
+  }
+  assert.equal(core.calculateShipment([valid]).shippingWeight, 305);
+  assert.equal(core.calculateShipment([{ ...valid, spec: "2950x1200" }]).shippingWeight, 305);
+  assert.match(read("tools/order-template.html"), /if \(warnings.length \|\| !items.length\) return \{ manual: true, warnings \}/);
+});
+
+test("未知目录产品清除旧自动价但保留人工覆盖", () => {
+  const context = { isMeililaiWarehouseActive: () => false, isNingboWarehouseActive: () => true, findNingboProduct: () => null, isCatalogWarehouseActive: () => true };
+  vm.createContext(context);
+  vm.runInContext(functionSource("tools/order-template.html", "syncNingboProductRow"), context);
+  for (const manual of [false, true]) {
+    const row = { productName: { value: "未知款" }, sqmPrice: { value: manual ? "123" : "95", dataset: { autoPrice: "95", manualOverride: manual ? "1" : "0" } }, matchTools: { dataset: { product: "旧产品" }, classList: { toggle() {} } } };
+    context.syncNingboProductRow(row);
+    assert.equal(row.sqmPrice.value, manual ? "123" : "");
+    assert.equal(row.sqmPrice.dataset.autoPrice, undefined);
+    assert.equal(row.matchTools.dataset.product, undefined);
+  }
+});
+
+test("混凝土未匹配价格不能继续沿用上一款自动价", () => {
+  const context = { isConcreteWarehouse: () => true, syncConcreteSpecOptions() {}, concretePriceMatch: () => ({ price: 0, hint: "未匹配，请手填" }) };
+  vm.createContext(context);
+  vm.runInContext(functionSource("tools/order-template.html", "syncConcretePrice"), context);
+  for (const manual of [false, true]) {
+    const row = { sqmPrice: { value: manual ? "199" : "170", dataset: { autoPrice: "170", manualOverride: manual ? "1" : "0" } }, priceHint: {} };
+    context.syncConcretePrice(row);
+    assert.equal(row.sqmPrice.value, manual ? "199" : "");
+    assert.equal(row.sqmPrice.dataset.autoPrice, undefined);
+  }
+});
+
+test("整板切割拒绝零尺寸零数量及被截断的输入", () => {
+  const context = {};
+  vm.createContext(context);
+  vm.runInContext(functionSource("tools/full-board-cut.html", "parseInput"), context);
+  assert.equal(context.parseInput("318*771=20\n318*762=5").length, 2);
+  assert.equal(context.parseInput("318*771=20 318*762=5").length, 2);
+  for (const text of ["318*771=20abc", "0*100=1", "318*771=0", "318*771=1.9"]) {
+    assert.throws(() => context.parseInput(text), undefined, text);
+  }
+});
+
+test("孔心排版无效尺寸和重叠孔位禁止导出", () => {
+  const base = { widthMm: 1200, heightMm: 600, holes: 6, columns: 3, diameter: 20, marginX: 50, marginY: 50 };
+  for (const patch of [{ widthMm: 0 }, { columns: 0 }, { diameter: -1 }, { marginX: -1 }, { marginX: 600 }, { holes: 1.5 }]) {
+    const button = {};
+    const messages = [];
+    const context = { svg: { replaceChildren() {}, append(node) { messages.push(node.text); } }, getValue: id => ({ ...base, ...patch })[id], document: { querySelector: () => button }, el: (tag, attrs, text) => ({ text }) };
+    vm.createContext(context);
+    vm.runInContext(functionSource("tools/hole-1200.html", "draw"), context);
+    context.draw();
+    assert.equal(button.disabled, true);
+    assert.equal(messages.length, 1);
+  }
+});
+
+test("上墙无法铺满的板缝边界必须提示而非输出零块正常结果", () => {
+  const context = { dims: () => ({ boardW: 1200, boardH: 600 }), jointGapValue: () => 1, els: { cutX: { value: "right" }, cutY: { value: "bottom" } } };
+  vm.createContext(context);
+  for (const name of ["distributeWithoutGap", "distribute", "layout", "escapeHtml"]) vm.runInContext(functionSource("tools/wall-panel.html", name), context);
+  const layout = context.layout({ wallW: 1201, wallH: 600 });
+  assert.equal(layout.incomplete, true);
+  assert.ok(layout.error);
+  assert.equal(context.escapeHtml('<b>墙面</b>'), '&lt;b&gt;墙面&lt;/b&gt;');
+});
+
+test("报备地址不把路名当城市且多省地址转人工确认", () => {
+  const context = { provinceNames: ["上海", "广东", "浙江", "贵州"], municipalities: new Set(["上海"]), provinceByCity: { 贵阳: "贵州", 广州: "广东", 杭州: "浙江", 上海: "上海" } };
+  vm.createContext(context);
+  for (const name of ["hasProvincePrefix", "formatAddress"]) vm.runInContext(functionSource("tools/report-template.html", name), context);
+  for (const value of ["上海路88号", "贵阳路10号", "广东省广州市转浙江省杭州市"]) assert.equal(context.formatAddress(value).matched, false);
+  assert.equal(context.formatAddress("贵阳市南明区").text, "贵州贵阳市南明区");
+});
+
+test("文字报价手工模式有明确恢复入口且规格同步先于计算", () => {
+  const nodes = {};
+  const context = { document: { querySelector: id => nodes[id] ||= {} } };
+  vm.createContext(context);
+  vm.runInContext(`let quoteManuallyEdited = false; ${functionSource("tools/quote-generator.html", "setQuoteManualMode")}`, context);
+  context.setQuoteManualMode(true);
+  assert.equal(nodes["#resumeQuoteAuto"].hidden, false);
+  assert.equal(nodes["#quoteEditStatus"].hidden, false);
+  context.setQuoteManualMode(false);
+  assert.equal(nodes["#resumeQuoteAuto"].hidden, true);
+  const single = functionSource("tools/quote-generator.html", "renderSingle");
+  assert.ok(single.indexOf("syncProductQuickSpecs()") < single.indexOf("els.spec.value"));
+  for (const name of ["renderSingle", "renderMulti"]) {
+    assert.match(functionSource("tools/quote-generator.html", name), /if \(!quoteManuallyEdited\) els\.quote\.textContent/);
+  }
 });
 
 test("所有外部脚本引用都存在", () => {

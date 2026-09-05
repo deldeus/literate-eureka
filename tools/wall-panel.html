@@ -1444,6 +1444,9 @@
       const jointGap = jointGapValue();
       const cols = distribute(wallW, boardW, els.cutX.value, jointGap);
       const rows = distribute(wallH, boardH, els.cutY.value, jointGap);
+      if (!cols.length || !rows.length) {
+        return { wallW, wallH, boardW, boardH, jointGap, cols: [], rows: [], panels: [], incomplete: true, error: "当前板宽高与板缝无法排满墙面，请调整板缝或板材尺寸" };
+      }
       const panels = [];
       let y = 0;
       rows.forEach((h, row) => {
@@ -1475,12 +1478,16 @@
       els.wallH.value = wall.wallH || "";
     }
 
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+    }
+
     function renderWallSelect() {
       els.wallSelect.innerHTML = walls.map((wall, index) => {
         const label = wall.wallW && wall.wallH
           ? `${wall.name} ${wall.wallH} x ${wall.wallW}mm`
           : `${wall.name} 待输入尺寸`;
-        return `<option value="${index}">${label}</option>`;
+        return `<option value="${index}">${escapeHtml(label)}</option>`;
       }).join("");
       els.wallSelect.value = String(activeWall);
     }
@@ -1827,7 +1834,24 @@
     }
 
     function draw() {
+      const required = ["boardW", "boardH", "rawW", "rawH", ...(!els.noHole.checked ? ["holeD"] : [])];
+      const nonnegative = [...(!els.noHole.checked ? ["holeInset"] : []), ...(els.jointGapPreset.value === "custom" ? ["jointGapCustom"] : [])];
+      const invalid = required.some(id => !Number.isFinite(Number(els[id].value)) || Number(els[id].value) <= 0)
+        || nonnegative.some(id => !Number.isFinite(Number(els[id].value)) || Number(els[id].value) < 0);
+      els.exportSvg.disabled = invalid;
+      els.exportPng.disabled = invalid;
+      if (invalid) {
+        els.drawing.replaceChildren();
+        copyRegions = [];
+        els.summary.textContent = "请输入大于0的板材、原板尺寸和孔径；边距及板缝不能为负数。";
+        [els.cutList, els.allCutList, els.rawSheetList].forEach(node => node.replaceChildren());
+        closePanelEditor();
+        return;
+      }
       const layouts = walls.map((wall) => ({ wall, data: layout(wall) }));
+      const layoutError = layouts.some(item => item.data.error);
+      els.exportSvg.disabled = layoutError;
+      els.exportPng.disabled = layoutError;
       const noHole = els.noHole.checked;
       els.holeD.disabled = noHole;
       els.holeInset.disabled = noHole;
@@ -1884,7 +1908,7 @@
         const bottomY = data.wallH * scale;
 
         if (data.incomplete) {
-          addText(g, `${wall.name} 待输入墙宽和墙高`, 0, 0, {
+          addText(g, `${wall.name} ${data.error || "待输入墙宽和墙高"}`, 0, 0, {
             "font-size": 16,
             "font-weight": 800,
             fill: "#202520",
@@ -1900,7 +1924,7 @@
             "stroke-width": 1.2,
             "stroke-dasharray": "8 6",
           }));
-          addText(g, "请输入墙宽和墙高后生成排版图", 22, 72, {
+          addText(g, data.error ? "请调整参数后重新生成排版图" : "请输入墙宽和墙高后生成排版图", 22, 72, {
             "font-size": 14,
             fill: "#68716a",
           });
@@ -2147,7 +2171,7 @@
         const full = data.panels.filter((p) => p.full).length;
         const cut = data.panels.length - full;
         const specs = summarize(data.panels).map((item) => `${fmt(item.w)} x ${fmt(item.h)} × ${item.count}`).join("，");
-        return `<tr><td>${wall.name}</td><td>${data.panels.length} 块</td><td>整板 ${full} 块，裁切 ${cut} 块；${specs}</td></tr>`;
+        return `<tr><td>${escapeHtml(wall.name)}</td><td>${data.error ? "待调整" : `${data.panels.length} 块`}</td><td>${data.error || `整板 ${full} 块，裁切 ${cut} 块；${specs}`}</td></tr>`;
       }).join("");
     
       els.allCutList.innerHTML = summarizeAllWalls().map((item) => {
@@ -2324,10 +2348,11 @@
         panelIndex: Number(tile.dataset.panelIndex),
       };
       activeWall = selectedPanel.wallIndex;
+      const tileRect = tile.getBoundingClientRect();
       syncInputsFromWall();
       renderWallSelect();
       draw();
-      updatePanelEditor(tile.getBoundingClientRect());
+      updatePanelEditor(tileRect);
     });
     els.addWall.addEventListener("click", addWall);
     els.refreshDrawing.addEventListener("click", deleteCurrentWall);
